@@ -30,6 +30,10 @@ import com.github.sonatadev.sbldb.ui.AppViewModelProvider
 import com.github.sonatadev.sbldb.ui.components.AccentSwatch
 import com.github.sonatadev.sbldb.ui.components.Module
 import com.github.sonatadev.sbldb.ui.components.ModuleLabel
+import com.github.sonatadev.sbldb.ui.components.MonoCaption
+import com.github.sonatadev.sbldb.ui.components.SecondaryButton
+import com.github.sonatadev.sbldb.ui.formatDate
+import com.github.sonatadev.sbldb.ui.formatTime
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SegmentedControl
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
@@ -114,6 +118,26 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = vi
                 selected = state.weightUnit,
                 label = { unitLabels.getValue(it) },
                 onSelect = viewModel::setWeightUnit
+            )
+        }
+
+        Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_library)) {
+            val content = state.content
+            Text(
+                stringResource(
+                    if (content.source == "GitHub") R.string.library_source_github else R.string.library_source_app
+                ),
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.ink
+            )
+            content.checkedAt?.let {
+                MonoCaption(stringResource(R.string.library_checked, formatDate(it) + " " + formatTime(it)))
+            }
+            content.error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = colors.accent) }
+            SecondaryButton(
+                stringResource(if (state.checking) R.string.library_checking else R.string.library_check),
+                onClick = viewModel::checkForUpdates,
+                modifier = Modifier.fillMaxWidth()
             )
         }
 

@@ -213,7 +213,13 @@
     <string name="settings_appearance">01 · Appearance</string>
     <string name="settings_explanations">02 · Explanations</string>
     <string name="settings_units">03 · Units</string>
-    <string name="settings_about">04 · About</string>
+    <string name="settings_library">04 · Exercise library</string>
+    <string name="settings_about">05 · About</string>
+    <string name="library_source_github">Up to date with the online library on GitHub.</string>
+    <string name="library_source_app">Using the library bundled with the app.</string>
+    <string name="library_checked">Last checked %1$s</string>
+    <string name="library_check">Check for updates</string>
+    <string name="library_checking">Checking…</string>
     <string name="level_beginner">Beginner</string>
     <string name="level_expert">Expert</string>
     <string name="explanations_basic_hint">Plain-language explanations of joint actions, muscles and terms.</string>

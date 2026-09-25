@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Downloads library content (exercises, joint actions) from the public GitHub repository -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".SbldbApplication"
         android:allowBackup="true"

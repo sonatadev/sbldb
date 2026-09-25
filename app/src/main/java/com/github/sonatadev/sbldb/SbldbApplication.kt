@@ -2,7 +2,7 @@ package com.github.sonatadev.sbldb
 
 import android.app.Application
 import com.github.sonatadev.sbldb.data.AppDatabase
-import com.github.sonatadev.sbldb.data.SeedData
+import com.github.sonatadev.sbldb.data.content.ContentUpdater
 import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.JointActionRepository
 import com.github.sonatadev.sbldb.data.repository.RoutineRepository
@@ -21,6 +21,7 @@ class AppContainer(application: Application) {
     val settingsRepository = SettingsRepository(application)
     val jointActionRepository = JointActionRepository(database)
     val routineRepository = RoutineRepository(database)
+    val contentUpdater = ContentUpdater(application, database, settingsRepository)
 }
 
 class SbldbApplication : Application() {
@@ -32,6 +33,10 @@ class SbldbApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
-        appScope.launch { SeedData.sync(this@SbldbApplication, container.database, container.settingsRepository) }
+        appScope.launch {
+            // Start from local content right away, then look for newer content on GitHub
+            container.contentUpdater.loadLocal()
+            container.contentUpdater.refresh()
+        }
     }
 }

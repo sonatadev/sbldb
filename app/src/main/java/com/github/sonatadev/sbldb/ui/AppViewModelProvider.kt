@@ -65,7 +65,7 @@ object AppViewModelProvider {
         initializer {
             VolumeViewModel(container().workoutRepository, container().exerciseRepository)
         }
-        initializer { SettingsViewModel(container().settingsRepository) }
+        initializer { SettingsViewModel(container().settingsRepository, container().contentUpdater) }
     }
 
     private fun CreationExtras.container(): AppContainer =

@@ -3,6 +3,7 @@ package com.github.sonatadev.sbldb.data.repository
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.github.sonatadev.sbldb.domain.AccentColor
@@ -28,6 +29,22 @@ class SettingsRepository(private val context: Context) {
     val explanationLevel: Flow<ExplanationLevel> = enumFlow(explanationKey, ExplanationLevel.BASIC)
 
     private val contentHashKey = stringPreferencesKey("content_hash")
+    private val contentSourceKey = stringPreferencesKey("content_source")
+    private val contentCheckedKey = longPreferencesKey("content_checked_at")
+    private val contentErrorKey = stringPreferencesKey("content_error")
+
+    /** Where the library content in use came from, when it was last checked, and the last problem. */
+    val contentStatus: Flow<ContentStatus> = context.dataStore.data.map { prefs ->
+        ContentStatus(prefs[contentSourceKey], prefs[contentCheckedKey], prefs[contentErrorKey])
+    }.distinctUntilChanged()
+
+    suspend fun setContentStatus(source: String?, checkedAt: Long?, error: String?) {
+        context.dataStore.edit { prefs ->
+            source?.let { prefs[contentSourceKey] = it }
+            checkedAt?.let { prefs[contentCheckedKey] = it }
+            if (error == null) prefs.remove(contentErrorKey) else prefs[contentErrorKey] = error
+        }
+    }
 
     /** Hash of the bundled YAML content last written to the database. */
     suspend fun contentHash(): String? = context.dataStore.data.first()[contentHashKey]
@@ -53,3 +70,5 @@ class SettingsRepository(private val context: Context) {
         context.dataStore.edit { it[key] = value.name }
     }
 }
+
+data class ContentStatus(val source: String?, val checkedAt: Long?, val error: String?)

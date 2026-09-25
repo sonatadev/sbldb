@@ -1,7 +1,8 @@
 package com.github.sonatadev.sbldb.data
 
-import android.content.Context
 import androidx.room.withTransaction
+import com.github.sonatadev.sbldb.data.content.ContentFiles
+import com.github.sonatadev.sbldb.data.content.ContentValidator
 import com.github.sonatadev.sbldb.data.entity.Exercise
 import com.github.sonatadev.sbldb.data.entity.ExerciseJointAction
 import com.github.sonatadev.sbldb.data.entity.ExerciseMuscle
@@ -15,7 +16,6 @@ import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.SafeConstructor
 import java.io.InputStream
-import java.security.MessageDigest
 
 /** "Group" or "Group / Region", as written in the YAML files. */
 data class MuscleRef(val group: String, val region: String?) {
@@ -180,24 +180,22 @@ object MuscleDerivation {
 }
 
 object SeedData {
-    private val files = listOf("muscles.yaml", "joint_actions.yaml", "exercises.yaml", "glossary.yaml")
-
     /**
-     * Brings the reference tables in line with assets/ whenever the files change (or the database
-     * was recreated). Rows are matched by natural key, so logged workouts keep their exercises;
-     * exercises removed from the files are kept for history.
+     * Brings the reference tables in line with [files] whenever their content changes (or the
+     * database was recreated). Rows are matched by natural key, so logged workouts keep their
+     * exercises; exercises removed from the files are kept for history.
+     * Returns true when the database was updated.
      */
-    suspend fun sync(context: Context, db: AppDatabase, settings: SettingsRepository) {
-        val hash = contentHash(context)
-        if (hash == settings.contentHash() && db.muscleDAO().count() > 0) return
-
-        val muscles = SeedParser.parseMuscles(context.assets.open(files[0]))
-        val actions = SeedParser.parseJointActions(context.assets.open(files[1]))
-        val exercises = SeedParser.parseExercises(context.assets.open(files[2]))
-        val glossary = SeedParser.parseGlossary(context.assets.open(files[3]))
-
-        db.withTransaction { apply(db, muscles, actions, exercises, glossary) }
+    suspend fun sync(files: ContentFiles, db: AppDatabase, settings: SettingsRepository): Boolean {
+        val hash = files.hash
+        if (hash == settings.contentHash() && db.muscleDAO().count() > 0) return false
+        val content = when (val result = ContentValidator.check(files)) {
+            is ContentValidator.Result.Valid -> result.content
+            is ContentValidator.Result.Invalid -> error("Invalid content: ${result.problems.first()}")
+        }
+        db.withTransaction { apply(db, content.muscles, content.actions, content.exercises, content.glossary) }
         settings.setContentHash(hash)
+        return true
     }
 
     private suspend fun apply(
@@ -274,11 +272,5 @@ object SeedData {
         val glossaryDao = db.glossaryDAO()
         glossaryDao.deleteAll()
         glossaryDao.insertAll(glossary.mapIndexed { i, g -> GlossaryTerm(g.term, g.text.basic, g.text.expert, i) })
-    }
-
-    private fun contentHash(context: Context): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        files.forEach { name -> context.assets.open(name).use { digest.update(it.readBytes()) } }
-        return digest.digest().joinToString("") { "%02x".format(it) }
     }
 }

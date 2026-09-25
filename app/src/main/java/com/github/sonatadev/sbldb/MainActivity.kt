@@ -10,6 +10,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import com.github.sonatadev.sbldb.ui.onboarding.OnboardingScreen
+import kotlinx.coroutines.launch
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.sonatadev.sbldb.domain.AccentColor
 import com.github.sonatadev.sbldb.domain.ExplanationLevel
@@ -31,7 +38,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         if (intent?.getBooleanExtra(EXTRA_OPEN_WORKOUT, false) == true) openWorkoutRequests.value++
-        val settings = (application as SbldbApplication).container.settingsRepository
+        val container = (application as SbldbApplication).container
+        val settings = container.settingsRepository
         setContent {
             val themeMode by settings.themeMode.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
             val accent by settings.accentColor.collectAsStateWithLifecycle(AccentColor.ORANGE)
@@ -51,7 +59,13 @@ class MainActivity : ComponentActivity() {
             SbldbTheme(themeMode = themeMode, accent = accent) {
                 CompositionLocalProvider(LocalExplanationLevel provides explanations) {
                     val openWorkout by openWorkoutRequests.collectAsStateWithLifecycle()
-                    SbldbApp(openWorkoutRequest = openWorkout)
+                    val onboarding by container.needsOnboarding.collectAsStateWithLifecycle()
+                    val scope = rememberCoroutineScope()
+                    when (onboarding) {
+                        null -> Box(Modifier.fillMaxSize().background(SbldbTheme.colors.ground))
+                        true -> OnboardingScreen(onDone = { scope.launch { container.finishOnboarding() } })
+                        false -> SbldbApp(openWorkoutRequest = openWorkout)
+                    }
                 }
             }
         }

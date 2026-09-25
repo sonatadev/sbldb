@@ -236,7 +236,7 @@ fun TextInput(
 ) {
     val colors = SbldbTheme.colors
     androidx.compose.foundation.layout.Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        ModuleLabel(label, color = colors.muted)
+        if (label.isNotEmpty()) ModuleLabel(label, color = colors.muted)
         androidx.compose.foundation.text.BasicTextField(
             value = value,
             onValueChange = onValueChange,

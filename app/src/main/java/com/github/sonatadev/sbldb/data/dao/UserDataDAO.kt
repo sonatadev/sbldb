@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Transaction
 import androidx.room.Upsert
 import com.github.sonatadev.sbldb.data.entity.BodyEntry
@@ -78,11 +79,20 @@ interface UserDataDAO {
     @Query("DELETE FROM exercise_notes WHERE exerciseId = :exerciseId")
     suspend fun deleteExerciseNote(exerciseId: Int)
 
+    @Query("SELECT * FROM exercise_notes")
+    fun exerciseNotes(): Flow<List<ExerciseNote>>
+
     @Query("SELECT * FROM exercise_notes WHERE exerciseId = :exerciseId")
     fun exerciseNote(exerciseId: Int): Flow<ExerciseNote?>
 
     @Insert
     suspend fun insertBodyEntry(entry: BodyEntry): Long
+
+    @Query("SELECT * FROM body_entries WHERE date = :date LIMIT 1")
+    suspend fun bodyEntryOn(date: Long): BodyEntry?
+
+    @Update
+    suspend fun updateBodyEntry(entry: BodyEntry)
 
     @Query("DELETE FROM body_entries WHERE id = :id")
     suspend fun deleteBodyEntry(id: Long)

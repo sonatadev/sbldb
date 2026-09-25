@@ -62,6 +62,7 @@ fun LogScreen(
     onOpenWorkout: (Long) -> Unit,
     onOpenVolume: () -> Unit,
     onOpenPlan: () -> Unit,
+    onOpenBody: () -> Unit,
     viewModel: LogViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -139,6 +140,14 @@ fun LogScreen(
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.weekly_plan), onClick = onOpenPlan) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.plan_cta), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
+                    Text("›", style = SbldbType.monoLarge, color = colors.dim)
+                }
+            }
+        }
+        item {
+            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.body), onClick = onOpenBody) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.body_cta), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
                     Text("›", style = SbldbType.monoLarge, color = colors.dim)
                 }
             }

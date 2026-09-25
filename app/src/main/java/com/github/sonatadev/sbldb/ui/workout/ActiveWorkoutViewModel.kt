@@ -60,7 +60,9 @@ data class ActiveWorkoutUiState(
     val isLoading: Boolean = true,
     val workout: WorkoutWithExercises? = null,
     val unit: WeightUnit = WeightUnit.KG,
-    val info: Map<Int, ExerciseInfo> = emptyMap()
+    val info: Map<Int, ExerciseInfo> = emptyMap(),
+    /** Personal notes by exercise id. */
+    val notes: Map<Int, String> = emptyMap()
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -89,8 +91,8 @@ class ActiveWorkoutViewModel(
         .onStart { emit(emptyMap()) }
 
     val uiState: StateFlow<ActiveWorkoutUiState> =
-        combine(workout, settings.weightUnit, info) { workout, unit, info ->
-            ActiveWorkoutUiState(isLoading = false, workout = workout, unit = unit, info = info)
+        combine(workout, settings.weightUnit, info, exerciseRepository.notes) { workout, unit, info, notes ->
+            ActiveWorkoutUiState(isLoading = false, workout = workout, unit = unit, info = info, notes = notes)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ActiveWorkoutUiState())
 
     private suspend fun loadInfo(ids: List<Int>, routineId: Long?): Map<Int, ExerciseInfo> {
@@ -115,6 +117,10 @@ class ActiveWorkoutViewModel(
     }
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }
+
+    fun setExerciseNote(exerciseId: Int, text: String) = launch { exerciseRepository.setNote(exerciseId, text) }
+
+    fun setWorkoutNote(exercise: WorkoutExercise, text: String) = launch { repository.setWorkoutNote(exercise, text) }
 
     suspend fun swapCandidates(exerciseId: Int): List<Exercise> = repository.swapCandidates(exerciseId)
 

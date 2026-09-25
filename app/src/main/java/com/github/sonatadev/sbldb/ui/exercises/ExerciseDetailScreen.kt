@@ -21,6 +21,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import com.github.sonatadev.sbldb.ui.components.NoteDialog
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -69,6 +72,16 @@ fun ExerciseDetailScreen(
     val colors = SbldbTheme.colors
     val exercise = state.exercise ?: return
     var tab by rememberSaveable { mutableIntStateOf(TAB_OVERVIEW) }
+    var editNote by remember { mutableStateOf(false) }
+    if (editNote) {
+        NoteDialog(
+            title = stringResource(R.string.exercise_note),
+            initial = state.note.orEmpty(),
+            placeholder = stringResource(R.string.exercise_note_hint),
+            onSave = viewModel::setNote,
+            onDismiss = { editNote = false }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -110,6 +123,17 @@ fun ExerciseDetailScreen(
                 selected = tab,
                 onSelect = { tab = it }
             )
+        }
+        if (tab == TAB_OVERVIEW) item {
+            Module(Modifier.fillMaxWidth(), onClick = { editNote = true }) {
+                val note = state.note
+                if (note == null) {
+                    Text(stringResource(R.string.add_note), style = SbldbType.mono, color = colors.accent)
+                } else {
+                    ModuleLabel(stringResource(R.string.module_your_note), color = colors.muted)
+                    Text("◆ $note", style = MaterialTheme.typography.bodyLarge, color = colors.ink)
+                }
+            }
         }
         if (tab == TAB_OVERVIEW) item {
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_joint_actions), trailing = { MonoCaption(stringResource(R.string.rating_short)) }) {

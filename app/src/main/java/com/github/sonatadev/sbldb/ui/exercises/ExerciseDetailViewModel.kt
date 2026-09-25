@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 data class SessionHistory(val workoutId: Long, val startedAt: Long, val sets: List<SetHistoryRow>)
 
@@ -31,12 +32,13 @@ data class ExerciseDetailUiState(
     val actions: List<RatedJointAction> = emptyList(),
     val records: Records = Records(),
     /** Best e1RM of each session, oldest first: (startedAt, kg). */
-    val e1rmSeries: List<Pair<Long, Double>> = emptyList()
+    val e1rmSeries: List<Pair<Long, Double>> = emptyList(),
+    val note: String? = null
 )
 
 class ExerciseDetailViewModel(
     savedStateHandle: SavedStateHandle,
-    repository: ExerciseRepository,
+    private val repository: ExerciseRepository,
     jointActions: JointActionRepository,
     settings: SettingsRepository
 ) : ViewModel() {
@@ -67,6 +69,12 @@ class ExerciseDetailViewModel(
     }
 
     val uiState: StateFlow<ExerciseDetailUiState> =
-        combine(base, jointActions.actionsForExercise(exerciseId)) { state, actions -> state.copy(actions = actions) }
+        combine(base, jointActions.actionsForExercise(exerciseId), repository.note(exerciseId)) { state, actions, note ->
+            state.copy(actions = actions, note = note)
+        }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExerciseDetailUiState())
+
+    fun setNote(text: String) {
+        viewModelScope.launch { repository.setNote(exerciseId, text) }
+    }
 }

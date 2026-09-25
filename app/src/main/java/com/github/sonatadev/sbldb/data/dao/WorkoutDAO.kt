@@ -31,6 +31,9 @@ interface WorkoutDAO {
     @Query("SELECT * FROM workouts WHERE endedAt IS NULL ORDER BY startedAt DESC LIMIT 1")
     suspend fun findActiveWorkout(): Workout?
 
+    @Query("SELECT COUNT(*) FROM workouts")
+    suspend fun countWorkouts(): Int
+
     @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
     suspend fun findWorkout(workoutId: Long): Workout?
 

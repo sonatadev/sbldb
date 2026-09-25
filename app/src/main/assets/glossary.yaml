@@ -63,3 +63,6 @@
 - term: PR
   basic: A personal record, meaning more weight, more reps at a weight, or a higher e1RM than ever before on that exercise.
   expert: Checked against all your finished sessions plus the earlier sets of the current one. A first-ever session sets the baseline and shows no PRs. Drop sets and partials never count.
+- term: Weight trend
+  basic: How fast your body weight is changing per week. For building muscle a slow gain works best; losing fat, a steady drop that keeps your lifts up.
+  expert: A least-squares slope over the last 28 days of weigh-ins. Common guidance is roughly +0.25–0.5% of body weight a week for a lean gain and −0.5–1% for a cut; the chart shows a 7-day average to smooth out water.

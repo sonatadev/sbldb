@@ -163,6 +163,7 @@ private fun ReadOnlyExercise(number: Int, exercise: WorkoutExerciseWithSets, uni
             color = colors.ink,
             modifier = Modifier.clickable(onClick = onOpenExercise)
         )
+        ExerciseNotes(note = null, todayNote = exercise.workoutExercise.note)
         Column {
             var workingIndex = 0
             exercise.sets.sortedBy { it.position }.forEach { set ->

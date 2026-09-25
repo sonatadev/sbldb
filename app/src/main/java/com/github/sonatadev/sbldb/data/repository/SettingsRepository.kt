@@ -54,6 +54,15 @@ class SettingsRepository(private val context: Context) {
         context.dataStore.edit { it[contentHashKey] = hash }
     }
 
+    private val onboardedKey = androidx.datastore.preferences.core.booleanPreferencesKey("onboarded")
+
+    /** null until the user either finished onboarding or was found to be an existing user. */
+    suspend fun onboarded(): Boolean? = context.dataStore.data.first()[onboardedKey]
+
+    suspend fun setOnboarded() {
+        context.dataStore.edit { it[onboardedKey] = true }
+    }
+
     private val backupFolderKey = stringPreferencesKey("backup_folder")
     private val lastBackupKey = longPreferencesKey("last_backup_at")
     private val restSecondsKey = intPreferencesKey("rest_seconds")

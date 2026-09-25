@@ -61,6 +61,7 @@ import com.github.sonatadev.sbldb.ui.muscles.MuscleDetailScreen
 import com.github.sonatadev.sbldb.ui.routines.RoutineEditorScreen
 import com.github.sonatadev.sbldb.ui.exercises.CustomExerciseScreen
 import com.github.sonatadev.sbldb.ui.plan.VolumeTargetsScreen
+import com.github.sonatadev.sbldb.ui.body.BodyScreen
 import com.github.sonatadev.sbldb.ui.plan.WeeklyPlanScreen
 import com.github.sonatadev.sbldb.ui.exercises.ExerciseListScreen
 import com.github.sonatadev.sbldb.ui.settings.SettingsScreen
@@ -84,6 +85,7 @@ private object Routes {
     const val MUSCLE = "muscle/{group}"
     const val GLOSSARY = "glossary?term={term}"
     const val WEEKLY_PLAN = "weekly_plan"
+    const val BODY = "body"
     const val VOLUME_TARGETS = "volume_targets"
     const val CUSTOM_EXERCISE = "custom_exercise?exerciseId={exerciseId}"
 
@@ -173,9 +175,11 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 LogScreen(
                     onOpenWorkout = { navController.navigate(Routes.workoutDetail(it)) },
                     onOpenVolume = { navController.navigate(Routes.VOLUME) },
-                    onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) }
+                    onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) },
+                    onOpenBody = { navController.navigate(Routes.BODY) }
                 )
             }
+            composable(Routes.BODY) { BodyScreen(onBack = back, onOpenGlossary = openGlossary) }
             composable(Routes.SETTINGS) {
                 SettingsScreen(onOpenGlossary = { openGlossary(null) }, onOpenTargets = { navController.navigate(Routes.VOLUME_TARGETS) })
             }

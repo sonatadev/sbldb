@@ -30,14 +30,19 @@ private val chartDate = DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
  * Values are in kg and labelled in [unit]; only the range ends and the latest value are labelled.
  */
 @Composable
-fun TrendChart(points: List<Pair<Long, Double>>, unit: WeightUnit, modifier: Modifier = Modifier) {
+fun TrendChart(points: List<Pair<Long, Double>>, unit: WeightUnit, modifier: Modifier = Modifier) =
+    TrendChart(points, modifier, format = unit::formatRounded, unitLabel = unit.label)
+
+/** [format] turns a stored value into its label; [unitLabel] is only used for accessibility. */
+@Composable
+fun TrendChart(points: List<Pair<Long, Double>>, modifier: Modifier = Modifier, format: (Double) -> String, unitLabel: String) {
     if (points.size < 2) return
     val colors = SbldbTheme.colors
     val measurer = rememberTextMeasurer()
     val labelStyle = SbldbType.label.copy(color = colors.muted)
     val valueStyle = SbldbType.mono.copy(color = colors.accent)
-    val description = remember(points, unit) {
-        "From ${unit.formatRounded(points.first().second)} to ${unit.formatRounded(points.last().second)} ${unit.label}"
+    val description = remember(points, unitLabel) {
+        "From ${format(points.first().second)} to ${format(points.last().second)} $unitLabel"
     }
     Canvas(modifier.semantics { contentDescription = description }) {
         val minV = points.minOf { it.second }
@@ -46,8 +51,8 @@ fun TrendChart(points: List<Pair<Long, Double>>, unit: WeightUnit, modifier: Mod
         val t0 = points.first().first
         val tSpan = (points.last().first - t0).takeIf { it > 0 } ?: 1L
 
-        val maxLabel = measurer.measure(unit.formatRounded(maxV), labelStyle)
-        val minLabel = measurer.measure(unit.formatRounded(minV), labelStyle)
+        val maxLabel = measurer.measure(format(maxV), labelStyle)
+        val minLabel = measurer.measure(format(minV), labelStyle)
         val left = maxOf(maxLabel.size.width, minLabel.size.width) + 8.dp.toPx()
         val right = 14.dp.toPx()
         val top = 22.dp.toPx()
@@ -72,7 +77,7 @@ fun TrendChart(points: List<Pair<Long, Double>>, unit: WeightUnit, modifier: Mod
         val (lastT, lastV) = points.last()
         drawCircle(colors.module, radius = 6.dp.toPx(), center = Offset(x(lastT), y(lastV)))
         drawCircle(colors.accent, radius = 4.5.dp.toPx(), center = Offset(x(lastT), y(lastV)))
-        val lastLabel = measurer.measure(unit.formatRounded(lastV), valueStyle)
+        val lastLabel = measurer.measure(format(lastV), valueStyle)
         drawText(
             lastLabel,
             topLeft = Offset(

@@ -104,6 +104,9 @@ class WorkoutRepository(private val db: AppDatabase) {
 
     suspend fun removeExercise(workoutExercise: WorkoutExercise) = dao.deleteWorkoutExercise(workoutExercise)
 
+    suspend fun setWorkoutNote(workoutExercise: WorkoutExercise, text: String) =
+        dao.updateWorkoutExercise(workoutExercise.copy(note = text.trim().ifEmpty { null }))
+
     /** Replaces the exercise but keeps its sets, for when the machine is taken. */
     suspend fun swapExercise(workoutExercise: WorkoutExercise, exerciseId: Int) =
         dao.updateWorkoutExercise(workoutExercise.copy(exerciseId = exerciseId))

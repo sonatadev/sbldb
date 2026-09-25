@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.repository
 
+import com.github.sonatadev.sbldb.data.entity.ExerciseNote
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.dao.ExerciseMuscleGroup
 import com.github.sonatadev.sbldb.data.dao.ExercisePrimaryGroup
@@ -31,6 +32,17 @@ class ExerciseRepository(db: AppDatabase) {
     }
 
     suspend fun resetVolumeTargets() = userData.deleteTargets()
+
+    /** Personal notes per exercise id (seat height, grip, cues). */
+    val notes: Flow<Map<Int, String>> = userData.exerciseNotes().map { list -> list.associate { it.exerciseId to it.text } }
+
+    fun note(exerciseId: Int): Flow<String?> = userData.exerciseNote(exerciseId).map { it?.text }
+
+    /** A blank note deletes it. */
+    suspend fun setNote(exerciseId: Int, text: String) {
+        val trimmed = text.trim()
+        if (trimmed.isEmpty()) userData.deleteExerciseNote(exerciseId) else userData.upsertExerciseNote(ExerciseNote(exerciseId, trimmed))
+    }
 
     fun exercise(exerciseId: Int): Flow<Exercise?> = exerciseDao.getExercise(exerciseId)
 

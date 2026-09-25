@@ -73,6 +73,7 @@ import com.github.sonatadev.sbldb.domain.WeightUnit
 import com.github.sonatadev.sbldb.ui.AppViewModelProvider
 import com.github.sonatadev.sbldb.ui.components.CompactNumberField
 import com.github.sonatadev.sbldb.ui.components.ConfirmDialog
+import com.github.sonatadev.sbldb.ui.components.NoteDialog
 import com.github.sonatadev.sbldb.ui.components.DotMatrix
 import com.github.sonatadev.sbldb.ui.components.EffortMeter
 import com.github.sonatadev.sbldb.ui.components.InfoLink
@@ -206,6 +207,7 @@ fun ActiveWorkoutScreen(
                     number = index,
                     exercise = exercise,
                     info = info,
+                    note = state.notes[exercise.exercise.exerciseId],
                     unit = state.unit,
                     viewModel = viewModel,
                     onOpenExercise = { onOpenExercise(exercise.exercise.exerciseId) },
@@ -267,6 +269,7 @@ private fun FocusedExercise(
     number: Int,
     exercise: WorkoutExerciseWithSets,
     info: ExerciseInfo,
+    note: String?,
     unit: WeightUnit,
     viewModel: ActiveWorkoutViewModel,
     onOpenExercise: () -> Unit,
@@ -274,6 +277,26 @@ private fun FocusedExercise(
 ) {
     val colors = SbldbTheme.colors
     var menuOpen by remember { mutableStateOf(false) }
+    var editNote by remember { mutableStateOf(false) }
+    var editTodayNote by remember { mutableStateOf(false) }
+    if (editNote) {
+        NoteDialog(
+            title = stringResource(R.string.exercise_note),
+            initial = note.orEmpty(),
+            placeholder = stringResource(R.string.exercise_note_hint),
+            onSave = { viewModel.setExerciseNote(exercise.exercise.exerciseId, it) },
+            onDismiss = { editNote = false }
+        )
+    }
+    if (editTodayNote) {
+        NoteDialog(
+            title = stringResource(R.string.today_note),
+            initial = exercise.workoutExercise.note.orEmpty(),
+            placeholder = stringResource(R.string.today_note_hint),
+            onSave = { viewModel.setWorkoutNote(exercise.workoutExercise, it) },
+            onDismiss = { editTodayNote = false }
+        )
+    }
     var swapOpen by remember { mutableStateOf(false) }
     if (swapOpen) {
         SwapDialog(
@@ -302,6 +325,20 @@ private fun FocusedExercise(
                 )
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, containerColor = colors.module) {
                     DropdownMenuItem(
+                        text = { Text(stringResource(R.string.exercise_note), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            editNote = true
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.today_note), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            editTodayNote = true
+                        }
+                    )
+                    DropdownMenuItem(
                         text = { Text(stringResource(R.string.swap_exercise), color = colors.ink) },
                         onClick = {
                             menuOpen = false
@@ -325,6 +362,7 @@ private fun FocusedExercise(
             color = colors.ink,
             modifier = Modifier.clickable(onClick = onOpenExercise)
         )
+        ExerciseNotes(note, exercise.workoutExercise.note, onEditNote = { editNote = true }, onEditToday = { editTodayNote = true })
         if (info.muscles.isNotEmpty()) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 info.muscles.forEach { chip ->
@@ -456,6 +494,28 @@ private fun CollapsedExercise(number: Int, exercise: WorkoutExerciseWithSets, on
                 }
             }
         }
+    }
+}
+
+/** The personal note (always shown, in accent) and today's note for this exercise. */
+@Composable
+internal fun ExerciseNotes(note: String?, todayNote: String?, onEditNote: (() -> Unit)? = null, onEditToday: (() -> Unit)? = null) {
+    val colors = SbldbTheme.colors
+    note?.let {
+        Text(
+            "◆ $it",
+            style = SbldbType.mono,
+            color = colors.accent,
+            modifier = if (onEditNote != null) Modifier.clickable(onClick = onEditNote) else Modifier
+        )
+    }
+    todayNote?.let {
+        Text(
+            it,
+            style = MaterialTheme.typography.bodyMedium.copy(fontStyle = androidx.compose.ui.text.font.FontStyle.Italic),
+            color = colors.muted,
+            modifier = if (onEditToday != null) Modifier.clickable(onClick = onEditToday) else Modifier
+        )
     }
 }
 

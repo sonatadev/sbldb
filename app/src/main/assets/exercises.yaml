@@ -791,11 +791,16 @@
   note: Light and slow, rolling the spine down one vertebra at a time and back up; mobility and back-extensor control, not a strength lift.
   actions: {Spine / Extension: 3, Hip / Extension: 2}
 - name: Reverse Strap Cable Curl
-  aliases: [TNF reverse strap curl, Reverse TNF curl, TNF reverse curl, Curl inverso ai cavi con cinghia]
+  aliases: [TNF reverse curl, Reverse TNF curl, TNF reverse strap curl, Vulken curl, Curl inverso con cinghia]
   equipment: Cable
-  attachment: Strap
-  note: Low cable with a strap handle, palms facing down and elbows at your sides; the overhand grip puts the biceps at a disadvantage, so the brachialis and brachioradialis do more of the work.
-  actions: {Elbow / Flexion: 4, Wrist / Extension: 2}
+  attachment: Forearm Strap
+  note: The cable pulls on a strap (such as a Vulken) worn around the forearm, while the hand holds a loose bar only to keep the palms-down position. The grip carries no load, so the brachialis and brachioradialis can be taken to failure without the forearms giving out first.
+  actions: {Elbow / Flexion: 4}
   muscles:
     primary: [Brachialis, Brachioradialis]
-    secondary: [Biceps, Forearms / Extensors]
+    secondary: [Biceps]
+- name: Toosa Curl
+  aliases: [Toosa curls, Behind-the-body preacher curl, Curl su panca Scott al contrario]
+  equipment: Dumbbell
+  note: Stand with your back against a preacher pad so the upper arms rest behind the torso, then curl. Like an incline curl, it loads the biceps long head in the stretched position, and the pad keeps the upper arm still.
+  actions: {Elbow / Flexion: 5, Forearm / Supination: 2}

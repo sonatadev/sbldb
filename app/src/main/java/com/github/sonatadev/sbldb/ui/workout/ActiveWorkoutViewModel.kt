@@ -58,7 +58,7 @@ class ActiveWorkoutViewModel(
     settings: SettingsRepository,
     private val backupManager: BackupManager,
     private val session: WorkoutSession
-) : ViewModel() {
+) : ViewModel(), SetActions {
     val rest = session.rest
 
     private val defaultRest = settings.restSeconds.stateIn(viewModelScope, SharingStarted.Eagerly, 120)
@@ -102,13 +102,13 @@ class ActiveWorkoutViewModel(
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }
 
-    fun updateWeight(set: WorkoutSet, weightKg: Double?) = launch { repository.updateWeight(set.setId, weightKg) }
+    override fun updateWeight(set: WorkoutSet, weightKg: Double?) = launch { repository.updateWeight(set.setId, weightKg) }
 
-    fun updateReps(set: WorkoutSet, reps: Int?) = launch { repository.updateReps(set.setId, reps) }
+    override fun updateReps(set: WorkoutSet, reps: Int?) = launch { repository.updateReps(set.setId, reps) }
 
-    fun updateRir(set: WorkoutSet, rir: Int?) = launch { repository.updateRir(set.setId, rir) }
+    override fun updateRir(set: WorkoutSet, rir: Int?) = launch { repository.updateRir(set.setId, rir) }
 
-    fun toggleCompleted(set: WorkoutSet) = launch { repository.updateCompleted(set.setId, !set.isCompleted) }
+    override fun toggleCompleted(set: WorkoutSet) = launch { repository.updateCompleted(set.setId, !set.isCompleted) }
 
     /** Completes a set and starts the rest timer for its exercise. */
     fun logSet(exercise: WorkoutExerciseWithSets, set: WorkoutSet) = launch {
@@ -121,9 +121,9 @@ class ActiveWorkoutViewModel(
 
     fun skipRest() = session.skipRest()
 
-    fun toggleWarmup(set: WorkoutSet) = launch { repository.updateWarmup(set.setId, !set.isWarmup) }
+    override fun toggleWarmup(set: WorkoutSet) = launch { repository.updateWarmup(set.setId, !set.isWarmup) }
 
-    fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
+    override fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
 
     fun finish() = launch {
         session.skipRest()

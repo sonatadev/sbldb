@@ -41,6 +41,7 @@ import com.github.sonatadev.sbldb.ui.theme.SbldbType
 fun ActionsScreen(
     onOpenAction: (Int) -> Unit,
     onOpenAllExercises: () -> Unit,
+    onNewCustomExercise: () -> Unit,
     onOpenGlossary: () -> Unit,
     viewModel: ActionsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -121,6 +122,14 @@ fun ActionsScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.all_exercises), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
                     Text("›", style = SbldbType.monoLarge, color = colors.dim)
+                }
+            }
+        }
+        item {
+            Module(Modifier.fillMaxWidth(), onClick = onNewCustomExercise) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("+ " + stringResource(R.string.add_custom_exercise), style = MaterialTheme.typography.titleMedium, color = colors.accent, modifier = Modifier.weight(1f))
+                    Text("›", style = SbldbType.monoLarge, color = colors.accent)
                 }
             }
         }

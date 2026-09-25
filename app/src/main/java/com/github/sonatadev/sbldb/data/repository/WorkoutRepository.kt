@@ -80,25 +80,36 @@ class WorkoutRepository(private val db: AppDatabase) {
 
     suspend fun delete(workout: Workout) = dao.deleteWorkout(workout)
 
-    /** Adds the exercise with one empty set, pre-filled from the last performance if available. */
+    /**
+     * Adds the exercise with one set, pre-filled from the last performance if available.
+     * In a finished workout (editing history) the set is already marked as done.
+     */
     suspend fun addExercise(workoutId: Long, exerciseId: Int) = db.withTransaction {
+        val finished = dao.findWorkout(workoutId)?.endedAt != null
         val position = dao.nextExercisePosition(workoutId)
         val workoutExerciseId = dao.insertWorkoutExercise(WorkoutExercise(workoutId = workoutId, exerciseId = exerciseId, position = position))
         val last = dao.getLastPerformance(exerciseId).firstOrNull()
-        dao.insertSet(WorkoutSet(workoutExerciseId = workoutExerciseId, position = 0, weightKg = last?.weightKg, reps = last?.reps))
+        dao.insertSet(
+            WorkoutSet(workoutExerciseId = workoutExerciseId, position = 0, weightKg = last?.weightKg, reps = last?.reps, isCompleted = finished)
+        )
     }
+
+    /** Moves a finished workout in time; [durationMillis] keeps the end after the start. */
+    suspend fun updateTimes(workout: Workout, startedAt: Long, durationMillis: Long) =
+        dao.updateWorkout(workout.copy(startedAt = startedAt, endedAt = startedAt + durationMillis.coerceAtLeast(0)))
 
     suspend fun removeExercise(workoutExercise: WorkoutExercise) = dao.deleteWorkoutExercise(workoutExercise)
 
     /** Adds a set copying weight and reps from [previous], so repeating a set is one tap. */
-    suspend fun addSet(workoutExerciseId: Long, previous: WorkoutSet?) = db.withTransaction {
+    suspend fun addSet(workoutExerciseId: Long, previous: WorkoutSet?, completed: Boolean = false) = db.withTransaction {
         dao.insertSet(
             WorkoutSet(
                 workoutExerciseId = workoutExerciseId,
                 position = dao.nextSetPosition(workoutExerciseId),
                 weightKg = previous?.weightKg,
                 reps = previous?.reps,
-                rir = previous?.rir
+                rir = previous?.rir,
+                isCompleted = completed
             )
         )
     }

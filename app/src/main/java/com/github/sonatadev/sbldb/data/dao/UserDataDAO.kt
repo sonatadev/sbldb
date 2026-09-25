@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import androidx.room.Upsert
 import com.github.sonatadev.sbldb.data.entity.BodyEntry
 import com.github.sonatadev.sbldb.data.entity.Exercise
+import com.github.sonatadev.sbldb.data.entity.ExerciseJointAction
 import com.github.sonatadev.sbldb.data.entity.ExerciseNote
 import com.github.sonatadev.sbldb.data.entity.MuscleTarget
 import com.github.sonatadev.sbldb.data.entity.Role
@@ -101,6 +102,9 @@ interface UserDataDAO {
     /** Muscles of the given joint actions with their role, for deriving a custom exercise's muscles. */
     @Query("SELECT jointActionId, muscleId, role FROM joint_action_muscles WHERE jointActionId IN (:actionIds)")
     suspend fun actionMuscles(actionIds: List<Int>): List<ActionMuscleLink>
+
+    @Query("SELECT * FROM exercise_joint_actions WHERE exerciseId = :exerciseId")
+    suspend fun exerciseLinks(exerciseId: Int): List<ExerciseJointAction>
 
     @Query("SELECT jointActionId FROM joint_actions WHERE joint = :joint AND name = :name")
     suspend fun actionId(joint: String, name: String): Int?

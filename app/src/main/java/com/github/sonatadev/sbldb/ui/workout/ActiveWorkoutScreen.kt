@@ -251,9 +251,6 @@ fun ActiveWorkoutScreen(
     }
 }
 
-private val SetColumn = 30.dp
-private val EffortColumn = 96.dp
-private val ActionColumn = 32.dp
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -322,7 +319,7 @@ private fun FocusedExercise(
             var workingIndex = 0
             sets.forEach { set ->
                 val label = if (set.isWarmup) null else ++workingIndex
-                SetRow(set = set, label = label, isCurrent = set == current, unit = unit, targetRir = info.target?.targetRir, viewModel = viewModel)
+                SetRow(set = set, label = label, isCurrent = set == current, unit = unit, targetRir = info.target?.targetRir, actions = viewModel)
             }
         }
 
@@ -376,122 +373,8 @@ private fun FocusedExercise(
     }
 }
 
-@Composable
-private fun SetRow(
-    set: WorkoutSet,
-    label: Int?,
-    isCurrent: Boolean,
-    unit: WeightUnit,
-    targetRir: Int?,
-    viewModel: ActiveWorkoutViewModel
-) {
-    val colors = SbldbTheme.colors
-    Column {
-        Box(Modifier.fillMaxWidth().height(1.dp).background(colors.line))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(if (set.isCompleted) 44.dp else 54.dp)
-                .then(if (set.isCompleted) Modifier.background(colors.accentTint, MaterialTheme.shapes.small) else Modifier),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = label?.let { "%02d".format(it) } ?: stringResource(R.string.warmup_short),
-                style = SbldbType.mono,
-                color = when {
-                    isCurrent -> colors.accent
-                    set.isWarmup -> colors.muted
-                    else -> colors.dim
-                },
-                modifier = Modifier
-                    .width(SetColumn)
-                    .clickable(onClickLabel = stringResource(R.string.toggle_warmup)) { viewModel.toggleWarmup(set) }
-                    .padding(vertical = 12.dp)
-            )
-            if (set.isCompleted) {
-                Text(
-                    buildString {
-                        if (set.weightKg != null) append("${unit.format(set.weightKg)} ${unit.label} ")
-                        append("× ${set.reps ?: "–"}")
-                    },
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                    color = colors.ink,
-                    modifier = Modifier.weight(1f)
-                )
-                Row(Modifier.width(EffortColumn), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                    EffortMeter(set.rir)
-                    Text(set.rir?.let { "RIR $it" } ?: "RIR –", style = SbldbType.label, color = colors.muted)
-                }
-                Box(
-                    Modifier
-                        .size(ActionColumn)
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable(onClickLabel = stringResource(R.string.undo_set)) { viewModel.toggleCompleted(set) },
-                    contentAlignment = Alignment.Center
-                ) { StatusDot(colors.accent, size = 8.dp) }
-            } else {
-                EditableLoad(set, unit, viewModel, Modifier.weight(1f))
-                EditableEffort(set, targetRir, viewModel, Modifier.width(EffortColumn))
-                Box(
-                    Modifier
-                        .size(ActionColumn)
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable(onClickLabel = stringResource(R.string.delete_set)) { viewModel.deleteSet(set) },
-                    contentAlignment = Alignment.Center
-                ) { Text("×", style = SbldbType.monoLarge, color = colors.dim) }
-            }
-        }
-    }
-}
 
-@Composable
-private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, viewModel: ActiveWorkoutViewModel, modifier: Modifier) {
-    val colors = SbldbTheme.colors
-    // Local text state keyed on the set: DB re-emissions while typing must not reset the cursor
-    var weight by rememberSaveable(set.setId, unit) { mutableStateOf(set.weightKg?.let(unit::format).orEmpty()) }
-    var reps by rememberSaveable(set.setId) { mutableStateOf(set.reps?.toString().orEmpty()) }
-    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        CompactNumberField(
-            value = weight,
-            onValueChange = {
-                weight = it
-                viewModel.updateWeight(set, it.toDoubleOrNull()?.let(unit::toKg))
-            },
-            placeholder = unit.label,
-            decimal = true,
-            modifier = Modifier.weight(1.3f)
-        )
-        Text("×", color = colors.dim, fontFamily = Geist, fontSize = 16.sp)
-        CompactNumberField(
-            value = reps,
-            onValueChange = {
-                reps = it
-                viewModel.updateReps(set, it.toIntOrNull())
-            },
-            placeholder = stringResource(R.string.col_reps).lowercase(),
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
 
-@Composable
-private fun EditableEffort(set: WorkoutSet, targetRir: Int?, viewModel: ActiveWorkoutViewModel, modifier: Modifier) {
-    var rir by rememberSaveable(set.setId) { mutableStateOf(set.rir?.toString().orEmpty()) }
-    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        EffortMeter(rir.toIntOrNull() ?: set.rir, outlineOnly = true)
-        CompactNumberField(
-            value = rir,
-            onValueChange = {
-                rir = it
-                viewModel.updateRir(set, it.toIntOrNull())
-            },
-            placeholder = targetRir?.toString() ?: stringResource(R.string.col_rir),
-            textStyle = SbldbType.mono.copy(fontSize = 14.sp),
-            modifier = Modifier.weight(1f)
-        )
-    }
-}
 
 @Composable
 private fun CollapsedExercise(number: Int, exercise: WorkoutExerciseWithSets, onClick: () -> Unit) {
@@ -522,7 +405,7 @@ private fun CollapsedExercise(number: Int, exercise: WorkoutExerciseWithSets, on
 }
 
 @Composable
-private fun RenameDialog(initial: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
+internal fun RenameDialog(initial: String, onConfirm: (String) -> Unit, onDismiss: () -> Unit) {
     val colors = SbldbTheme.colors
     var name by rememberSaveable { mutableStateOf(initial) }
     AlertDialog(

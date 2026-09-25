@@ -39,6 +39,7 @@ import com.github.sonatadev.sbldb.ui.components.MonoCaption
 import com.github.sonatadev.sbldb.ui.components.MonoChip
 import com.github.sonatadev.sbldb.ui.components.RatingDots
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
+import com.github.sonatadev.sbldb.ui.components.SecondaryButton
 import com.github.sonatadev.sbldb.ui.formatDate
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
@@ -49,6 +50,7 @@ fun ExerciseDetailScreen(
     onBack: () -> Unit,
     onOpenAction: (Int) -> Unit,
     onOpenMuscle: (String) -> Unit,
+    onEdit: (Int) -> Unit,
     viewModel: ExerciseDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -64,8 +66,16 @@ fun ExerciseDetailScreen(
             ScreenHeader(
                 label = exercise.attachment?.let { "${exercise.equipment} · $it" } ?: exercise.equipment,
                 title = exercise.name,
-                navigation = { BackButton(onBack) }
+                navigation = { BackButton(onBack) },
+                actions = {
+                    if (exercise.isCustom) {
+                        SecondaryButton(stringResource(R.string.edit), onClick = { onEdit(exercise.exerciseId) }, color = colors.accent)
+                    }
+                }
             )
+        }
+        if (exercise.isCustom) {
+            item { MonoChip(stringResource(R.string.custom_chip), filled = true, modifier = Modifier.padding(horizontal = 6.dp)) }
         }
         if (exercise.aliasList.isNotEmpty()) {
             item {

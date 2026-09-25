@@ -59,6 +59,7 @@ import com.github.sonatadev.sbldb.ui.glossary.GlossaryScreen
 import com.github.sonatadev.sbldb.ui.home.HomeScreen
 import com.github.sonatadev.sbldb.ui.muscles.MuscleDetailScreen
 import com.github.sonatadev.sbldb.ui.routines.RoutineEditorScreen
+import com.github.sonatadev.sbldb.ui.exercises.CustomExerciseScreen
 import com.github.sonatadev.sbldb.ui.exercises.ExerciseListScreen
 import com.github.sonatadev.sbldb.ui.settings.SettingsScreen
 import com.github.sonatadev.sbldb.ui.volume.VolumeScreen
@@ -80,6 +81,7 @@ private object Routes {
     const val VOLUME = "volume"
     const val MUSCLE = "muscle/{group}"
     const val GLOSSARY = "glossary?term={term}"
+    const val CUSTOM_EXERCISE = "custom_exercise?exerciseId={exerciseId}"
 
     fun muscle(group: String) = "muscle/${Uri.encode(group)}"
     fun glossary(term: String? = null) = "glossary?term=${Uri.encode(term.orEmpty())}"
@@ -89,6 +91,7 @@ private object Routes {
     fun actionDetail(id: Int) = "action/$id"
     fun routine(id: Long) = "routine/$id"
     fun pickExercise(kind: String, targetId: Long) = "pick_exercise/$kind/$targetId"
+    fun customExercise(id: Int? = null) = "custom_exercise?exerciseId=${id ?: -1}"
 }
 
 private enum class Tab(val route: String, @param:StringRes val label: Int) {
@@ -157,6 +160,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 ActionsScreen(
                     onOpenAction = openAction,
                     onOpenAllExercises = { navController.navigate(Routes.EXERCISES) },
+                    onNewCustomExercise = { navController.navigate(Routes.customExercise()) },
                     onOpenGlossary = { openGlossary(null) }
                 )
             }
@@ -187,10 +191,19 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 )
             }
             composable(Routes.WORKOUT_DETAIL, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
-                WorkoutDetailScreen(onBack = back, onOpenExercise = openExercise)
+                WorkoutDetailScreen(
+                    onBack = back,
+                    onOpenExercise = openExercise,
+                    onAddExercise = { navController.navigate(Routes.pickExercise("workout", it)) }
+                )
             }
             composable(Routes.EXERCISE_DETAIL, arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })) {
-                ExerciseDetailScreen(onBack = back, onOpenAction = openAction, onOpenMuscle = openMuscle)
+                ExerciseDetailScreen(
+                    onBack = back,
+                    onOpenAction = openAction,
+                    onOpenMuscle = openMuscle,
+                    onEdit = { navController.navigate(Routes.customExercise(it)) }
+                )
             }
             composable(Routes.ACTION_DETAIL, arguments = listOf(navArgument("actionId") { type = NavType.IntType })) {
                 ActionDetailScreen(onBack = back, onOpenExercise = openExercise, onOpenMuscle = openMuscle, onOpenGlossary = openGlossary)
@@ -208,7 +221,33 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     navArgument("targetId") { type = NavType.LongType }
                 )
             ) {
-                ExerciseListScreen(onOpenExercise = openExercise, onBack = back)
+                ExerciseListScreen(
+                    onOpenExercise = openExercise,
+                    onBack = back,
+                    onNewCustomExercise = { navController.navigate(Routes.customExercise()) }
+                )
+            }
+            composable(
+                Routes.CUSTOM_EXERCISE,
+                arguments = listOf(navArgument("exerciseId") { type = NavType.IntType; defaultValue = -1 })
+            ) { entry ->
+                val editing = (entry.arguments?.getInt("exerciseId") ?: -1) > 0
+                CustomExerciseScreen(
+                    onBack = back,
+                    onSaved = { id ->
+                        if (editing) {
+                            navController.popBackStack()
+                        } else {
+                            navController.navigate(Routes.exerciseDetail(id)) {
+                                popUpTo(Routes.CUSTOM_EXERCISE) { inclusive = true }
+                            }
+                        }
+                    },
+                    onRemoved = {
+                        if (!navController.popBackStack(Routes.EXERCISE_DETAIL, inclusive = true)) navController.popBackStack()
+                    },
+                    onOpenGlossary = openGlossary
+                )
             }
         }
     }

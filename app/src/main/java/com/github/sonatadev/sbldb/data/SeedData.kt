@@ -279,6 +279,8 @@ object SeedData {
             }
         }
 
+        CustomExercises.rederiveAll(db)
+
         val glossaryDao = db.glossaryDAO()
         glossaryDao.deleteAll()
         glossaryDao.insertAll(glossary.mapIndexed { i, g -> GlossaryTerm(g.term, g.text.basic, g.text.expert, i) })

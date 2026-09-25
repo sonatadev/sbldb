@@ -224,6 +224,37 @@ fun SearchField(value: String, onValueChange: (String) -> Unit, placeholder: Str
     }
 }
 
+/** Underlined text input with a mono label above it. */
+@Composable
+fun TextInput(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    placeholder: String = "",
+    singleLine: Boolean = true
+) {
+    val colors = SbldbTheme.colors
+    androidx.compose.foundation.layout.Column(modifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        ModuleLabel(label, color = colors.muted)
+        androidx.compose.foundation.text.BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = singleLine,
+            textStyle = androidx.compose.material3.MaterialTheme.typography.bodyLarge.copy(color = colors.ink),
+            cursorBrush = androidx.compose.ui.graphics.SolidColor(colors.accent),
+            modifier = Modifier.fillMaxWidth(),
+            decorationBox = { inner ->
+                Box(Modifier.padding(vertical = 8.dp)) {
+                    if (value.isEmpty()) Text(placeholder, style = androidx.compose.material3.MaterialTheme.typography.bodyLarge, color = colors.dim)
+                    inner()
+                }
+            }
+        )
+        Box(Modifier.fillMaxWidth().height(1.dp).background(if (value.isEmpty()) colors.edge else colors.accent))
+    }
+}
+
 /** Role chip for a muscle in a joint action; wording follows the explanation level. */
 @Composable
 fun RoleChip(primary: Boolean) {

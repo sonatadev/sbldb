@@ -40,11 +40,23 @@ object CustomExercises {
         actionDao.deleteExerciseLinks(id)
         input.ratings.forEach { (actionId, rating) -> actionDao.insertExerciseLink(ExerciseJointAction(id, actionId, rating.coerceIn(1, 5))) }
 
-        val links = db.userDataDAO().actionMuscles(input.ratings.keys.toList())
-        val roles = MuscleDerivation.combine(links.map { Triple(it.muscleId, it.role, input.ratings.getValue(it.jointActionId)) })
-        db.exerciseMuscleDAO().deleteForExercise(id)
-        roles.forEach { (muscleId, role) -> db.exerciseMuscleDAO().insertExerciseMuscle(ExerciseMuscle(id, muscleId, role)) }
+        deriveMuscles(db, id, input.ratings)
         id
+    }
+
+    /** Re-derives every custom exercise's muscles, after the library changed which muscles an action trains. */
+    suspend fun rederiveAll(db: AppDatabase) {
+        db.userDataDAO().customExercises().forEach { exercise ->
+            val ratings = db.userDataDAO().exerciseLinks(exercise.exerciseId).associate { it.jointActionId to it.rating }
+            deriveMuscles(db, exercise.exerciseId, ratings)
+        }
+    }
+
+    private suspend fun deriveMuscles(db: AppDatabase, exerciseId: Int, ratings: Map<Int, Int>) {
+        val links = if (ratings.isEmpty()) emptyList() else db.userDataDAO().actionMuscles(ratings.keys.toList())
+        val roles = MuscleDerivation.combine(links.map { Triple(it.muscleId, it.role, ratings.getValue(it.jointActionId)) })
+        db.exerciseMuscleDAO().deleteForExercise(exerciseId)
+        roles.forEach { (muscleId, role) -> db.exerciseMuscleDAO().insertExerciseMuscle(ExerciseMuscle(exerciseId, muscleId, role)) }
     }
 
     /** Deletes a custom exercise, or archives it when it appears in logged workouts or routines. */

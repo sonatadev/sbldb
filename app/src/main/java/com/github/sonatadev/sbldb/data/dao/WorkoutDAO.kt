@@ -31,6 +31,9 @@ interface WorkoutDAO {
     @Query("SELECT * FROM workouts WHERE endedAt IS NULL ORDER BY startedAt DESC LIMIT 1")
     suspend fun findActiveWorkout(): Workout?
 
+    @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
+    suspend fun findWorkout(workoutId: Long): Workout?
+
     @Transaction
     @Query("SELECT * FROM workouts WHERE endedAt IS NOT NULL ORDER BY startedAt DESC")
     fun getFinishedWorkouts(): Flow<List<WorkoutWithExercises>>

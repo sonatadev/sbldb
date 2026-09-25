@@ -13,6 +13,7 @@ import com.github.sonatadev.sbldb.ui.settings.SettingsViewModel
 import com.github.sonatadev.sbldb.ui.volume.VolumeViewModel
 import com.github.sonatadev.sbldb.ui.workout.ActiveWorkoutViewModel
 import com.github.sonatadev.sbldb.ui.workout.WorkoutDetailViewModel
+import com.github.sonatadev.sbldb.ui.exercises.CustomExerciseViewModel
 import com.github.sonatadev.sbldb.ui.actions.ActionDetailViewModel
 import com.github.sonatadev.sbldb.ui.actions.ActionsViewModel
 import com.github.sonatadev.sbldb.ui.log.LogViewModel
@@ -23,6 +24,7 @@ import com.github.sonatadev.sbldb.ui.routines.RoutineEditorViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
+        initializer { CustomExerciseViewModel(createSavedStateHandle(), container().database) }
         initializer { HomeViewModel(container().workoutRepository, container().routineRepository, container().exerciseRepository) }
         initializer { RoutineEditorViewModel(createSavedStateHandle(), container().routineRepository) }
         initializer { ActionsViewModel(container().jointActionRepository, container().settingsRepository, container().contentUpdater) }

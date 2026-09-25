@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -76,7 +77,7 @@ fun DotRow(sets: Double, modifier: Modifier = Modifier, dotSize: Dp = 6.5.dp, ga
         modifier
             .width(dotSize * dots.size + gap * (dots.size - 1))
             .height(dotSize * 2.3f)
-            .semantics { contentDescription = "$sets sets" }
+            .semantics { contentDescription = "${com.github.sonatadev.sbldb.ui.formatSets(sets)} sets" }
     ) {
         val d = dotSize.toPx()
         val g = gap.toPx()
@@ -162,6 +163,24 @@ fun RatingDots(rating: Int, modifier: Modifier = Modifier, dotSize: Dp = 7.dp) {
     ) {
         repeat(5) { i ->
             Box(Modifier.size(dotSize).background(if (i < rating) colors.accent else colors.empty, CircleShape))
+        }
+    }
+}
+
+/** Five tappable rating dots; each dot has a full-size touch target. */
+@Composable
+fun RatingPicker(rating: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    val colors = SbldbTheme.colors
+    Row(modifier.semantics { contentDescription = "$rating out of 5" }) {
+        repeat(5) { i ->
+            Box(
+                Modifier
+                    .size(30.dp)
+                    .clickable(role = androidx.compose.ui.semantics.Role.Button) { onSelect(i + 1) },
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                Box(Modifier.size(11.dp).background(if (i < rating) colors.accent else colors.empty, CircleShape))
+            }
         }
     }
 }

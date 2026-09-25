@@ -31,6 +31,7 @@ import com.github.sonatadev.sbldb.ui.components.BackButton
 import com.github.sonatadev.sbldb.ui.components.Module
 import com.github.sonatadev.sbldb.ui.components.MonoCaption
 import com.github.sonatadev.sbldb.ui.components.MonoChip
+import com.github.sonatadev.sbldb.ui.components.RoundButton
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SearchField
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
@@ -39,6 +40,7 @@ import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 fun ExerciseListScreen(
     onOpenExercise: (Int) -> Unit,
     onBack: (() -> Unit)? = null,
+    onNewCustomExercise: (() -> Unit)? = null,
     viewModel: ExerciseListViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,7 +52,10 @@ fun ExerciseListScreen(
             label = stringResource(if (picking) R.string.pick_label else R.string.library_label, state.exercises.size),
             title = stringResource(if (picking) R.string.add_exercise else R.string.all_exercises),
             navigation = onBack?.let { { BackButton(it) } },
-            modifier = Modifier.padding(horizontal = 14.dp)
+            modifier = Modifier.padding(horizontal = 14.dp),
+            actions = {
+                onNewCustomExercise?.let { RoundButton(glyph = "+", description = stringResource(R.string.add_custom_exercise), onClick = it) }
+            }
         )
 
         SearchField(

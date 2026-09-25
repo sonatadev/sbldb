@@ -790,3 +790,12 @@
   equipment: Barbell
   note: Light and slow, rolling the spine down one vertebra at a time and back up; mobility and back-extensor control, not a strength lift.
   actions: {Spine / Extension: 3, Hip / Extension: 2}
+- name: Reverse Strap Cable Curl
+  aliases: [TNF reverse strap curl, Reverse TNF curl, TNF reverse curl, Curl inverso ai cavi con cinghia]
+  equipment: Cable
+  attachment: Strap
+  note: Low cable with a strap handle, palms facing down and elbows at your sides; the overhand grip puts the biceps at a disadvantage, so the brachialis and brachioradialis do more of the work.
+  actions: {Elbow / Flexion: 4, Wrist / Extension: 2}
+  muscles:
+    primary: [Brachialis, Brachioradialis]
+    secondary: [Biceps, Forearms / Extensors]

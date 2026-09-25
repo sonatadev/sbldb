@@ -73,6 +73,7 @@ fun WorkoutDetailScreen(
     onBack: () -> Unit,
     onOpenExercise: (Int) -> Unit,
     onAddExercise: (workoutId: Long) -> Unit,
+    onOpenRoutine: (Long) -> Unit,
     viewModel: WorkoutDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -130,12 +131,20 @@ fun WorkoutDetailScreen(
                 )
             } else {
                 SecondaryButton(
-                    stringResource(R.string.delete_workout),
-                    onClick = { showDelete = true },
-                    color = colors.muted,
+                    stringResource(R.string.save_as_routine),
+                    onClick = { viewModel.saveAsRoutine(onOpenRoutine) },
+                    color = colors.accent,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
+        }
+        if (!editing) item {
+            SecondaryButton(
+                stringResource(R.string.delete_workout),
+                onClick = { showDelete = true },
+                color = colors.muted,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 

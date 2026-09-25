@@ -6,6 +6,10 @@ import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.RoutineWithExercises
 import kotlinx.coroutines.flow.Flow
+import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
+import com.github.sonatadev.sbldb.domain.PastSet
+import com.github.sonatadev.sbldb.domain.RoutinePlan
+import com.github.sonatadev.sbldb.domain.SlotPlan
 
 class RoutineRepository(private val db: AppDatabase) {
     private val dao = db.routineDAO()
@@ -18,6 +22,27 @@ class RoutineRepository(private val db: AppDatabase) {
 
     suspend fun create(name: String): Long = db.withTransaction {
         dao.insert(Routine(name = name, position = dao.nextPosition()))
+    }
+
+    /** A new routine with the exercises of [workout], planned from the sets that were done. */
+    suspend fun createFromWorkout(workout: WorkoutWithExercises): Long = db.withTransaction {
+        val routineId = dao.insert(Routine(name = workout.workout.name.substringBefore(" · "), position = dao.nextPosition()))
+        workout.exercises.sortedBy { it.workoutExercise.position }.forEachIndexed { i, exercise ->
+            val working = exercise.sets.filter { it.isCompleted && !it.isWarmup }.map { PastSet(it.weightKg, it.reps, it.rir) }
+            val plan = RoutinePlan.fromSets(working) ?: SlotPlan(3, 8, 12, 1)
+            dao.insertExercise(
+                RoutineExercise(
+                    routineId = routineId,
+                    exerciseId = exercise.exercise.exerciseId,
+                    position = i,
+                    sets = plan.sets,
+                    repMin = plan.repMin,
+                    repMax = plan.repMax,
+                    targetRir = plan.targetRir
+                )
+            )
+        }
+        routineId
     }
 
     suspend fun rename(routine: Routine, name: String) = dao.update(routine.copy(name = name))

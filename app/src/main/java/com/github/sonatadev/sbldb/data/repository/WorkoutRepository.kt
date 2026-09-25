@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.repository
 
+import com.github.sonatadev.sbldb.domain.WarmupSet
 import androidx.room.withTransaction
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.entity.SetHistoryRow
@@ -140,6 +141,23 @@ class WorkoutRepository(
     }
 
     suspend fun updateWeight(setId: Long, weightKg: Double?) = dao.updateWeight(setId, weightKg)
+
+    /** Puts warm-up sets before the existing ones. */
+    suspend fun addWarmups(workoutExerciseId: Long, warmups: List<WarmupSet>) = db.withTransaction {
+        dao.shiftSets(workoutExerciseId, warmups.size)
+        warmups.forEachIndexed { i, w ->
+            dao.insertSet(
+                WorkoutSet(
+                    workoutExerciseId = workoutExerciseId,
+                    position = i,
+                    weightKg = w.weightKg,
+                    reps = w.reps,
+                    isWarmup = true,
+                    setType = SetType.WARMUP
+                )
+            )
+        }
+    }
 
     /** Sets load and reps on several sets at once (progression suggestion). */
     suspend fun prefill(setIds: Collection<Long>, weightKg: Double?, reps: Int) = db.withTransaction {

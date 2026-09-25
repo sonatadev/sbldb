@@ -52,7 +52,8 @@ object AppViewModelProvider {
             WorkoutDetailViewModel(
                 createSavedStateHandle(),
                 container().workoutRepository,
-                container().settingsRepository
+                container().settingsRepository,
+                container().routineRepository
             )
         }
         initializer {

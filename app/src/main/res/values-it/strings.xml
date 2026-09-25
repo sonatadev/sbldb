@@ -5,27 +5,16 @@
     <string name="tab_log">Diario</string>
     <string name="tab_settings">Impostazioni</string>
     <string name="back">Indietro</string>
-    <string name="start_workout">Inizia allenamento</string>
     <string name="resume_workout">Riprendi allenamento</string>
-    <string name="history">Storico</string>
-    <string name="module_session">01 · Sessione</string>
     <string name="ready_to_train">Pronto quando vuoi</string>
-    <string name="in_progress">In corso</string>
     <string name="library_label">Libreria · %1$d movimenti</string>
     <string name="pick_label">Scegline uno · %1$d movimenti</string>
     <string name="module_joint_actions">01 · Azioni articolari</string>
     <string name="module_muscles_2">02 · Muscoli</string>
-    <string name="best_e1rm_3">03 · Miglior 1RM stimato</string>
     <string name="actions_label">Libreria · %1$d azioni articolari</string>
     <string name="search_actions">Cerca azioni o muscoli</string>
     <string name="all_exercises_label">A–Z</string>
     <string name="all_exercises">Tutti gli esercizi</string>
-    <string name="module_trains">01 · Allena</string>
-    <string name="module_what_it_is">01 · Cos\'è</string>
-    <string name="module_why_it_matters">02 · Perché conta</string>
-    <string name="module_action_muscles">03 · Muscoli</string>
-    <string name="module_how_to_feel_it">04 · Come sentirla</string>
-    <string name="module_exercises_numbered">05 · Esercizi · %1$d</string>
     <string name="roles">Ruoli</string>
     <string name="tab_overview">Panoramica</string>
     <string name="tab_muscles_count">Muscoli · %1$d</string>
@@ -49,19 +38,11 @@
     <string name="role_prime_mover">Agonista principale</string>
     <string name="role_synergist">Sinergico</string>
     <string name="muscle_label">Muscolo</string>
-    <string name="module_about">01 · Descrizione</string>
-    <string name="module_regions">02 · Regioni</string>
-    <string name="module_muscle_actions">03 · Azioni articolari</string>
-    <string name="module_best_exercises">04 · Esercizi migliori</string>
     <string name="about_muscle">Info su %1$s</string>
     <string name="glossary">Glossario</string>
     <string name="glossary_label">Impara · %1$d termini</string>
     <string name="glossary_hint">I termini usati nell\'app, spiegati</string>
-    <string name="prime_movers">Agonisti principali</string>
-    <string name="helpers">Aiutanti</string>
-    <string name="module_exercises">02 · Esercizi · %1$d</string>
     <string name="rating_short">Voto</string>
-    <string name="rating_explainer">Voto = quanto direttamente e quanto duramente l\'esercizio carica questa azione su tutto il range, premiando il carico in allungamento. 5 = tra le scelte migliori, 1 = coinvolta appena.</string>
     <string name="home_label">Settimana %1$d · %2$s</string>
     <string name="module_this_week">01 · Questa settimana</string>
     <string name="module_next_up">02 · Prossimo</string>
@@ -74,7 +55,6 @@
     <string name="module_last_session">04 · Ultima sessione</string>
     <string name="module_routines">05 · Routine</string>
     <string name="start_empty_workout">Allenamento libero</string>
-    <string name="routine">Routine</string>
     <string name="routine_empty">Ancora nessun esercizio</string>
     <string name="start">Inizia</string>
     <string name="new_routine">Nuova routine</string>
@@ -111,8 +91,6 @@
     <string name="zone_legend">Zona</string>
     <string name="frequency_short">%1$d×/sett.</string>
     <string name="volume_explainer_short">Un punto = una serie allenante. I muscoli secondari valgono mezzo punto. Riscaldamento e RIR sopra 4 non contano.</string>
-    <string name="no_workouts">Ancora nessun allenamento. Inizia il primo!</string>
-    <string name="workout_summary">%1$s · %2$s</string>
     <string name="add_exercise">Aggiungi esercizio</string>
     <string name="finish">Fine</string>
     <string name="discard">Scarta</string>
@@ -125,14 +103,10 @@
     <string name="add_set">Aggiungi serie</string>
     <string name="remove_exercise">Rimuovi esercizio</string>
     <string name="col_set">Serie</string>
-    <string name="col_previous">Precedente</string>
     <string name="col_reps">Rip.</string>
     <string name="warmup_short">R</string>
-    <string name="toggle_warmup">Riscaldamento sì/no</string>
-    <string name="mark_done">Segna serie come fatta</string>
     <string name="delete_set">Elimina serie</string>
     <string name="empty_workout">Aggiungi un esercizio per iniziare a registrare.</string>
-    <string name="rir_hint">RIR = ripetizioni di riserva. Le serie con RIR sopra 4 non contano nel volume.</string>
     <string name="workout_name">Nome allenamento</string>
     <string name="module_time">01 · Tempo</string>
     <string name="module_hard_sets">02 · Serie allenanti</string>
@@ -169,23 +143,10 @@
     <string name="all_groups">Tutti</string>
     <string name="primary">Principali</string>
     <string name="secondary">Secondari</string>
-    <string name="best_e1rm">02 · Miglior 1RM stimato</string>
     <string name="no_history">Nessuna serie registrata per questo esercizio.</string>
-    <string name="muscles">Muscoli</string>
-    <string name="equipment_attachment">%1$s · %2$s</string>
-    <string name="this_week">Questa settimana</string>
-    <string name="last_week">Settimana scorsa</string>
-    <string name="week_of">Settimana del %1$s</string>
     <string name="previous_week">Settimana precedente</string>
     <string name="next_week">Settimana successiva</string>
-    <string name="frequency">%1$d×/sett.</string>
-    <string name="sets_value">%1$s serie</string>
-    <string name="band_low">Basso</string>
-    <string name="band_optimal">Ottimale</string>
-    <string name="band_high">Alto</string>
-    <string name="volume_explainer">Serie allenanti settimanali per muscolo. Una serie vale 1 per i muscoli principali e 0,5 per i secondari; riscaldamento e serie con RIR sopra 4 sono esclusi. Riferimento: 10–20 serie a settimana.</string>
     <string name="no_regions">Nessun lavoro specifico per regione questa settimana.</string>
-    <string name="weight_unit">Unità di peso</string>
     <string name="settings_label">Preferenze</string>
     <string name="settings_appearance">01 · Aspetto</string>
     <string name="settings_explanations">02 · Spiegazioni</string>
@@ -371,4 +332,7 @@
     <string name="workout_morning">Allenamento mattutino</string>
     <string name="workout_afternoon">Allenamento pomeridiano</string>
     <string name="workout_evening">Allenamento serale</string>
+    <string name="save_as_routine">Salva come routine</string>
+    <string name="add_warmups">Aggiungi serie di riscaldamento</string>
+    <string name="plates_per_side">Per lato %1$s · bilanciere %2$s</string>
 </resources>

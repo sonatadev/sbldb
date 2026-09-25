@@ -9,27 +9,16 @@
     <string name="back">Back</string>
 
     <!-- Workout home -->
-    <string name="start_workout">Start workout</string>
     <string name="resume_workout">Resume workout</string>
-    <string name="history">History</string>
-    <string name="module_session">01 · Session</string>
     <string name="ready_to_train">Ready when you are</string>
-    <string name="in_progress">In progress</string>
     <string name="library_label">Library · %1$d moves</string>
     <string name="pick_label">Pick one · %1$d moves</string>
     <string name="module_joint_actions">01 · Joint actions</string>
     <string name="module_muscles_2">02 · Muscles</string>
-    <string name="best_e1rm_3">03 · Best estimated 1RM</string>
     <string name="actions_label">Library · %1$d joint actions</string>
     <string name="search_actions">Search actions or muscles</string>
     <string name="all_exercises_label">A–Z</string>
     <string name="all_exercises">All exercises</string>
-    <string name="module_trains">01 · Trains</string>
-    <string name="module_what_it_is">01 · What it is</string>
-    <string name="module_why_it_matters">02 · Why it matters</string>
-    <string name="module_action_muscles">03 · Muscles</string>
-    <string name="module_how_to_feel_it">04 · How to feel it</string>
-    <string name="module_exercises_numbered">05 · Exercises · %1$d</string>
     <string name="roles">Roles</string>
     <string name="tab_overview">Overview</string>
     <string name="tab_muscles_count">Muscles · %1$d</string>
@@ -53,20 +42,12 @@
     <string name="role_prime_mover">Prime mover</string>
     <string name="role_synergist">Synergist</string>
     <string name="muscle_label">Muscle</string>
-    <string name="module_about">01 · About</string>
-    <string name="module_regions">02 · Regions</string>
-    <string name="module_muscle_actions">03 · Joint actions</string>
-    <string name="module_best_exercises">04 · Best exercises</string>
     <string name="about_muscle">About %1$s</string>
     <string name="glossary">Glossary</string>
     <string name="glossary_short" translatable="false">?</string>
     <string name="glossary_label">Learn · %1$d terms</string>
     <string name="glossary_hint">Terms used in the app, explained</string>
-    <string name="prime_movers">Prime movers</string>
-    <string name="helpers">Helpers</string>
-    <string name="module_exercises">02 · Exercises · %1$d</string>
     <string name="rating_short">Rating</string>
-    <string name="rating_explainer">Rating = how directly and how hard the exercise loads this action through a full range, favouring load in the stretched position. 5 = one of the best choices, 1 = barely involved.</string>
     <string name="home_label">Week %1$d · %2$s</string>
     <string name="module_this_week">01 · This week</string>
     <string name="module_next_up">02 · Next up</string>
@@ -79,7 +60,6 @@
     <string name="module_last_session">04 · Last session</string>
     <string name="module_routines">05 · Routines</string>
     <string name="start_empty_workout">Start empty workout</string>
-    <string name="routine">Routine</string>
     <string name="routine_empty">No exercises yet</string>
     <string name="start">Start</string>
     <string name="new_routine">New routine</string>
@@ -116,8 +96,6 @@
     <string name="zone_legend">Zone</string>
     <string name="frequency_short">%1$d×/week</string>
     <string name="volume_explainer_short">One dot = one hard set. Secondary muscles earn half a dot. Warm-ups and RIR above 4 do not count.</string>
-    <string name="no_workouts">No workouts yet. Start your first one!</string>
-    <string name="workout_summary">%1$s · %2$s</string>
     <plurals name="summary_helpers">
         <item quantity="one">helper</item>
         <item quantity="other">helpers</item>
@@ -148,15 +126,11 @@
     <string name="add_set">Add set</string>
     <string name="remove_exercise">Remove exercise</string>
     <string name="col_set">Set</string>
-    <string name="col_previous">Previous</string>
     <string name="col_reps">Reps</string>
     <string name="col_rir" translatable="false">RIR</string>
     <string name="warmup_short">W</string>
-    <string name="toggle_warmup">Toggle warm-up</string>
-    <string name="mark_done">Mark set as done</string>
     <string name="delete_set">Delete set</string>
     <string name="empty_workout">Add an exercise to start logging sets.</string>
-    <string name="rir_hint">RIR = reps in reserve. Sets with RIR above 4 do not count toward volume.</string>
     <string name="workout_name">Workout name</string>
     <string name="module_time">01 · Time</string>
     <string name="module_hard_sets">02 · Hard sets</string>
@@ -197,27 +171,14 @@
     <string name="all_groups">All</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
-    <string name="best_e1rm">02 · Best estimated 1RM</string>
     <string name="no_history">No sets logged for this exercise yet.</string>
-    <string name="muscles">Muscles</string>
-    <string name="equipment_attachment">%1$s · %2$s</string>
 
     <!-- Volume -->
-    <string name="this_week">This week</string>
-    <string name="last_week">Last week</string>
-    <string name="week_of">Week of %1$s</string>
     <string name="previous_week">Previous week</string>
     <string name="next_week">Next week</string>
-    <string name="frequency">%1$d×/week</string>
-    <string name="sets_value">%1$s sets</string>
-    <string name="band_low">Low</string>
-    <string name="band_optimal">Optimal</string>
-    <string name="band_high">High</string>
-    <string name="volume_explainer">Weekly hard sets per muscle. A set counts 1 for primary muscles and 0.5 for secondary ones; warm-ups and sets with RIR above 4 are excluded. Reference range: 10–20 sets per week.</string>
     <string name="no_regions">No region-specific work this week.</string>
 
     <!-- Settings -->
-    <string name="weight_unit">Weight unit</string>
     <string name="unit_kg" translatable="false">kg</string>
     <string name="unit_lb" translatable="false">lb</string>
     <string name="settings_label">Preferences</string>
@@ -386,4 +347,7 @@
     <string name="workout_morning">Morning workout</string>
     <string name="workout_afternoon">Afternoon workout</string>
     <string name="workout_evening">Evening workout</string>
+    <string name="save_as_routine">Save as routine</string>
+    <string name="add_warmups">Add warm-up sets</string>
+    <string name="plates_per_side">Per side %1$s · bar %2$s</string>
 </resources>

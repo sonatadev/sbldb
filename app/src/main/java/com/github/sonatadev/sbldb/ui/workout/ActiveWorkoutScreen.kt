@@ -67,6 +67,7 @@ import com.github.sonatadev.sbldb.domain.OneRepMax
 import com.github.sonatadev.sbldb.domain.PastSet
 import com.github.sonatadev.sbldb.domain.PersonalRecords
 import com.github.sonatadev.sbldb.domain.PrKind
+import com.github.sonatadev.sbldb.domain.Plates
 import com.github.sonatadev.sbldb.domain.Progression
 import com.github.sonatadev.sbldb.domain.Suggestion
 import com.github.sonatadev.sbldb.domain.WeightUnit
@@ -308,6 +309,9 @@ private fun FocusedExercise(
     }
     val sets = exercise.sets.sortedBy { it.position }
     val current = sets.firstOrNull { !it.isCompleted }
+    // Warm-ups ramp up to the first working load: typed in, else last time's top set
+    val warmupBase = if (sets.any { it.isWarmup }) null
+    else sets.firstOrNull { !it.isWarmup }?.weightKg ?: info.previous.mapNotNull { it.weightKg }.maxOrNull()
 
     Module(
         modifier = Modifier.fillMaxWidth(),
@@ -324,6 +328,13 @@ private fun FocusedExercise(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, containerColor = colors.module) {
+                    if (warmupBase != null) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.add_warmups), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            viewModel.addWarmups(exercise, warmupBase, unit)
+                        }
+                    )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.exercise_note), color = colors.ink) },
                         onClick = {
@@ -400,6 +411,13 @@ private fun FocusedExercise(
                     isRecord = set.setId in recordSets,
                     version = version
                 )
+            }
+        }
+
+        // Barbell loading help for the set about to be done
+        if (exercise.exercise.equipment.equals("Barbell", ignoreCase = true)) {
+            current?.weightKg?.let { Plates.perSide(it, unit) }?.let { plates ->
+                MonoCaption(stringResource(R.string.plates_per_side, plates.joinToString(" + ") { unit.format(unit.toKg(it)) }, unit.format(unit.toKg(Plates.bar(unit)))))
             }
         }
 

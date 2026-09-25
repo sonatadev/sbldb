@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.domain.Warmup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sonatadev.sbldb.data.entity.Exercise
@@ -121,6 +122,11 @@ class ActiveWorkoutViewModel(
     fun setExerciseNote(exerciseId: Int, text: String) = launch { exerciseRepository.setNote(exerciseId, text) }
 
     fun setWorkoutNote(exercise: WorkoutExercise, text: String) = launch { repository.setWorkoutNote(exercise, text) }
+
+    fun addWarmups(exercise: WorkoutExerciseWithSets, workKg: Double, unit: WeightUnit) = launch {
+        val ramp = Warmup.ramp(workKg, exercise.exercise.equipment, unit)
+        if (ramp.isNotEmpty()) repository.addWarmups(exercise.workoutExercise.workoutExerciseId, ramp)
+    }
 
     suspend fun swapCandidates(exerciseId: Int): List<Exercise> = repository.swapCandidates(exerciseId)
 

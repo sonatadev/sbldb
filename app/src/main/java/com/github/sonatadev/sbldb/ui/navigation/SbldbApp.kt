@@ -215,7 +215,8 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 WorkoutDetailScreen(
                     onBack = back,
                     onOpenExercise = openExercise,
-                    onAddExercise = { navController.navigate(Routes.pickExercise("workout", it)) }
+                    onAddExercise = { navController.navigate(Routes.pickExercise("workout", it)) },
+                    onOpenRoutine = { navController.navigate(Routes.routine(it)) }
                 )
             }
             composable(Routes.EXERCISE_DETAIL, arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })) {

@@ -8,6 +8,7 @@ import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
 import com.github.sonatadev.sbldb.data.entity.SetType
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
 import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
+import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
 import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
 import com.github.sonatadev.sbldb.domain.WeightUnit
@@ -26,7 +27,8 @@ data class WorkoutDetailUiState(
 class WorkoutDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: WorkoutRepository,
-    settings: SettingsRepository
+    settings: SettingsRepository,
+    private val routines: RoutineRepository
 ) : ViewModel(), SetActions {
     val workoutId: Long = checkNotNull(savedStateHandle["workoutId"])
 
@@ -42,6 +44,11 @@ class WorkoutDetailViewModel(
     fun delete() {
         val workout = uiState.value.workout?.workout ?: return
         launch { repository.delete(workout) }
+    }
+
+    fun saveAsRoutine(onCreated: (Long) -> Unit) {
+        val workout = uiState.value.workout ?: return
+        viewModelScope.launch { onCreated(routines.createFromWorkout(workout)) }
     }
 
     fun rename(name: String) {

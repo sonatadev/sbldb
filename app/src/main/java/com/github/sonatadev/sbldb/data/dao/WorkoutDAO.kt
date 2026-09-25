@@ -83,6 +83,9 @@ interface WorkoutDAO {
     @Query("UPDATE workout_sets SET setType = :type, isWarmup = (:type = 'WARMUP') WHERE setId = :setId")
     suspend fun updateSetType(setId: Long, type: String)
 
+    @Query("UPDATE workout_sets SET position = position + :by WHERE workoutExerciseId = :workoutExerciseId")
+    suspend fun shiftSets(workoutExerciseId: Long, by: Int)
+
     @Query("SELECT COALESCE(MAX(position) + 1, 0) FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId")
     suspend fun nextSetPosition(workoutExerciseId: Long): Int
 

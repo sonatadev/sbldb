@@ -11,5 +11,9 @@ data class Exercise(
     val equipment: String,
     val attachment: String?,
     /** One line on why the exercise works, from the bundled content. */
-    val note: String? = null
-)
+    val note: String? = null,
+    /** Other names people search for, separated by " | " (e.g. "Transverse row | Pulley presa larga"). */
+    val aliases: String? = null
+) {
+    val aliasList: List<String> get() = aliases?.split(" | ")?.filter { it.isNotBlank() }.orEmpty()
+}

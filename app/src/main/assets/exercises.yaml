@@ -9,42 +9,54 @@
 
 # ---------- Chest ----------
 - name: Barbell Bench Press
+  aliases: [Panca piana, Flat bench press]
   equipment: Barbell
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 2, Elbow / Extension: 3}
 - name: Incline Barbell Bench Press
+  aliases: [Panca inclinata, Incline bench]
   equipment: Barbell
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 3, Elbow / Extension: 3}
 - name: Dumbbell Bench Press
+  aliases: [Panca piana manubri, DB bench]
   equipment: Dumbbell
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 2, Elbow / Extension: 3}
 - name: Incline Dumbbell Press
+  aliases: [Panca inclinata manubri, Incline DB press]
   equipment: Dumbbell
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 3, Elbow / Extension: 3}
 - name: Machine Chest Press
+  aliases: [Chest press]
   equipment: Machine
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 2, Elbow / Extension: 3}
 - name: Close-Grip Bench Press
+  aliases: [Panca presa stretta, CGBP]
   equipment: Barbell
   actions: {Elbow / Extension: 4, Shoulder / Horizontal Adduction: 3, Shoulder / Flexion: 2}
 - name: Cable Fly
+  aliases: [Croci ai cavi, Cable crossover]
   equipment: Cable
   attachment: D-Handle
   note: Constant cable tension with the pecs loaded hard at the stretch.
   actions: {Shoulder / Horizontal Adduction: 5}
 - name: Low-to-High Cable Fly
+  aliases: [Croci ai cavi dal basso]
   equipment: Cable
   attachment: D-Handle
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 4}
 - name: Pec Deck
+  aliases: [Pectoral machine, Butterfly]
   equipment: Machine
   actions: {Shoulder / Horizontal Adduction: 4}
 - name: Dumbbell Fly
+  aliases: [Croci con manubri]
   equipment: Dumbbell
   actions: {Shoulder / Horizontal Adduction: 4}
 - name: Push-Up
+  aliases: [Piegamenti, Flessioni]
   equipment: Bodyweight
   actions: {Shoulder / Horizontal Adduction: 4, Elbow / Extension: 3, Scapula / Protraction: 2, Shoulder / Flexion: 2}
 - name: Dip
+  aliases: [Parallele, Dip alle parallele]
   equipment: Bodyweight
   actions: {Elbow / Extension: 4, Shoulder / Extension: 3, Shoulder / Horizontal Adduction: 3}
   muscles:
@@ -53,48 +65,58 @@
 
 # ---------- Shoulders ----------
 - name: Barbell Overhead Press
+  aliases: [Military press, Lento avanti, OHP]
   equipment: Barbell
   actions: {Shoulder / Flexion: 4, Elbow / Extension: 3, Scapula / Upward Rotation: 3, Shoulder / Abduction: 2}
   muscles:
     primary: [Shoulders / Anterior Head]
     secondary: [Shoulders / Lateral Head, Triceps, Chest / Clavicular Head, Traps / Upper Traps, Serratus Anterior]
 - name: Seated Dumbbell Shoulder Press
+  aliases: [Lento manubri, Shoulder press manubri]
   equipment: Dumbbell
   actions: {Shoulder / Flexion: 4, Shoulder / Abduction: 3, Elbow / Extension: 3, Scapula / Upward Rotation: 3}
   muscles:
     primary: [Shoulders / Anterior Head]
     secondary: [Shoulders / Lateral Head, Triceps, Chest / Clavicular Head, Traps / Upper Traps, Serratus Anterior]
 - name: Machine Shoulder Press
+  aliases: [Shoulder press]
   equipment: Machine
   actions: {Shoulder / Flexion: 4, Elbow / Extension: 3, Shoulder / Abduction: 2}
   muscles:
     primary: [Shoulders / Anterior Head]
     secondary: [Shoulders / Lateral Head, Triceps, Chest / Clavicular Head]
 - name: Dumbbell Front Raise
+  aliases: [Alzate frontali]
   equipment: Dumbbell
   actions: {Shoulder / Flexion: 4}
 - name: Dumbbell Lateral Raise
+  aliases: [Alzate laterali, Side raise]
   equipment: Dumbbell
   note: Easy to load but hardest only at the top; cables and lean-aways load the stretch better.
   actions: {Shoulder / Abduction: 4, Scapula / Upward Rotation: 2}
 - name: Cable Lateral Raise
+  aliases: [Alzate laterali ai cavi]
   equipment: Cable
   attachment: D-Handle
   note: The cable keeps the side delts loaded at the bottom, where dumbbells go slack.
   actions: {Shoulder / Abduction: 5, Scapula / Upward Rotation: 2}
 - name: Machine Lateral Raise
+  aliases: [Alzate laterali macchina]
   equipment: Machine
   actions: {Shoulder / Abduction: 4}
 - name: Incline Dumbbell Y-Raise
   equipment: Dumbbell
   actions: {Scapula / Upward Rotation: 4, Shoulder / Abduction: 3, Scapula / Depression: 2}
 - name: Reverse Pec Deck
+  aliases: [Reverse fly machine, Rear delt machine, Croci inverse macchina]
   equipment: Machine
   actions: {Shoulder / Horizontal Abduction: 5, Scapula / Retraction: 2}
 - name: Bent-Over Dumbbell Reverse Fly
+  aliases: [Alzate posteriori, Rear delt fly]
   equipment: Dumbbell
   actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 2}
 - name: Face Pull
+  aliases: [Tirate al viso]
   equipment: Cable
   attachment: Rope
   actions: {Shoulder / Horizontal Abduction: 4, Shoulder / External Rotation: 4, Scapula / Retraction: 3}
@@ -109,50 +131,64 @@
 
 # ---------- Back ----------
 - name: Pull-Up
+  aliases: [Trazioni, Trazioni prone]
   equipment: Bodyweight
   actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
 - name: Chin-Up
+  aliases: [Trazioni supine]
   equipment: Bodyweight
   actions: {Shoulder / Extension: 4, Elbow / Flexion: 4, Scapula / Depression: 3, Scapula / Downward Rotation: 2}
 - name: Lat Pulldown
+  aliases: [Lat machine, Lat machine presa larga, Wide-grip pulldown]
   equipment: Cable
   attachment: Wide Bar
   actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
 - name: Close-Grip Lat Pulldown
+  aliases: [Lat machine presa stretta, Neutral-grip pulldown]
   equipment: Cable
   attachment: V-Bar
   actions: {Shoulder / Extension: 4, Elbow / Flexion: 3, Scapula / Depression: 3}
 - name: Straight-Arm Pulldown
+  aliases: [Pullover ai cavi, Lat pushdown]
   equipment: Cable
   attachment: Straight Bar
   actions: {Shoulder / Extension: 4, Scapula / Depression: 2}
 - name: Dumbbell Pullover
+  aliases: [Pullover]
   equipment: Dumbbell
   actions: {Shoulder / Extension: 4, Shoulder / Horizontal Adduction: 1}
 - name: Barbell Row
+  aliases: [Rematore con bilanciere, Bent-over row]
   equipment: Barbell
   actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2, Spine / Extension: 2}
 - name: Chest-Supported Dumbbell Row
+  aliases: [Rematore su panca inclinata, Incline DB row]
   equipment: Dumbbell
   actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2}
 - name: One-Arm Dumbbell Row
+  aliases: [Rematore con manubrio, Single-arm row]
   equipment: Dumbbell
   actions: {Shoulder / Extension: 5, Scapula / Retraction: 3, Elbow / Flexion: 3}
 - name: Seated Cable Row
+  aliases: [Pulley, Pulley basso, Low row, Seated row]
   equipment: Cable
   attachment: V-Bar
   actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3}
 - name: Wide-Grip Cable Row
+  aliases: [Transverse row, Pulley presa larga, Wide row, Upper back row]
   equipment: Cable
   attachment: Wide Bar
   actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Extension: 2}
 - name: Chest-Supported T-Bar Row
+  aliases: [T-bar con appoggio]
   equipment: Machine
   actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2}
 - name: Barbell Shrug
+  aliases: [Scrollate bilanciere]
   equipment: Barbell
   actions: {Scapula / Elevation: 5}
 - name: Dumbbell Shrug
+  aliases: [Scrollate manubri]
   equipment: Dumbbell
   actions: {Scapula / Elevation: 5}
 - name: Cable Serratus Punch
@@ -163,41 +199,50 @@
   equipment: Bodyweight
   actions: {Scapula / Protraction: 4, Shoulder / Horizontal Adduction: 3, Elbow / Extension: 3}
 - name: 45° Back Extension
+  aliases: [Hyperextension, Iperestensioni]
   equipment: Bodyweight
   actions: {Spine / Extension: 4, Hip / Extension: 4}
 
 # ---------- Arms ----------
 - name: Barbell Curl
+  aliases: [Curl bilanciere]
   equipment: Barbell
   note: Solid classic, but the resistance fades at the stretch; incline or Bayesian curls load it better.
   actions: {Elbow / Flexion: 4, Forearm / Supination: 2}
 - name: Dumbbell Curl
+  aliases: [Curl manubri]
   equipment: Dumbbell
   actions: {Elbow / Flexion: 4, Forearm / Supination: 3}
 - name: Incline Dumbbell Curl
+  aliases: [Curl su panca inclinata]
   equipment: Dumbbell
   note: Arm behind the body puts the biceps long head under stretch.
   actions: {Elbow / Flexion: 5, Forearm / Supination: 3}
 - name: EZ-Bar Preacher Curl
+  aliases: [Panca Scott, Scott curl]
   equipment: Barbell
   attachment: EZ Bar
   actions: {Elbow / Flexion: 5}
 - name: Cable Curl
+  aliases: [Curl ai cavi]
   equipment: Cable
   attachment: Straight Bar
   actions: {Elbow / Flexion: 4}
 - name: Bayesian Cable Curl
+  aliases: [Face-away curl, Curl bayesiano]
   equipment: Cable
   attachment: D-Handle
   note: Face-away cable curl that loads the biceps hardest in the stretched position.
   actions: {Elbow / Flexion: 5, Forearm / Supination: 3}
 - name: Hammer Curl
+  aliases: [Curl a martello]
   equipment: Dumbbell
   actions: {Elbow / Flexion: 4}
   muscles:
     primary: [Brachialis, Brachioradialis]
     secondary: [Biceps]
 - name: EZ-Bar Reverse Curl
+  aliases: [Curl inverso]
   equipment: Barbell
   attachment: EZ Bar
   actions: {Elbow / Flexion: 3, Wrist / Extension: 2}
@@ -205,6 +250,7 @@
     primary: [Brachioradialis, Brachialis]
     secondary: [Biceps, Forearms / Extensors]
 - name: Tricep Pushdown (Rope Attachment)
+  aliases: [Push down corda, Rope pushdown]
   equipment: Cable
   attachment: Rope
   actions: {Elbow / Extension: 4}
@@ -212,6 +258,7 @@
     primary: [Triceps / Lateral Head, Triceps / Medial Head]
     secondary: [Triceps / Long Head]
 - name: Tricep Pushdown (Straight Bar)
+  aliases: [Push down, Bar pushdown]
   equipment: Cable
   attachment: Straight Bar
   actions: {Elbow / Extension: 4}
@@ -219,18 +266,22 @@
     primary: [Triceps / Lateral Head, Triceps / Medial Head]
     secondary: [Triceps / Long Head]
 - name: Overhead Cable Triceps Extension
+  aliases: [French press ai cavi, Estensioni sopra la testa]
   equipment: Cable
   attachment: Rope
   note: Overhead arm position stretches the long head, which drives more triceps growth than pushdowns.
   actions: {Elbow / Extension: 5}
 - name: Dumbbell Overhead Triceps Extension
+  aliases: [French press manubrio, Estensioni sopra la testa manubrio]
   equipment: Dumbbell
   actions: {Elbow / Extension: 4}
 - name: EZ-Bar Skull Crusher
+  aliases: [French press, Skull crusher]
   equipment: Barbell
   attachment: EZ Bar
   actions: {Elbow / Extension: 4}
 - name: Dumbbell Kickback
+  aliases: [Kickback tricipiti]
   equipment: Dumbbell
   actions: {Elbow / Extension: 4}
   muscles:
@@ -257,12 +308,14 @@
 
 # ---------- Quads and hips ----------
 - name: Barbell Back Squat
+  aliases: [Squat, Back squat]
   equipment: Barbell
   actions: {Knee / Extension: 5, Hip / Extension: 4, Spine / Extension: 2}
   muscles:
     primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
     secondary: [Quadriceps / Rectus Femoris, Hamstrings, Erector Spinae]
 - name: Front Squat
+  aliases: [Squat frontale]
   equipment: Barbell
   actions: {Knee / Extension: 5, Hip / Extension: 3, Spine / Extension: 2}
   muscles:
@@ -275,18 +328,21 @@
     primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
     secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
 - name: Leg Press
+  aliases: [Pressa, Leg press 45]
   equipment: Machine
   actions: {Knee / Extension: 4, Hip / Extension: 3}
   muscles:
     primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
     secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
 - name: Bulgarian Split Squat
+  aliases: [Affondi bulgari, Split squat bulgaro]
   equipment: Dumbbell
   actions: {Knee / Extension: 4, Hip / Extension: 4, Hip / Abduction: 2}
   muscles:
     primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
     secondary: [Quadriceps / Rectus Femoris, Hamstrings, Glutes / Gluteus Medius/Minimus]
 - name: Walking Lunge
+  aliases: [Affondi camminati]
   equipment: Dumbbell
   actions: {Knee / Extension: 4, Hip / Extension: 4, Hip / Abduction: 2}
   muscles:
@@ -304,6 +360,7 @@
   attachment: Ankle Strap
   actions: {Hip / Flexion: 4}
 - name: Hip Abduction Machine
+  aliases: [Abductor machine, Macchina abduttori]
   equipment: Machine
   actions: {Hip / Abduction: 5}
 - name: Cable Hip Abduction
@@ -311,6 +368,7 @@
   attachment: Ankle Strap
   actions: {Hip / Abduction: 4}
 - name: Hip Adduction Machine
+  aliases: [Adductor machine, Macchina adduttori]
   equipment: Machine
   actions: {Hip / Adduction: 5}
 - name: Copenhagen Plank
@@ -327,12 +385,14 @@
 
 # ---------- Hinges, glutes and hamstrings ----------
 - name: Conventional Deadlift
+  aliases: [Stacco da terra, Deadlift]
   equipment: Barbell
   actions: {Hip / Extension: 4, Spine / Extension: 4, Knee / Extension: 3, Scapula / Elevation: 2, Wrist / Flexion: 2}
   muscles:
     primary: [Glutes / Gluteus Maximus, Adductors / Adductor Magnus, Erector Spinae]
     secondary: [Hamstrings, Quadriceps, Traps / Upper Traps, Forearms / Flexors]
 - name: Romanian Deadlift
+  aliases: [Stacco rumeno, RDL]
   equipment: Barbell
   note: Loads glutes, adductors and hamstrings deep in the stretch with a short, controlled range.
   actions: {Hip / Extension: 5, Spine / Extension: 3}
@@ -340,6 +400,7 @@
   equipment: Barbell
   actions: {Hip / Extension: 4, Spine / Extension: 3}
 - name: Barbell Hip Thrust
+  aliases: [Hip thrust]
   equipment: Barbell
   actions: {Hip / Extension: 4}
   muscles:
@@ -350,9 +411,11 @@
   attachment: Rope
   actions: {Hip / Extension: 4}
 - name: Lying Leg Curl
+  aliases: [Leg curl sdraiato]
   equipment: Machine
   actions: {Knee / Flexion: 4}
 - name: Seated Leg Curl
+  aliases: [Leg curl seduto]
   equipment: Machine
   note: Hip flexion lengthens the hamstrings; seated curls outgrew lying curls in direct comparisons.
   actions: {Knee / Flexion: 5}
@@ -362,6 +425,7 @@
 
 # ---------- Calves and shins ----------
 - name: Standing Calf Raise
+  aliases: [Calf in piedi]
   equipment: Machine
   note: Straight knee lengthens the gastrocnemius; pause in the deep stretch at the bottom.
   actions: {Ankle / Plantarflexion: 5}
@@ -375,6 +439,7 @@
     primary: [Calves / Gastrocnemius]
     secondary: [Calves / Soleus]
 - name: Seated Calf Raise
+  aliases: [Calf seduto]
   equipment: Machine
   actions: {Ankle / Plantarflexion: 4}
   muscles:
@@ -386,6 +451,7 @@
 
 # ---------- Core ----------
 - name: Cable Crunch
+  aliases: [Crunch ai cavi]
   equipment: Cable
   attachment: Rope
   actions: {Spine / Flexion: 5}
@@ -393,6 +459,7 @@
   equipment: Bodyweight
   actions: {Spine / Flexion: 4}
 - name: Hanging Leg Raise
+  aliases: [Leg raise alla sbarra]
   equipment: Bodyweight
   actions: {Hip / Flexion: 4, Spine / Flexion: 4}
 - name: Ab Wheel Rollout
@@ -415,6 +482,7 @@
 
 # ---------- Modern variations ----------
 - name: Smith Machine Incline Press
+  aliases: [Panca inclinata al multipower]
   equipment: Machine
   note: Fixed bar path lets you push close to failure safely with the upper chest loaded at the stretch.
   actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 3, Elbow / Extension: 3}
@@ -464,6 +532,7 @@
   note: Elbows flared at 90° on an incline bench bias the rear delts and mid traps over the lats.
   actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 2}
 - name: Kneeling Single-Arm Lat Pulldown
+  aliases: [Lat machine a un braccio]
   equipment: Cable
   attachment: D-Handle
   note: One arm at a time lets the lat reach a full overhead stretch and pull straight down in line with its fibers.
@@ -507,6 +576,7 @@
   note: Lets you take vertical pulls close to failure at any strength level.
   actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
 - name: Kelso Shrug
+  aliases: [Scrollate retratte]
   equipment: Dumbbell
   note: Chest-supported shrug pulling the shoulder blades back, targeting the mid traps and rhomboids.
   actions: {Scapula / Retraction: 5}
@@ -554,6 +624,7 @@
     primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
     secondary: [Quadriceps / Rectus Femoris, Hamstrings]
 - name: Smith Machine Squat
+  aliases: [Squat al multipower]
   equipment: Machine
   note: Feet slightly forward and a fixed path let you squat deep and safe near failure.
   actions: {Knee / Extension: 5, Hip / Extension: 3}
@@ -579,6 +650,7 @@
     primary: [Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
     secondary: [Quadriceps, Hamstrings, Glutes / Gluteus Medius/Minimus]
 - name: Stiff-Leg Deadlift
+  aliases: [Stacco a gambe tese]
   equipment: Barbell
   note: Straighter knees than an RDL push the hamstrings further into the stretch.
   actions: {Hip / Extension: 5, Spine / Extension: 3}
@@ -628,3 +700,45 @@
   equipment: Bodyweight
   note: The ball lets the spine extend past neutral, so the abs work from a stretch.
   actions: {Spine / Flexion: 5}
+
+# ---------- Chest-supported and unsupported counterparts ----------
+- name: Bent-Over Dumbbell Row
+  aliases: [Rematore con manubri a busto flesso]
+  equipment: Dumbbell
+  note: Unsupported two-arm row; the lower back works to hold the position. The chest-supported version removes that and the cheating.
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Spine / Extension: 2}
+- name: T-Bar Row
+  aliases: [Rematore T-bar, Landmine row]
+  equipment: Barbell
+  note: Unsupported T-bar row; heavy and effective but the lower back limits it before the upper back does.
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Spine / Extension: 3, Shoulder / Horizontal Abduction: 2}
+- name: Chest-Supported Machine Row
+  aliases: [Rematore alla macchina, Machine row, Low row machine]
+  equipment: Machine
+  note: Chest pad removes momentum and lower-back fatigue, so every rep can go close to failure.
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3}
+- name: Chest-Supported Wide-Grip Machine Row
+  aliases: [Transverse machine row, Rematore alla macchina presa larga, High row machine]
+  equipment: Machine
+  note: Elbows out with the chest braced; the most direct way to load rear delts and mid traps with a row.
+  actions: {Shoulder / Horizontal Abduction: 5, Scapula / Retraction: 4, Elbow / Flexion: 3}
+- name: Bent-Over Rear Delt Row
+  aliases: [Rematore deltoidi posteriori]
+  equipment: Dumbbell
+  note: Unsupported version of the rear delt row; keep the torso still so the upper back, not the hips, moves the weight.
+  actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 2, Spine / Extension: 2}
+- name: Chest-Supported Reverse Fly
+  aliases: [Alzate posteriori su panca inclinata, Incline rear delt fly]
+  equipment: Dumbbell
+  note: Lying face-down on an incline bench stops the torso swinging, so the rear delts do all the work.
+  actions: {Shoulder / Horizontal Abduction: 5, Scapula / Retraction: 2}
+- name: Bent-Over Kelso Shrug
+  aliases: [Scrollate retratte a busto flesso]
+  equipment: Barbell
+  note: Unsupported Kelso shrug; heavier loads are possible but the lower back has to hold the bent-over position.
+  actions: {Scapula / Retraction: 5, Spine / Extension: 2}
+- name: Standing Dumbbell Y-Raise
+  aliases: [Y-raise in piedi]
+  equipment: Dumbbell
+  note: Unsupported version of the incline Y-raise; lighter weights and a strict torso keep the lower traps working.
+  actions: {Scapula / Upward Rotation: 4, Shoulder / Abduction: 3, Scapula / Depression: 2}

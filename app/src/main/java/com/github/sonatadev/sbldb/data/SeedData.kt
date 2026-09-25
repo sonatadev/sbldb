@@ -60,11 +60,14 @@ data class ExerciseSeed(
     val equipment: String,
     val attachment: String?,
     val note: String?,
+    val aliases: List<String>,
     /** Joint action key → rating 1–5, in file order. */
     val actions: Map<String, Int>,
     /** Explicit muscle roles replacing the derivation, when present. */
     val muscleOverride: Map<MuscleRef, Role>?
-)
+) {
+    val joinedAliases: String? get() = aliases.takeIf { it.isNotEmpty() }?.joinToString(" | ")
+}
 
 data class GlossarySeed(val term: String, val text: Explained)
 
@@ -117,6 +120,7 @@ object SeedParser {
                 equipment = entry.requireString("equipment"),
                 attachment = entry["attachment"] as String?,
                 note = entry["note"] as String?,
+                aliases = (entry["aliases"] as? List<*>).orEmpty().map { it as String },
                 actions = actions,
                 muscleOverride = muscles?.let {
                     it.muscleList("primary").associateWith { Role.PRIMARY } +
@@ -251,10 +255,10 @@ object SeedData {
         for (seed in exercises) {
             val existing = exerciseDao.findId(seed.name)
             val id = if (existing != null) {
-                exerciseDao.updateExercise(Exercise(existing, seed.name, seed.equipment, seed.attachment, seed.note))
+                exerciseDao.updateExercise(Exercise(existing, seed.name, seed.equipment, seed.attachment, seed.note, seed.joinedAliases))
                 existing
             } else {
-                exerciseDao.insertExercise(Exercise(0, seed.name, seed.equipment, seed.attachment, seed.note)).toInt()
+                exerciseDao.insertExercise(Exercise(0, seed.name, seed.equipment, seed.attachment, seed.note, seed.joinedAliases)).toInt()
             }
             actionDao.deleteExerciseLinks(id)
             seed.actions.forEach { (key, rating) ->

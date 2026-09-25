@@ -94,6 +94,9 @@ fun ExerciseListScreen(
                                 verticalArrangement = Arrangement.spacedBy(3.dp)
                             ) {
                                 Text(exercise.name, style = MaterialTheme.typography.titleMedium, color = colors.ink)
+                                item.matchedAlias?.let {
+                                    Text(stringResource(R.string.also_known_as_short, it), style = MaterialTheme.typography.bodySmall, color = colors.accent)
+                                }
                                 val equipment = exercise.attachment?.let { "${exercise.equipment} · $it" } ?: exercise.equipment
                                 MonoCaption((item.primaryGroups + equipment).joinToString(" · "))
                             }

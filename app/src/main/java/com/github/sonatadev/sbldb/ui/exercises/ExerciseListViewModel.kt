@@ -15,7 +15,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class ExerciseListItem(val exercise: Exercise, val primaryGroups: List<String>)
+/** [matchedAlias] is set when the search matched another name rather than the exercise name. */
+data class ExerciseListItem(val exercise: Exercise, val primaryGroups: List<String>, val matchedAlias: String? = null)
 
 data class ExerciseListUiState(
     val query: String = "",
@@ -52,10 +53,14 @@ class ExerciseListViewModel(
     ) { exercises, primary, exerciseJoints, actions, (query, joint) ->
         val groupsByExercise = primary.groupBy({ it.exerciseId }, { it.muscleGroup })
         val jointsByExercise = exerciseJoints.groupBy({ it.exerciseId }, { it.muscleGroup })
+        val q = query.trim()
         val items = exercises
-            .filter { query.isBlank() || it.name.contains(query.trim(), ignoreCase = true) }
             .filter { joint == null || joint in jointsByExercise[it.exerciseId].orEmpty() }
-            .map { ExerciseListItem(it, groupsByExercise[it.exerciseId].orEmpty().sorted()) }
+            .mapNotNull { exercise ->
+                val alias = if (q.isEmpty() || exercise.name.contains(q, ignoreCase = true)) null
+                else exercise.aliasList.firstOrNull { it.contains(q, ignoreCase = true) } ?: return@mapNotNull null
+                ExerciseListItem(exercise, groupsByExercise[exercise.exerciseId].orEmpty().sorted(), alias)
+            }
         ExerciseListUiState(query, joint, actions.map { it.joint }.distinct(), items)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExerciseListUiState())
 

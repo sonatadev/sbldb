@@ -84,6 +84,31 @@ class SeedParserTest {
     }
 
     @Test
+    fun `aliases never point to a different exercise's name`() {
+        val names = exercises.map { it.name.lowercase() }.toSet()
+        val clashes = exercises.flatMap { e -> e.aliases.filter { it.lowercase() in names && !it.equals(e.name, true) }.map { "${e.name}: $it" } }
+        assertTrue("Aliases equal to another exercise: $clashes", clashes.isEmpty())
+    }
+
+    @Test
+    fun `chest-supported rows have an unsupported counterpart`() {
+        val names = exercises.map { it.name }.toSet()
+        val pairs = mapOf(
+            "Seal Row" to "Barbell Row",
+            "Chest-Supported Dumbbell Row" to "Bent-Over Dumbbell Row",
+            "Chest-Supported T-Bar Row" to "T-Bar Row",
+            "Chest-Supported Machine Row" to "Seated Cable Row",
+            "Chest-Supported Wide-Grip Machine Row" to "Wide-Grip Cable Row",
+            "Chest-Supported Rear Delt Row" to "Bent-Over Rear Delt Row",
+            "Chest-Supported Reverse Fly" to "Bent-Over Dumbbell Reverse Fly",
+            "Kelso Shrug" to "Bent-Over Kelso Shrug",
+            "Incline Dumbbell Y-Raise" to "Standing Dumbbell Y-Raise"
+        )
+        val missing = pairs.flatMap { (a, b) -> listOf(a, b) }.filter { it !in names }
+        assertTrue("Missing: $missing", missing.isEmpty())
+    }
+
+    @Test
     fun `names are unique`() {
         assertTrue(exercises.map { it.name }.let { it.size == it.toSet().size })
         assertTrue(actions.map { it.key }.let { it.size == it.toSet().size })

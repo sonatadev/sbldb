@@ -67,6 +67,11 @@ fun ExerciseDetailScreen(
                 navigation = { BackButton(onBack) }
             )
         }
+        if (exercise.aliasList.isNotEmpty()) {
+            item {
+                MonoCaption(stringResource(R.string.also_known_as, exercise.aliasList.joinToString(" · ")), Modifier.padding(horizontal = 6.dp))
+            }
+        }
         exercise.note?.let { note ->
             item {
                 Text(note, style = MaterialTheme.typography.bodyLarge, color = colors.muted, modifier = Modifier.padding(horizontal = 6.dp))

@@ -180,7 +180,9 @@
     <string name="delete_workout_message">This workout will be permanently deleted.</string>
 
     <!-- Exercises -->
-    <string name="search_exercises">Search exercises</string>
+    <string name="also_known_as">Also known as %1$s</string>
+    <string name="also_known_as_short">aka %1$s</string>
+    <string name="search_exercises">Search exercises or other names</string>
     <string name="all_groups">All</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>

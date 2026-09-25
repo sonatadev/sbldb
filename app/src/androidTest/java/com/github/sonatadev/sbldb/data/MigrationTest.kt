@@ -18,7 +18,7 @@ class MigrationTest {
     val helper = MigrationTestHelper(InstrumentationRegistry.getInstrumentation(), AppDatabase::class.java)
 
     @Test
-    fun migrate3To5KeepsWorkouts() {
+    fun migrate3To6KeepsWorkouts() {
         helper.createDatabase(dbName, 3).apply {
             execSQL("INSERT INTO exercises (exerciseId, name, equipment, attachment) VALUES (1, 'Barbell Row', 'Barbell', NULL)")
             execSQL("INSERT INTO workouts (workoutId, name, startedAt, endedAt, notes, routineId) VALUES (1, 'Upper', 1000, 2000, NULL, NULL)")
@@ -27,7 +27,7 @@ class MigrationTest {
             close()
         }
 
-        val db = helper.runMigrationsAndValidate(dbName, 5, true, AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5)
+        val db = helper.runMigrationsAndValidate(dbName, 6, true, AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6)
 
         db.query("SELECT name, note FROM exercises WHERE exerciseId = 1").use { c ->
             c.moveToFirst()

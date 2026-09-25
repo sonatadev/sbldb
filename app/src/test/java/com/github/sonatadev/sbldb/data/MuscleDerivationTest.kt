@@ -24,7 +24,7 @@ class MuscleDerivationTest {
     ).associateBy { it.key }
 
     private fun exercise(vararg actions: Pair<String, Int>, override: Map<MuscleRef, Role>? = null) =
-        ExerciseSeed("Test", "Barbell", null, null, actions.toMap(), override)
+        ExerciseSeed("Test", "Barbell", null, null, emptyList(), actions.toMap(), override)
 
     @Test
     fun `prime movers of directly trained actions are primary`() {

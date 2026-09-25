@@ -3,6 +3,7 @@ package com.github.sonatadev.sbldb.data.repository
 import android.content.Context
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -51,6 +52,47 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setContentHash(hash: String) {
         context.dataStore.edit { it[contentHashKey] = hash }
+    }
+
+    private val backupFolderKey = stringPreferencesKey("backup_folder")
+    private val lastBackupKey = longPreferencesKey("last_backup_at")
+    private val restSecondsKey = intPreferencesKey("rest_seconds")
+
+    val backupStatus: Flow<Pair<String?, Long?>> = context.dataStore.data.map { it[backupFolderKey] to it[lastBackupKey] }.distinctUntilChanged()
+
+    /** Default rest between sets when the routine does not set one. */
+    val restSeconds: Flow<Int> = context.dataStore.data.map { it[restSecondsKey] ?: 120 }.distinctUntilChanged()
+
+    suspend fun backupFolder(): String? = context.dataStore.data.first()[backupFolderKey]
+
+    suspend fun setBackupFolder(uri: String?) {
+        context.dataStore.edit { if (uri == null) it.remove(backupFolderKey) else it[backupFolderKey] = uri }
+    }
+
+    suspend fun setLastBackup(millis: Long) {
+        context.dataStore.edit { it[lastBackupKey] = millis }
+    }
+
+    suspend fun setRestSeconds(seconds: Int) {
+        context.dataStore.edit { it[restSecondsKey] = seconds.coerceIn(15, 600) }
+    }
+
+    /** User preferences for backups (never device-specific values like the backup folder). */
+    suspend fun snapshot(): org.json.JSONObject {
+        val prefs = context.dataStore.data.first()
+        return org.json.JSONObject().apply {
+            listOf(weightUnitKey, themeModeKey, accentKey, explanationKey).forEach { key -> prefs[key]?.let { put(key.name, it) } }
+            prefs[restSecondsKey]?.let { put(restSecondsKey.name, it) }
+        }
+    }
+
+    suspend fun restore(json: org.json.JSONObject) {
+        context.dataStore.edit { prefs ->
+            listOf(weightUnitKey, themeModeKey, accentKey, explanationKey).forEach { key ->
+                if (json.has(key.name)) prefs[key] = json.getString(key.name)
+            }
+            if (json.has(restSecondsKey.name)) prefs[restSecondsKey] = json.getInt(restSecondsKey.name)
+        }
     }
 
     suspend fun setWeightUnit(unit: WeightUnit) = set(weightUnitKey, unit)

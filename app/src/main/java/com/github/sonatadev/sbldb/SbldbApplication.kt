@@ -2,6 +2,7 @@ package com.github.sonatadev.sbldb
 
 import android.app.Application
 import com.github.sonatadev.sbldb.data.AppDatabase
+import com.github.sonatadev.sbldb.data.backup.BackupManager
 import com.github.sonatadev.sbldb.data.content.ContentUpdater
 import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.JointActionRepository
@@ -22,6 +23,7 @@ class AppContainer(application: Application) {
     val jointActionRepository = JointActionRepository(database)
     val routineRepository = RoutineRepository(database)
     val contentUpdater = ContentUpdater(application, database, settingsRepository)
+    val backupManager = BackupManager(application, database, settingsRepository)
 }
 
 class SbldbApplication : Application() {

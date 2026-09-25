@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -12,7 +13,9 @@ import androidx.room.Relation
 data class Routine(
     @PrimaryKey(autoGenerate = true) val routineId: Long = 0,
     val name: String,
-    val position: Int
+    val position: Int,
+    /** How many times a week the routine is planned, for the weekly volume planner. */
+    @ColumnInfo(defaultValue = "1") val timesPerWeek: Int = 1
 )
 
 @Entity(
@@ -31,7 +34,8 @@ data class RoutineExercise(
     val sets: Int = 3,
     val repMin: Int = 8,
     val repMax: Int = 12,
-    val targetRir: Int? = 1
+    val targetRir: Int? = 1,
+    @ColumnInfo(defaultValue = "120") val restSeconds: Int = 120
 )
 
 data class RoutineExerciseWithExercise(

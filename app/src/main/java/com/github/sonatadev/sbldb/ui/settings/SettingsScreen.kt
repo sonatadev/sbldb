@@ -1,6 +1,14 @@
 package com.github.sonatadev.sbldb.ui.settings
 
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.github.sonatadev.sbldb.ui.components.ConfirmDialog
+import java.time.LocalDate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -43,6 +51,28 @@ import com.github.sonatadev.sbldb.ui.theme.color
 @Composable
 fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val dataMessage by viewModel.dataMessage.collectAsStateWithLifecycle()
+    val pendingRestore by viewModel.pendingRestore.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val stamp = remember { LocalDate.now().toString() }
+    val exportJson = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
+        uri?.let(viewModel::exportJson)
+    }
+    val exportCsv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri ->
+        uri?.let(viewModel::exportCsv)
+    }
+    val importJson = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let(viewModel::inspect)
+    }
+    val pickFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri != null) {
+            // Keep access to the folder across restarts
+            context.contentResolver.takePersistableUriPermission(
+                uri, Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            )
+            viewModel.setBackupFolder(uri)
+        }
+    }
     val colors = SbldbTheme.colors
     val themeLabels = mapOf(
         ThemeMode.SYSTEM to stringResource(R.string.theme_system),
@@ -121,6 +151,34 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = vi
             )
         }
 
+        Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_data)) {
+            Text(stringResource(R.string.data_hint), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SecondaryButton(stringResource(R.string.export_backup), onClick = { exportJson.launch("sbldb-backup-$stamp.json") }, modifier = Modifier.weight(1f))
+                SecondaryButton(stringResource(R.string.export_csv), onClick = { exportCsv.launch("sbldb-sets-$stamp.csv") }, modifier = Modifier.weight(1f))
+            }
+            SecondaryButton(stringResource(R.string.import_backup), onClick = { importJson.launch(arrayOf("application/json", "*/*")) }, modifier = Modifier.fillMaxWidth())
+            ModuleLabel(stringResource(R.string.auto_backup), color = colors.muted, modifier = Modifier.padding(top = 6.dp))
+            Text(
+                if (state.backupFolder == null) stringResource(R.string.auto_backup_off)
+                else stringResource(R.string.auto_backup_on, state.lastBackup?.let { formatDate(it) + " " + formatTime(it) } ?: "–"),
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.ink
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                SecondaryButton(
+                    stringResource(if (state.backupFolder == null) R.string.choose_folder else R.string.change_folder),
+                    onClick = { pickFolder.launch(null) },
+                    color = colors.accent,
+                    modifier = Modifier.weight(1f)
+                )
+                if (state.backupFolder != null) {
+                    SecondaryButton(stringResource(R.string.turn_off), onClick = { viewModel.setBackupFolder(null) }, modifier = Modifier.weight(1f))
+                }
+            }
+            dataMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = colors.accent) }
+        }
+
         Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_library)) {
             val content = state.content
             Text(
@@ -144,5 +202,19 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = vi
         Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_about)) {
             Text(stringResource(R.string.about), style = MaterialTheme.typography.bodyMedium, color = colors.muted)
         }
+    }
+
+    pendingRestore?.let { pending ->
+        ConfirmDialog(
+            title = stringResource(R.string.restore_title),
+            message = stringResource(
+                R.string.restore_message,
+                pending.summary.workouts, pending.summary.sets, pending.summary.routines,
+                pending.summary.customExercises, pending.summary.bodyEntries
+            ),
+            confirmLabel = stringResource(R.string.restore),
+            onConfirm = viewModel::confirmRestore,
+            onDismiss = viewModel::cancelRestore
+        )
     }
 }

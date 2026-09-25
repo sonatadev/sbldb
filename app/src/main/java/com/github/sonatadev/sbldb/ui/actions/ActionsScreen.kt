@@ -30,6 +30,8 @@ import com.github.sonatadev.sbldb.ui.components.Module
 import com.github.sonatadev.sbldb.ui.components.MonoCaption
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SearchField
+import com.github.sonatadev.sbldb.ui.components.SecondaryButton
+import com.github.sonatadev.sbldb.ui.formatTime
 import androidx.compose.ui.text.style.TextOverflow
 import com.github.sonatadev.sbldb.ui.explained
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
@@ -53,6 +55,21 @@ fun ActionsScreen(
     ) {
         item {
             ScreenHeader(label = stringResource(R.string.actions_label, actionCount), title = stringResource(R.string.tab_actions))
+        }
+        item {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    MonoCaption(
+                        state.lastSync?.let { stringResource(R.string.library_synced, formatTime(it)) } ?: stringResource(R.string.library_not_synced)
+                    )
+                    state.syncError?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = colors.accent, maxLines = 1, overflow = TextOverflow.Ellipsis) }
+                }
+                SecondaryButton(
+                    stringResource(if (state.syncing) R.string.library_checking else R.string.sync_short),
+                    onClick = viewModel::sync,
+                    color = colors.accent
+                )
+            }
         }
         item {
             SearchField(state.query, viewModel::setQuery, stringResource(R.string.search_actions), Modifier.padding(horizontal = 6.dp))

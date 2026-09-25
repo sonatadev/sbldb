@@ -2,6 +2,10 @@ package com.github.sonatadev.sbldb.ui.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import android.net.Uri
+import com.github.sonatadev.sbldb.data.backup.BackupException
+import com.github.sonatadev.sbldb.data.backup.BackupManager
+import com.github.sonatadev.sbldb.data.backup.BackupSummary
 import com.github.sonatadev.sbldb.data.content.ContentUpdater
 import com.github.sonatadev.sbldb.data.repository.ContentStatus
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
@@ -22,22 +26,71 @@ data class SettingsUiState(
     val accent: AccentColor = AccentColor.ORANGE,
     val explanations: ExplanationLevel = ExplanationLevel.BASIC,
     val content: ContentStatus = ContentStatus(null, null, null),
-    val checking: Boolean = false
+    val checking: Boolean = false,
+    val backupFolder: String? = null,
+    val lastBackup: Long? = null
 )
+
+/** A backup picked for import, waiting for the user to confirm. */
+data class PendingRestore(val json: String, val summary: BackupSummary)
 
 class SettingsViewModel(
     private val settings: SettingsRepository,
-    private val contentUpdater: ContentUpdater
+    private val contentUpdater: ContentUpdater,
+    private val backups: BackupManager
 ) : ViewModel() {
     private val checking = MutableStateFlow(false)
+
+    /** Short result of the last data action, shown under the buttons. */
+    val dataMessage = MutableStateFlow<String?>(null)
+    val pendingRestore = MutableStateFlow<PendingRestore?>(null)
 
     private val preferences = combine(settings.weightUnit, settings.themeMode, settings.accentColor, settings.explanationLevel) { unit, mode, accent, level ->
         SettingsUiState(unit, mode, accent, level)
     }
 
     val uiState: StateFlow<SettingsUiState> =
-        combine(preferences, settings.contentStatus, checking) { prefs, content, busy -> prefs.copy(content = content, checking = busy) }
+        combine(preferences, settings.contentStatus, checking, settings.backupStatus) { prefs, content, busy, backup ->
+            prefs.copy(content = content, checking = busy, backupFolder = backup.first, lastBackup = backup.second)
+        }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
+
+    fun exportJson(uri: Uri) = dataAction { backups.write(uri, backups.exportJson()); "Backup saved" }
+
+    fun exportCsv(uri: Uri) = dataAction { backups.write(uri, backups.exportCsv()); "CSV saved" }
+
+    fun inspect(uri: Uri) = dataAction {
+        val json = backups.read(uri)
+        pendingRestore.value = PendingRestore(json, backups.inspect(json).second)
+        null
+    }
+
+    fun confirmRestore() {
+        val pending = pendingRestore.value ?: return
+        pendingRestore.value = null
+        dataAction { backups.restore(pending.json); "Backup restored: ${pending.summary.workouts} workouts" }
+    }
+
+    fun cancelRestore() {
+        pendingRestore.value = null
+    }
+
+    fun setBackupFolder(uri: Uri?) = dataAction {
+        settings.setBackupFolder(uri?.toString())
+        if (uri != null && !backups.autoBackup()) "Could not write to that folder" else if (uri != null) "Backed up to the folder" else "Automatic backup turned off"
+    }
+
+    private fun dataAction(block: suspend () -> String?) {
+        viewModelScope.launch {
+            dataMessage.value = try {
+                block()
+            } catch (e: BackupException) {
+                e.message
+            } catch (e: Exception) {
+                "Something went wrong: ${e.message}"
+            }
+        }
+    }
 
     fun checkForUpdates() {
         if (checking.value) return

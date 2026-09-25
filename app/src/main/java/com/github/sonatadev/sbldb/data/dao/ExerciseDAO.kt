@@ -19,10 +19,13 @@ interface ExerciseDAO {
     @Query("SELECT exerciseId FROM exercises WHERE name = :name")
     suspend fun findId(name: String): Int?
 
+    @Query("SELECT * FROM exercises WHERE name = :name")
+    suspend fun findByName(name: String): Exercise?
+
     @Update
     suspend fun updateExercise(exercise: Exercise)
 
-    @Query("SELECT * FROM exercises ORDER BY name")
+    @Query("SELECT * FROM exercises WHERE isArchived = 0 ORDER BY name")
     fun getAllExercises(): Flow<List<Exercise>>
 
     @Query("SELECT * FROM exercises WHERE exerciseId = :exerciseId")

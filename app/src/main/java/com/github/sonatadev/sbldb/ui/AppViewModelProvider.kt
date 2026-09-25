@@ -25,7 +25,7 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer { HomeViewModel(container().workoutRepository, container().routineRepository, container().exerciseRepository) }
         initializer { RoutineEditorViewModel(createSavedStateHandle(), container().routineRepository) }
-        initializer { ActionsViewModel(container().jointActionRepository) }
+        initializer { ActionsViewModel(container().jointActionRepository, container().settingsRepository, container().contentUpdater) }
         initializer { MuscleDetailViewModel(createSavedStateHandle(), container().jointActionRepository) }
         initializer { GlossaryViewModel(createSavedStateHandle(), container().jointActionRepository) }
         initializer { ActionDetailViewModel(createSavedStateHandle(), container().jointActionRepository) }
@@ -35,7 +35,8 @@ object AppViewModelProvider {
                 container().workoutRepository,
                 container().exerciseRepository,
                 container().routineRepository,
-                container().settingsRepository
+                container().settingsRepository,
+                container().backupManager
             )
         }
         initializer {
@@ -65,7 +66,7 @@ object AppViewModelProvider {
         initializer {
             VolumeViewModel(container().workoutRepository, container().exerciseRepository)
         }
-        initializer { SettingsViewModel(container().settingsRepository, container().contentUpdater) }
+        initializer { SettingsViewModel(container().settingsRepository, container().contentUpdater, container().backupManager) }
     }
 
     private fun CreationExtras.container(): AppContainer =

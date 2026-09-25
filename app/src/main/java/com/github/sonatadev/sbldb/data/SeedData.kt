@@ -166,14 +166,22 @@ object MuscleDerivation {
      */
     fun derive(exercise: ExerciseSeed, actions: Map<String, JointActionSeed>): Map<MuscleRef, Role> {
         exercise.muscleOverride?.let { return it }
-        val roles = LinkedHashMap<MuscleRef, Role>()
-        for ((key, rating) in exercise.actions) {
+        val contributions = exercise.actions.flatMap { (key, rating) ->
             val action = requireNotNull(actions[key]) { "Exercise '${exercise.name}' references unknown action '$key'" }
-            fun add(muscle: MuscleRef, role: Role) {
-                if (roles[muscle] != Role.PRIMARY) roles[muscle] = role
-            }
-            action.primary.forEach { add(it, if (rating >= DIRECT_RATING) Role.PRIMARY else Role.SECONDARY) }
-            action.secondary.forEach { add(it, Role.SECONDARY) }
+            action.muscles.map { Triple(it.muscle, it.role, rating) }
+        }
+        return combine(contributions)
+    }
+
+    /**
+     * Core rule shared by bundled and custom exercises. Each entry is (muscle, its role in the
+     * action, the exercise's rating for that action).
+     */
+    fun <M> combine(contributions: List<Triple<M, Role, Int>>): Map<M, Role> {
+        val roles = LinkedHashMap<M, Role>()
+        for ((muscle, actionRole, rating) in contributions) {
+            val role = if (actionRole == Role.PRIMARY && rating >= DIRECT_RATING) Role.PRIMARY else Role.SECONDARY
+            if (roles[muscle] != Role.PRIMARY) roles[muscle] = role
         }
         return roles
     }
@@ -251,6 +259,8 @@ object SeedData {
         val exerciseDao = db.exerciseDAO()
         val actionsByKey = actions.associateBy { it.key }
         for (seed in exercises) {
+            // A custom exercise with the same name belongs to the user and wins over the library
+            if (exerciseDao.findByName(seed.name)?.isCustom == true) continue
             val existing = exerciseDao.findId(seed.name)
             val id = if (existing != null) {
                 exerciseDao.updateExercise(Exercise(existing, seed.name, seed.equipment, seed.attachment, seed.note, seed.joinedAliases))

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -13,7 +14,11 @@ data class Exercise(
     /** One line on why the exercise works, from the bundled content. */
     val note: String? = null,
     /** Other names people search for, separated by " | " (e.g. "Transverse row | Pulley presa larga"). */
-    val aliases: String? = null
+    val aliases: String? = null,
+    /** Created by the user; never touched by the content sync. */
+    @ColumnInfo(defaultValue = "0") val isCustom: Boolean = false,
+    /** Hidden from lists (a custom exercise that still appears in the history). */
+    @ColumnInfo(defaultValue = "0") val isArchived: Boolean = false
 ) {
     val aliasList: List<String> get() = aliases?.split(" | ")?.filter { it.isNotBlank() }.orEmpty()
 }

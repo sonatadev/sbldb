@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -26,5 +27,7 @@ data class WorkoutSet(
     val reps: Int? = null,
     val rir: Int? = null,
     val isWarmup: Boolean = false,
-    val isCompleted: Boolean = false
+    val isCompleted: Boolean = false,
+    /** Kept in sync with [isWarmup] (WARMUP ⇔ isWarmup). */
+    @ColumnInfo(defaultValue = "NORMAL") val setType: SetType = SetType.NORMAL
 )

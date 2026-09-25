@@ -14,8 +14,8 @@ android {
         applicationId = "com.github.sonatadev.sbldb"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 8
+        versionName = "0.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -69,6 +69,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.snakeyaml)
     implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.documentfile)
     // Aligns Navigation's kotlinx-serialization with the version room-testing is built against
     implementation(platform(libs.kotlinx.serialization.bom))
     coreLibraryDesugaring(libs.desugar.jdk.libs)

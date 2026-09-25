@@ -28,5 +28,7 @@ data class WorkoutExercise(
     @PrimaryKey(autoGenerate = true) val workoutExerciseId: Long = 0,
     val workoutId: Long,
     val exerciseId: Int,
-    val position: Int
+    val position: Int,
+    /** A note for this exercise in this workout only. */
+    val note: String? = null
 )

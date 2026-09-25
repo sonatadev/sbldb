@@ -67,7 +67,7 @@ interface WorkoutDAO {
     @Query("UPDATE workout_sets SET isCompleted = :completed WHERE setId = :setId")
     suspend fun updateCompleted(setId: Long, completed: Boolean)
 
-    @Query("UPDATE workout_sets SET isWarmup = :warmup WHERE setId = :setId")
+    @Query("UPDATE workout_sets SET isWarmup = :warmup, setType = CASE WHEN :warmup THEN 'WARMUP' ELSE 'NORMAL' END WHERE setId = :setId")
     suspend fun updateWarmup(setId: Long, warmup: Boolean)
 
     @Query("SELECT COALESCE(MAX(position) + 1, 0) FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId")

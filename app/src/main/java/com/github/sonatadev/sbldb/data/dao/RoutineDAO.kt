@@ -49,6 +49,9 @@ interface RoutineDAO {
     @Delete
     suspend fun deleteExercise(exercise: RoutineExercise)
 
+    @Query("SELECT EXISTS(SELECT 1 FROM routine_exercises WHERE exerciseId = :exerciseId)")
+    suspend fun usesExercise(exerciseId: Int): Boolean
+
     @Query("SELECT COALESCE(MAX(position) + 1, 0) FROM routine_exercises WHERE routineId = :routineId")
     suspend fun nextExercisePosition(routineId: Long): Int
 }

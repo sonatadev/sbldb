@@ -7,7 +7,10 @@ import com.github.sonatadev.sbldb.data.entity.JointAction
 import com.github.sonatadev.sbldb.data.entity.JointActionMuscleRow
 import com.github.sonatadev.sbldb.data.entity.JointActionSummary
 import com.github.sonatadev.sbldb.data.entity.RatedExercise
+import com.github.sonatadev.sbldb.data.content.ContentUpdater
 import com.github.sonatadev.sbldb.data.repository.JointActionRepository
+import com.github.sonatadev.sbldb.data.repository.SettingsRepository
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,19 +19,43 @@ import kotlinx.coroutines.flow.stateIn
 
 data class JointGroup(val joint: String, val actions: List<JointActionSummary>)
 
-data class ActionsUiState(val query: String = "", val joints: List<JointGroup> = emptyList())
+data class ActionsUiState(
+    val query: String = "",
+    val joints: List<JointGroup> = emptyList(),
+    val lastSync: Long? = null,
+    val syncing: Boolean = false,
+    val syncError: String? = null
+)
 
-class ActionsViewModel(repository: JointActionRepository) : ViewModel() {
+class ActionsViewModel(
+    repository: JointActionRepository,
+    settings: SettingsRepository,
+    private val contentUpdater: ContentUpdater
+) : ViewModel() {
     private val query = MutableStateFlow("")
+    private val syncing = MutableStateFlow(false)
 
-    val uiState: StateFlow<ActionsUiState> = combine(repository.summaries, query) { actions, query ->
+    private val library = combine(repository.summaries, query) { actions, query ->
         val q = query.trim()
         val filtered = actions.filter {
             q.isEmpty() || it.name.contains(q, true) || it.joint.contains(q, true) || it.primaryGroups.orEmpty().contains(q, true)
         }
         // groupBy keeps the library order of the first action of each joint
         ActionsUiState(query, filtered.groupBy { it.joint }.map { (joint, list) -> JointGroup(joint, list) })
+    }
+
+    val uiState: StateFlow<ActionsUiState> = combine(library, settings.contentStatus, syncing) { state, status, busy ->
+        state.copy(lastSync = status.checkedAt, syncing = busy, syncError = status.error)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ActionsUiState())
+
+    /** Pulls new exercises and explanations from GitHub without reinstalling the app. */
+    fun sync() {
+        if (syncing.value) return
+        viewModelScope.launch {
+            syncing.value = true
+            try { contentUpdater.refresh() } finally { syncing.value = false }
+        }
+    }
 
     fun setQuery(value: String) {
         query.value = value

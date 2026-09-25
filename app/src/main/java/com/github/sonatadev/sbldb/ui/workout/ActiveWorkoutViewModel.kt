@@ -8,6 +8,7 @@ import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
 import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
+import com.github.sonatadev.sbldb.data.backup.BackupManager
 import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
@@ -53,7 +54,8 @@ class ActiveWorkoutViewModel(
     private val repository: WorkoutRepository,
     private val exerciseRepository: ExerciseRepository,
     private val routineRepository: RoutineRepository,
-    settings: SettingsRepository
+    settings: SettingsRepository,
+    private val backupManager: BackupManager
 ) : ViewModel() {
 
     private val workout = repository.activeWorkout
@@ -107,7 +109,11 @@ class ActiveWorkoutViewModel(
 
     fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
 
-    fun finish() = launch { current()?.let { repository.finish(it.workout) } }
+    fun finish() = launch {
+        current()?.let { repository.finish(it.workout) }
+        // Keeps the backup folder current; silently skipped when none is set
+        backupManager.autoBackup()
+    }
 
     fun discard() = launch { current()?.let { repository.delete(it.workout) } }
 

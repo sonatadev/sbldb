@@ -1,0 +1,800 @@
+# Joint actions, the core of the library. Every text exists twice:
+#   basic  = plain language for beginners
+#   expert = biomechanics and training detail
+# Muscles are "Group" or "Group / Region" and must exist in muscles.yaml.
+# PRIMARY = prime mover, SECONDARY = helper (synergist).
+
+# ======================= SHOULDER =======================
+- joint: Shoulder
+  name: Flexion
+  what:
+    basic: Raising your arm forward and up in front of you, like reaching for a high shelf.
+    expert: Sagittal-plane elevation of the humerus at the glenohumeral joint, from the arm at the side up to overhead; past about 60° the scapula upwardly rotates with it.
+  why:
+    basic: You use it every time you reach forward or push something overhead. Training it builds the front of the shoulders and the upper chest.
+    expert: Loaded in all incline and overhead pressing. The anterior delt usually gets plenty of this from pressing, so direct flexion work (front raises) is optional for most people.
+  feel:
+    basic: Stand tall, keep your arm straight and lift it forward to shoulder height. You should feel the front of the shoulder working.
+    expert: Keep the torso still so the lumbar spine does not extend to cheat the last degrees; stopping at shoulder height keeps tension on the anterior delt rather than the traps.
+  muscles:
+    - muscle: Shoulders / Anterior Head
+      role: PRIMARY
+      basic: The front of the shoulder does most of the lifting.
+      expert: Best moment arm for flexion of the three heads; the main driver through the whole range.
+    - muscle: Chest / Clavicular Head
+      role: PRIMARY
+      basic: The upper chest helps lift the arm, especially in the first part.
+      expert: Its fibers run up toward the clavicle, giving a flexion moment arm that is largest early in the range; incline presses rely on it.
+    - muscle: Biceps / Long Head
+      role: SECONDARY
+      basic: The biceps gives a small helping hand because it crosses the shoulder.
+      expert: Crosses the glenohumeral joint anteriorly, so it contributes a small flexion torque, larger with the elbow straight.
+
+- joint: Shoulder
+  name: Extension
+  what:
+    basic: Pulling your arm down and back from in front of you, like pulling a rope toward your hips.
+    expert: Sagittal-plane movement of the humerus from flexion back toward and behind the torso.
+  why:
+    basic: It is the main movement in rows, pulldowns and pullovers, and it builds a thick, wide back.
+    expert: The lats have their best leverage for extension with the arm in front of the body; close-grip and neutral-grip pulls and straight-arm movements emphasize it.
+  feel:
+    basic: With straight arms, pull a cable or band from in front of your face down to your thighs. You should feel the sides of your back under the armpits.
+    expert: Keep the elbows fixed (straight-arm pulldown, pullover) to remove the biceps and isolate the lats; a slight forward lean increases the stretch at the top.
+  muscles:
+    - muscle: Lats / Latissimus Dorsi
+      role: PRIMARY
+      basic: The big back muscle does most of the pulling.
+      expert: Largest extensor moment arm with the arm flexed; tension drops as the arm passes the torso, so loading the stretched top position matters.
+    - muscle: Lats / Teres Major
+      role: PRIMARY
+      basic: A small muscle next to the lats that pulls with them.
+      expert: One-joint synergist of the lats running from the scapula's inferior angle to the humerus.
+    - muscle: Chest / Sternocostal Head
+      role: SECONDARY
+      basic: The lower chest helps when your arm starts high in front of you.
+      expert: Extends the shoulder from flexion down to about neutral; this is why dips and pullovers load the lower pec.
+    - muscle: Shoulders / Posterior Head
+      role: SECONDARY
+      basic: The back of the shoulder helps finish the pull.
+      expert: Contributes more as the arm moves behind the torso.
+    - muscle: Triceps / Long Head
+      role: SECONDARY
+      basic: Part of the triceps helps because it also crosses the shoulder.
+      expert: Two-joint muscle with a small extension moment arm at the shoulder, largest from an overhead position.
+
+- joint: Shoulder
+  name: Abduction
+  what:
+    basic: Lifting your arm out to the side, like a lateral raise or flapping a wing.
+    expert: Frontal-plane elevation of the humerus; beyond about 30° the scapula upwardly rotates in a roughly 2:1 rhythm with the humerus.
+  why:
+    basic: It is what makes shoulders look wide. The side delts barely work in presses, so they need this movement directly.
+    expert: The lateral delt is poorly stimulated by pressing and rows; abduction with tension near the bottom (cables, lean-aways) is the main way to grow it.
+  feel:
+    basic: Raise your arms out to the side up to shoulder height, leading with the elbows. You should feel the side of the shoulder, not the neck.
+    expert: A slight forward lean and raising in the scapular plane reduce trap and anterior-delt takeover; there is little extra lateral-delt stimulus above shoulder height.
+  muscles:
+    - muscle: Shoulders / Lateral Head
+      role: PRIMARY
+      basic: The side of the shoulder does the lifting.
+      expert: Main abductor from about 15° upward; its multipennate structure favors force over range.
+    - muscle: Rotator Cuff / Supraspinatus
+      role: PRIMARY
+      basic: A small deep muscle on top of the shoulder helps start the movement.
+      expert: Contributes most torque early in abduction and keeps the humeral head centered so the deltoid does not shear it upward.
+    - muscle: Shoulders / Anterior Head
+      role: SECONDARY
+      basic: The front of the shoulder helps, more if your arm drifts forward.
+      expert: Contributes more when abduction drifts toward the sagittal plane or the shoulder is internally rotated.
+
+- joint: Shoulder
+  name: Adduction
+  what:
+    basic: Pulling your arm down to your side from out wide or from overhead, like a pull-up.
+    expert: Frontal-plane depression of the humerus from abduction or overhead back to the side of the body.
+  why:
+    basic: It is the key movement in pull-ups and wide pulldowns, and it builds the width of your back.
+    expert: Wide-grip vertical pulls are mostly adduction; the lats are lengthened overhead, so full range at the top is where much of the stimulus is.
+  feel:
+    basic: Hang from a bar or hold a pulldown bar wide, then pull your elbows down toward your ribs. Think about driving the elbows, not the hands.
+    expert: Let the scapulae elevate and upwardly rotate at the top for a full lat stretch, then initiate with depression; single-arm versions allow an extra side-bend for more length.
+  muscles:
+    - muscle: Lats / Latissimus Dorsi
+      role: PRIMARY
+      basic: The big back muscle pulls your arm down.
+      expert: The dominant adductor, longest with the arm overhead.
+    - muscle: Lats / Teres Major
+      role: PRIMARY
+      basic: A helper right next to the lats.
+      expert: One-joint adductor and internal rotator working alongside the lats.
+    - muscle: Chest / Sternocostal Head
+      role: SECONDARY
+      basic: The lower chest helps a bit when the arm is low.
+      expert: Assists adduction below shoulder height; contributes little from overhead.
+    - muscle: Triceps / Long Head
+      role: SECONDARY
+      basic: Part of the triceps helps because it crosses the shoulder.
+      expert: Adducts via its scapular origin, mainly from overhead.
+
+- joint: Shoulder
+  name: Horizontal Adduction
+  what:
+    basic: Bringing your arm across the front of your body at chest height, like hugging a tree or doing a fly.
+    expert: Transverse-plane movement of the humerus toward the midline with the shoulder near 90° of elevation; the defining action of the pecs.
+  why:
+    basic: It is the main job of your chest. Presses, push-ups and flys all use it, and it builds a full chest.
+    expert: Pecs are longest with the arm behind the torso, so presses and flys with a deep, loaded bottom position give the most stimulus; cables keep tension at both ends.
+  feel:
+    basic: Open your arms wide like wings, then bring them together in front of your chest as if hugging a big tree. Squeeze your chest at the end.
+    expert: Keep the shoulder blades set back and down so the humerus, not the scapula, provides the range; a slight bend at the elbow reduces biceps and joint strain in flys.
+  muscles:
+    - muscle: Chest / Sternocostal Head
+      role: PRIMARY
+      basic: The main part of the chest pulls your arm across your body.
+      expert: Horizontal fibers give it the largest moment arm, especially with the arm at or below shoulder height.
+    - muscle: Chest / Clavicular Head
+      role: PRIMARY
+      basic: The upper chest works too, more when you push upward at an angle.
+      expert: Upward-angled fibers add flexion; bias it with incline angles or a low-to-high path.
+    - muscle: Shoulders / Anterior Head
+      role: SECONDARY
+      basic: The front of the shoulder helps in every press.
+      expert: Assists horizontal adduction and takes more load in presses than flys.
+
+- joint: Shoulder
+  name: Horizontal Abduction
+  what:
+    basic: Pulling your arm out and back at shoulder height, like a reverse fly or opening a double door.
+    expert: Transverse-plane movement of the humerus away from the midline with the shoulder near 90° of elevation.
+  why:
+    basic: It builds the back of the shoulders and helps posture. Most people train it too little.
+    expert: The posterior delt is the key mover; elbows flared around 90° shifts rows from the lats toward the rear delts and mid traps.
+  feel:
+    basic: Hold your arms straight out in front, then open them wide to the sides at shoulder height. You should feel the back of the shoulders.
+    expert: Minimize scapular retraction if the goal is rear delts (let the humerus move, not the shoulder blade); cross-body cables pre-stretch the posterior delt.
+  muscles:
+    - muscle: Shoulders / Posterior Head
+      role: PRIMARY
+      basic: The back of the shoulder does the work.
+      expert: Largest horizontal-abduction moment arm; poorly trained by standard rows that keep the elbows tucked.
+    - muscle: Rotator Cuff / Infraspinatus/Teres Minor
+      role: SECONDARY
+      basic: Small deep shoulder muscles help.
+      expert: Assist horizontal abduction and control humeral rotation during the movement.
+
+- joint: Shoulder
+  name: Internal Rotation
+  what:
+    basic: Turning your upper arm inward, bringing your forearm toward your belly like closing a door.
+    expert: Rotation of the humerus about its long axis toward the body.
+  why:
+    basic: It protects the shoulder and helps in throwing and pressing. It is mostly trained for shoulder health.
+    expert: The subscapularis is a key anterior stabilizer; large muscles like the pecs and lats are strong internal rotators too, so it is rarely a weakness in lifters.
+  feel:
+    basic: Keep your elbow tucked at your side, bent at 90°, and pull a band from outside toward your belly.
+    expert: Keep the elbow pinned (a towel between elbow and ribs helps) so the lats and pecs do not turn it into a row or a fly.
+  muscles:
+    - muscle: Rotator Cuff / Subscapularis
+      role: PRIMARY
+      basic: The main inward-turning muscle, deep in the front of the shoulder.
+      expert: The largest cuff muscle and dedicated internal rotator.
+    - muscle: Chest / Sternocostal Head
+      role: SECONDARY
+      basic: The chest helps turn the arm inward.
+      expert: Strong internal rotation moment arm via its humeral insertion.
+    - muscle: Lats / Latissimus Dorsi
+      role: SECONDARY
+      basic: The lats help too.
+      expert: Internal rotator as part of its combined adduction/extension action.
+    - muscle: Shoulders / Anterior Head
+      role: SECONDARY
+      basic: The front of the shoulder helps a little.
+      expert: Minor internal rotator.
+
+- joint: Shoulder
+  name: External Rotation
+  what:
+    basic: Turning your upper arm outward, moving your forearm away from your belly like opening a door.
+    expert: Rotation of the humerus about its long axis away from the body.
+  why:
+    basic: It keeps your shoulders healthy and balanced, especially if you press a lot.
+    expert: Balances the strong internal rotators and supports overhead positions; commonly trained with face pulls and cable rotations.
+  feel:
+    basic: Keep your elbow tucked at your side, bent at 90°, and rotate a band outward, keeping the elbow still.
+    expert: Also train it with the arm abducted to 90°, the position used overhead and in face pulls.
+  muscles:
+    - muscle: Rotator Cuff / Infraspinatus/Teres Minor
+      role: PRIMARY
+      basic: Small muscles on the back of the shoulder blade turn the arm out.
+      expert: The dedicated external rotators.
+    - muscle: Shoulders / Posterior Head
+      role: SECONDARY
+      basic: The back of the shoulder helps.
+      expert: Assists external rotation, more with the arm abducted.
+
+# ======================= SCAPULA =======================
+- joint: Scapula
+  name: Elevation
+  what:
+    basic: Shrugging your shoulders up toward your ears.
+    expert: Superior translation of the scapula on the thorax.
+  why:
+    basic: It builds the upper traps, the muscles between neck and shoulders, and helps you carry heavy things.
+    expert: Heavy shrugs, carries and deadlifts all load it; the upper traps also upwardly rotate the scapula.
+  feel:
+    basic: Hold weights at your sides and lift your shoulders straight up, then lower slowly.
+    expert: Shrug up and slightly back rather than rolling; a full stretch at the bottom matters more than extra load.
+  muscles:
+    - muscle: Traps / Upper Traps
+      role: PRIMARY
+      basic: The upper traps lift your shoulders.
+      expert: Main elevator; also produces upward rotation.
+    - muscle: Rhomboids
+      role: SECONDARY
+      basic: Muscles between the shoulder blades help.
+      expert: Assist elevation alongside levator scapulae.
+
+- joint: Scapula
+  name: Depression
+  what:
+    basic: Pulling your shoulder blades down, away from your ears.
+    expert: Inferior translation of the scapula on the thorax.
+  why:
+    basic: It starts every pull-up and keeps your shoulders stable when you pull.
+    expert: The first phase of vertical pulling; also holds the scapula stable in dips and heavy presses.
+  feel:
+    basic: Hang from a bar and pull your shoulders down without bending your arms. Your body rises a little.
+    expert: Scapular pull-ups isolate it; lower traps do the work, with the lats helping through the humerus.
+  muscles:
+    - muscle: Traps / Lower Traps
+      role: PRIMARY
+      basic: The lower traps pull your shoulder blades down.
+      expert: Primary depressor; also upwardly rotates.
+    - muscle: Lats / Latissimus Dorsi
+      role: SECONDARY
+      basic: The lats help by pulling on the arm.
+      expert: Depresses the shoulder girdle indirectly via its humeral insertion.
+    - muscle: Serratus Anterior
+      role: SECONDARY
+      basic: The rib muscle helps hold the shoulder blade in place.
+      expert: Lower fibers assist depression and keep the scapula against the ribcage.
+
+- joint: Scapula
+  name: Protraction
+  what:
+    basic: Reaching forward so your shoulder blades spread apart around your ribs, like a push-up that goes a bit further.
+    expert: Abduction of the scapula around the thorax.
+  why:
+    basic: It keeps your shoulder blades working properly and healthy, especially when you push.
+    expert: Serratus function supports overhead mechanics and prevents winging; it is trained at the top of push-ups and in serratus punches.
+  feel:
+    basic: In a push-up position, keep your arms straight and push the floor away so your upper back rounds slightly.
+    expert: Keep the elbows locked so all movement comes from the scapula.
+  muscles:
+    - muscle: Serratus Anterior
+      role: PRIMARY
+      basic: The finger-like muscle on the side of the ribs pushes the shoulder blade forward.
+      expert: The prime protractor; weak serratus is common in people with shoulder pain.
+
+- joint: Scapula
+  name: Retraction
+  what:
+    basic: Squeezing your shoulder blades together behind you.
+    expert: Adduction of the scapula toward the spine.
+  why:
+    basic: It builds the middle of your upper back and helps posture. Every row ends with it.
+    expert: Thickness of the upper back comes largely from mid traps and rhomboids; full retraction at the end of rows trains them.
+  feel:
+    basic: Pull your elbows back and squeeze your shoulder blades together as if holding a pencil between them.
+    expert: Allow full protraction at the start of each row to lengthen the retractors, then retract before the arms finish.
+  muscles:
+    - muscle: Traps / Mid Traps
+      role: PRIMARY
+      basic: The middle traps pull the shoulder blades together.
+      expert: Main retractor with horizontal fibers.
+    - muscle: Rhomboids
+      role: PRIMARY
+      basic: The rhomboids squeeze with them.
+      expert: Retract and downwardly rotate.
+    - muscle: Traps / Lower Traps
+      role: SECONDARY
+      basic: The lower traps help.
+      expert: Assist retraction while depressing.
+
+- joint: Scapula
+  name: Upward Rotation
+  what:
+    basic: Your shoulder blades turning upward as you raise your arms overhead.
+    expert: Rotation of the scapula so the glenoid faces upward; required for full overhead arm elevation.
+  why:
+    basic: Without it you cannot lift your arms fully overhead safely.
+    expert: Coordinated upper trap, lower trap and serratus action; trained by overhead pressing and Y-raises.
+  feel:
+    basic: Raise your arms in a Y shape above your head and let your shoulders go up with them.
+    expert: Do not force the shoulders down overhead; the scapula must rotate up for clearance.
+  muscles:
+    - muscle: Serratus Anterior
+      role: PRIMARY
+      basic: The rib muscle rotates the bottom of the shoulder blade outward.
+      expert: Pulls the inferior angle laterally.
+    - muscle: Traps / Upper Traps
+      role: PRIMARY
+      basic: The upper traps lift the outer edge.
+      expert: Pulls the acromion up and medially.
+    - muscle: Traps / Lower Traps
+      role: PRIMARY
+      basic: The lower traps help complete the turn.
+      expert: Pulls the medial spine down, completing the force couple.
+
+- joint: Scapula
+  name: Downward Rotation
+  what:
+    basic: Your shoulder blades turning back down as your arms come down from overhead.
+    expert: Rotation of the scapula so the glenoid faces downward, as when pulling from overhead.
+  why:
+    basic: It happens in every pull-up and pulldown.
+    expert: The rhomboids and lats drive it during vertical pulls.
+  feel:
+    basic: From arms overhead, pull your elbows down to your sides.
+    expert: Pair it with depression for a full vertical pull.
+  muscles:
+    - muscle: Rhomboids
+      role: PRIMARY
+      basic: The rhomboids turn the shoulder blades down.
+      expert: Main downward rotators.
+    - muscle: Lats / Latissimus Dorsi
+      role: SECONDARY
+      basic: The lats help through the arm.
+      expert: Assists indirectly via the humerus.
+
+# ======================= ELBOW =======================
+- joint: Elbow
+  name: Flexion
+  what:
+    basic: Bending your elbow, bringing your hand toward your shoulder, like a curl.
+    expert: Decreasing the angle between upper arm and forearm at the humeroulnar joint.
+  why:
+    basic: It builds your biceps and the front of your arm, and helps in every row and pull-up.
+    expert: Grip changes the balance between biceps, brachialis and brachioradialis; the shoulder position changes how stretched the biceps long head is.
+  feel:
+    basic: Keep your elbow still at your side and curl a weight up by bending the elbow only.
+    expert: Arm behind the body (incline or Bayesian curls) lengthens the long head; arm in front (preacher, spider) shifts emphasis to the short head and the shortened range.
+  muscles:
+    - muscle: Biceps / Long Head
+      role: PRIMARY
+      basic: The outer biceps bends the elbow.
+      expert: Also crosses the shoulder; most stretched with the arm behind the body.
+    - muscle: Biceps / Short Head
+      role: PRIMARY
+      basic: The inner biceps bends the elbow.
+      expert: Relatively more active with the arm in front of the body.
+    - muscle: Brachialis
+      role: PRIMARY
+      basic: A muscle under the biceps that bends the elbow with any grip.
+      expert: Pure flexor on the ulna; relatively more important with neutral and pronated grips.
+    - muscle: Brachioradialis
+      role: PRIMARY
+      basic: The forearm muscle near the elbow, strongest with a thumbs-up grip.
+      expert: Best leverage in a neutral grip; hammer and reverse curls emphasize it.
+
+- joint: Elbow
+  name: Extension
+  what:
+    basic: Straightening your elbow, like pushing a weight away or a triceps pushdown.
+    expert: Increasing the angle between upper arm and forearm.
+  why:
+    basic: It builds your triceps, which make up most of your upper arm, and helps every press.
+    expert: The long head crosses the shoulder, so overhead extensions stretch it and have grown the triceps more than pushdowns in direct comparisons.
+  feel:
+    basic: Keep your elbows still and straighten your arms against resistance, squeezing the back of the arm.
+    expert: Combine an overhead variation (long head at length) with a pushdown or press (lateral and medial heads) for full development.
+  muscles:
+    - muscle: Triceps / Long Head
+      role: PRIMARY
+      basic: The biggest triceps head, strongest when your arms are overhead.
+      expert: Two-joint; lengthened with the shoulder flexed.
+    - muscle: Triceps / Lateral Head
+      role: PRIMARY
+      basic: The outer head, the horseshoe shape.
+      expert: One-joint; heavily loaded by pushdowns and pressing.
+    - muscle: Triceps / Medial Head
+      role: PRIMARY
+      basic: The deep head that works in every elbow straightening.
+      expert: Active throughout the range and at all loads.
+
+# ======================= FOREARM =======================
+- joint: Forearm
+  name: Pronation
+  what:
+    basic: Turning your palm to face down, like turning a key or pouring water.
+    expert: Rotation of the radius over the ulna at the radioulnar joints.
+  why:
+    basic: It helps grip strength and forearm size, and protects the elbow.
+    expert: A small contributor to forearm girth; mostly trained for balance and elbow health.
+  feel:
+    basic: Hold a hammer or dumbbell by one end and slowly turn your palm from up to down.
+    expert: Keep the elbow bent at 90° to isolate the pronators from shoulder rotation.
+  muscles:
+    - muscle: Forearms / Pronators
+      role: PRIMARY
+      basic: Small forearm muscles turn the palm down.
+      expert: Pronator teres and pronator quadratus.
+
+- joint: Forearm
+  name: Supination
+  what:
+    basic: Turning your palm to face up, like turning a doorknob or a screwdriver.
+    expert: Rotation of the radius back to lie parallel to the ulna.
+  why:
+    basic: The biceps does this too, so twisting the palm up during curls works it harder.
+    expert: The biceps is a strong supinator with the elbow bent; the supinator dominates with the elbow straight.
+  feel:
+    basic: Curl a dumbbell and turn your pinky up at the top.
+    expert: Supinating dumbbell curls combine both biceps functions.
+  muscles:
+    - muscle: Forearms / Supinator
+      role: PRIMARY
+      basic: A small muscle near the elbow that turns your palm up.
+      expert: Supinates without flexing the elbow.
+    - muscle: Biceps / Long Head
+      role: PRIMARY
+      basic: The biceps helps turn the palm up.
+      expert: Strong supination moment arm with the elbow flexed.
+    - muscle: Biceps / Short Head
+      role: PRIMARY
+      basic: Both biceps heads help.
+      expert: Contributes to supination alongside the long head.
+
+# ======================= WRIST =======================
+- joint: Wrist
+  name: Flexion
+  what:
+    basic: Curling your palm toward the inside of your forearm.
+    expert: Flexion at the radiocarpal joint.
+  why:
+    basic: It builds forearm size and grip strength for holding heavy weights.
+    expert: The flexors are the largest forearm muscles; grip-heavy lifts train them isometrically.
+  feel:
+    basic: Rest your forearm on your thigh, palm up, and curl a dumbbell with your wrist only.
+    expert: Let the weight roll to the fingertips for a longer range.
+  muscles:
+    - muscle: Forearms / Flexors
+      role: PRIMARY
+      basic: Muscles on the palm side of the forearm curl the wrist.
+      expert: Flexor carpi radialis/ulnaris and the finger flexors.
+
+- joint: Wrist
+  name: Extension
+  what:
+    basic: Bending the back of your hand toward the outside of your forearm.
+    expert: Extension at the radiocarpal joint.
+  why:
+    basic: It balances your forearms and helps protect your elbows.
+    expert: Extensor strength supports grip and resilience against lateral elbow pain.
+  feel:
+    basic: Rest your forearm on your thigh, palm down, and lift the back of your hand.
+    expert: Use light loads and a slow eccentric.
+  muscles:
+    - muscle: Forearms / Extensors
+      role: PRIMARY
+      basic: Muscles on the back of the forearm lift the hand.
+      expert: Extensor carpi radialis and ulnaris.
+
+# ======================= SPINE =======================
+- joint: Spine
+  name: Flexion
+  what:
+    basic: Curling your torso forward, bringing your ribs toward your hips, like a crunch.
+    expert: Flexion of the thoracic and lumbar spine.
+  why:
+    basic: It builds the six-pack muscles and a strong midsection.
+    expert: The rectus abdominis is trained best through spinal flexion with load, not just by bracing.
+  feel:
+    basic: Lie down and curl your upper back off the floor, pulling your ribs down toward your belly button.
+    expert: Starting from spinal extension (ball crunch, cable crunch leaning back) adds range at long muscle lengths.
+  muscles:
+    - muscle: Core / Rectus Abdominis
+      role: PRIMARY
+      basic: The six-pack muscle does the curling.
+      expert: The primary spinal flexor.
+    - muscle: Core / Obliques
+      role: SECONDARY
+      basic: The side abs help.
+      expert: Both sides contracting together assist flexion.
+
+- joint: Spine
+  name: Extension
+  what:
+    basic: Straightening your back, like standing up from a bent-over position, or keeping it straight under a weight.
+    expert: Extension of the spine, performed dynamically or held isometrically against load.
+  why:
+    basic: It protects your back in squats and deadlifts and builds the muscles along the spine.
+    expert: The erectors mostly work isometrically in big lifts; back extensions train them dynamically.
+  feel:
+    basic: On a back-extension bench, lower your torso and rise until your body is straight.
+    expert: Rounding and extending the spine targets the erectors; keeping the spine neutral shifts work to the hips.
+  muscles:
+    - muscle: Erector Spinae
+      role: PRIMARY
+      basic: The columns of muscle along the spine straighten your back.
+      expert: The primary spinal extensors.
+    - muscle: Core / Quadratus Lumborum
+      role: SECONDARY
+      basic: A deep lower-back muscle helps.
+      expert: Assists extension and stabilizes the lumbar spine.
+
+- joint: Spine
+  name: Lateral Flexion
+  what:
+    basic: Bending your torso to the side.
+    expert: Frontal-plane flexion of the spine.
+  why:
+    basic: It trains the sides of your waist and helps you carry heavy things in one hand.
+    expert: Obliques and quadratus lumborum work hard in suitcase carries and side bends.
+  feel:
+    basic: Hold a dumbbell in one hand and bend sideways toward it, then stand back up.
+    expert: Keep the hips still so the spine, not the pelvis, moves.
+  muscles:
+    - muscle: Core / Obliques
+      role: PRIMARY
+      basic: The side abs bend you sideways.
+      expert: One side contracting produces lateral flexion.
+    - muscle: Core / Quadratus Lumborum
+      role: PRIMARY
+      basic: A deep lower-back muscle bends you too.
+      expert: Strong lateral flexor of the lumbar spine.
+    - muscle: Erector Spinae
+      role: SECONDARY
+      basic: The spinal muscles help.
+      expert: Unilateral contraction assists.
+
+- joint: Spine
+  name: Rotation
+  what:
+    basic: Twisting your torso, or stopping it from twisting.
+    expert: Transverse-plane rotation of the spine, or resisting it (anti-rotation).
+  why:
+    basic: It powers throwing, swinging and hitting in sports.
+    expert: The obliques drive rotation; anti-rotation work (Pallof press) trains them to stabilize.
+  feel:
+    basic: Pull a cable from high to low across your body, turning your torso.
+    expert: Rotate through the thoracic spine and keep the lumbar spine controlled.
+  muscles:
+    - muscle: Core / Obliques
+      role: PRIMARY
+      basic: The side abs twist your torso.
+      expert: External oblique on one side works with the internal oblique on the other.
+
+# ======================= HIP =======================
+- joint: Hip
+  name: Flexion
+  what:
+    basic: Lifting your thigh up toward your chest, like marching or a leg raise.
+    expert: Sagittal-plane flexion at the hip joint.
+  why:
+    basic: It helps you run, climb stairs and raise your legs.
+    expert: Iliopsoas does most of the work above 90°; it is rarely trained directly but matters for sprinting.
+  feel:
+    basic: Hang from a bar or lie down and raise your knees or legs toward your chest.
+    expert: Posterior pelvic tilt at the top adds spinal flexion and more ab involvement.
+  muscles:
+    - muscle: Hip Flexors / Iliopsoas
+      role: PRIMARY
+      basic: A deep muscle from the spine to the thigh lifts the leg.
+      expert: The strongest hip flexor.
+    - muscle: Quadriceps / Rectus Femoris
+      role: PRIMARY
+      basic: The middle quad helps lift the leg.
+      expert: Two-joint; flexes the hip strongly with the knee bent.
+    - muscle: Adductors / Adductor Longus/Brevis
+      role: SECONDARY
+      basic: Inner-thigh muscles help at the start.
+      expert: Assist flexion from an extended hip.
+
+- joint: Hip
+  name: Extension
+  what:
+    basic: Driving your thigh backward, like standing up from a squat or pushing your hips forward in a hip thrust.
+    expert: Sagittal-plane extension at the hip.
+  why:
+    basic: It is one of the strongest movements you have. It builds the glutes and hamstrings and powers squats, deadlifts and jumps.
+    expert: Glutes and adductor magnus dominate at deep hip flexion; hamstrings contribute more near extension; hinges (RDLs) load everything at length.
+  feel:
+    basic: Stand up from a deep squat or hinge forward with a flat back and then drive your hips forward.
+    expert: Deep hip flexion lengthens glute max and adductor magnus; knee bend reduces hamstring involvement because they shorten at the knee.
+  muscles:
+    - muscle: Glutes / Gluteus Maximus
+      role: PRIMARY
+      basic: The big butt muscle drives your hips forward.
+      expert: Largest extensor, with high torque from deep flexion.
+    - muscle: Adductors / Adductor Magnus
+      role: PRIMARY
+      basic: The biggest inner-thigh muscle helps a lot.
+      expert: Posterior head is a major extensor, especially in deep flexion.
+    - muscle: Hamstrings / Biceps Femoris
+      role: PRIMARY
+      basic: The outer hamstring helps straighten the hip.
+      expert: Long head extends the hip; most involved with straight knees.
+    - muscle: Hamstrings / Semitendinosus/Semimembranosus
+      role: PRIMARY
+      basic: The inner hamstrings help too.
+      expert: Strong hip extensors in hinges with near-straight knees.
+
+- joint: Hip
+  name: Abduction
+  what:
+    basic: Moving your leg out to the side.
+    expert: Frontal-plane abduction at the hip.
+  why:
+    basic: It keeps your hips level when walking and running and shapes the upper side of the glutes.
+    expert: Glute medius and minimus stabilize the pelvis in single-leg stance; machine abductions train them directly.
+  feel:
+    basic: Stand on one leg and lift the other out to the side, keeping your toes pointing forward.
+    expert: Leaning forward on the abductor machine biases glute max upper fibers.
+  muscles:
+    - muscle: Glutes / Gluteus Medius/Minimus
+      role: PRIMARY
+      basic: The upper side of the glutes moves the leg outward.
+      expert: Primary abductors and pelvic stabilizers.
+    - muscle: Glutes / Gluteus Maximus
+      role: SECONDARY
+      basic: The big glute helps a bit.
+      expert: Upper fibers assist abduction.
+
+- joint: Hip
+  name: Adduction
+  what:
+    basic: Squeezing your leg in toward the middle of your body.
+    expert: Frontal-plane adduction at the hip.
+  why:
+    basic: It strengthens the inner thighs and helps stability in squats and sports.
+    expert: The adductors are large and often undertrained; the magnus also contributes to hip extension.
+  feel:
+    basic: On the adduction machine, squeeze your knees together against the pads.
+    expert: Use a wide start position for a loaded stretch.
+  muscles:
+    - muscle: Adductors / Adductor Longus/Brevis
+      role: PRIMARY
+      basic: The inner-thigh muscles pull your legs together.
+      expert: Main adductors.
+    - muscle: Adductors / Adductor Magnus
+      role: PRIMARY
+      basic: The biggest inner-thigh muscle helps.
+      expert: Large adductor as well as extensor.
+
+- joint: Hip
+  name: Internal Rotation
+  what:
+    basic: Turning your thigh inward, so your knee points toward the other leg.
+    expert: Transverse-plane internal rotation of the femur.
+  why:
+    basic: It keeps your hips mobile and healthy.
+    expert: Often limited in lifters; trained for joint health and pelvic control.
+  feel:
+    basic: Sit with your knee bent and swing your foot outward, which turns your thigh inward.
+    expert: Keep the pelvis still so the femur rotates.
+  muscles:
+    - muscle: Glutes / Gluteus Medius/Minimus
+      role: PRIMARY
+      basic: The upper side of the glutes turns the thigh inward.
+      expert: Anterior fibers internally rotate.
+    - muscle: Adductors / Adductor Longus/Brevis
+      role: SECONDARY
+      basic: Inner-thigh muscles help.
+      expert: Assist in some hip positions.
+
+- joint: Hip
+  name: External Rotation
+  what:
+    basic: Turning your thigh outward, so your knee points away from the other leg.
+    expert: Transverse-plane external rotation of the femur.
+  why:
+    basic: It keeps your knees tracking properly in squats and helps you turn and change direction.
+    expert: Glute max and the deep rotators drive it; weak control shows as knees caving in.
+  feel:
+    basic: Sit with your knee bent and swing your foot inward, which turns your thigh outward.
+    expert: Also trained isometrically by pushing the knees out in squats.
+  muscles:
+    - muscle: Glutes / Gluteus Maximus
+      role: PRIMARY
+      basic: The big glute turns your thigh outward.
+      expert: Strong external rotator.
+    - muscle: Glutes / Gluteus Medius/Minimus
+      role: SECONDARY
+      basic: The upper glutes help.
+      expert: Posterior fibers assist.
+
+# ======================= KNEE =======================
+- joint: Knee
+  name: Extension
+  what:
+    basic: Straightening your knee, like kicking or standing up from a squat.
+    expert: Extension at the tibiofemoral joint.
+  why:
+    basic: It builds your quads, the front of your thighs, and powers squats, jumps and stairs.
+    expert: Deep knee flexion loads the vasti at length; the rectus femoris needs hip extension to be lengthened (leg extensions, sissy squats).
+  feel:
+    basic: On a leg-extension machine, straighten your legs and squeeze the front of your thighs.
+    expert: Recline the seat to lengthen the rectus femoris; squats and presses mostly train the three vasti.
+  muscles:
+    - muscle: Quadriceps / Rectus Femoris
+      role: PRIMARY
+      basic: The middle quad straightens the knee.
+      expert: Two-joint; shortened at the hip in squats, so it grows mostly from knee extension with an extended hip.
+    - muscle: Quadriceps / Vastus Lateralis
+      role: PRIMARY
+      basic: The outer quad straightens the knee.
+      expert: Largest vastus.
+    - muscle: Quadriceps / Vastus Medialis
+      role: PRIMARY
+      basic: The inner quad, the teardrop.
+      expert: One-joint extensor.
+    - muscle: Quadriceps / Vastus Intermedius
+      role: PRIMARY
+      basic: The deep quad.
+      expert: One-joint extensor.
+
+- joint: Knee
+  name: Flexion
+  what:
+    basic: Bending your knee, bringing your heel toward your butt, like a leg curl.
+    expert: Flexion at the tibiofemoral joint.
+  why:
+    basic: It builds the hamstrings and protects your knees when running and jumping.
+    expert: Only leg curls train the short head of the biceps femoris; seated curls lengthen the hamstrings at the hip.
+  feel:
+    basic: On a leg-curl machine, curl your heels toward your butt and lower slowly.
+    expert: Seated curls with a forward lean maximize hamstring length; point the toes to reduce calf help.
+  muscles:
+    - muscle: Hamstrings / Biceps Femoris
+      role: PRIMARY
+      basic: The outer hamstring bends the knee.
+      expert: Both heads flex the knee; the short head only acts here.
+    - muscle: Hamstrings / Semitendinosus/Semimembranosus
+      role: PRIMARY
+      basic: The inner hamstrings bend the knee.
+      expert: Strong knee flexors.
+    - muscle: Calves / Gastrocnemius
+      role: SECONDARY
+      basic: The calf helps a little.
+      expert: Crosses the knee and assists flexion.
+
+# ======================= ANKLE =======================
+- joint: Ankle
+  name: Plantarflexion
+  what:
+    basic: Pointing your foot down or rising onto your toes, like a calf raise.
+    expert: Plantarflexion at the talocrural joint.
+  why:
+    basic: It builds your calves and powers walking, running and jumping.
+    expert: Knee position changes the balance between gastrocnemius and soleus.
+  feel:
+    basic: Stand on a step and rise onto your toes, then lower your heels below the step.
+    expert: Pause in the deep stretch; straight knee for gastrocnemius, bent knee for soleus.
+  muscles:
+    - muscle: Calves / Gastrocnemius
+      role: PRIMARY
+      basic: The upper calf lifts you onto your toes.
+      expert: Two-joint; strongest with the knee straight.
+    - muscle: Calves / Soleus
+      role: PRIMARY
+      basic: The lower calf lifts too, especially with bent knees.
+      expert: One-joint; dominates in seated calf raises.
+
+- joint: Ankle
+  name: Dorsiflexion
+  what:
+    basic: Pulling your toes up toward your shin.
+    expert: Dorsiflexion at the talocrural joint.
+  why:
+    basic: It helps your balance and protects your shins when running.
+    expert: The tibialis anterior controls foot strike; rarely trained but useful for runners and knee health.
+  feel:
+    basic: Lean your back against a wall with heels forward and lift your toes up.
+    expert: Tibialis raises through a full range.
+  muscles:
+    - muscle: Tibialis Anterior
+      role: PRIMARY
+      basic: The shin muscle lifts your toes.
+      expert: Primary dorsiflexor.

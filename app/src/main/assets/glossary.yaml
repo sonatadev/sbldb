@@ -1,0 +1,47 @@
+# Terms a beginner meets in the app, each explained twice (basic / expert).
+
+- term: Joint action
+  basic: A single way a joint can move, like bending the elbow or lifting the arm to the side. Every exercise is made of one or more joint actions.
+  expert: A rotation of one joint in one plane. Classifying exercises by joint action shows which muscles they can load and makes it easy to cover all of them.
+- term: Prime mover
+  basic: A "main muscle" for a movement, the one doing most of the work.
+  expert: The agonist with the largest share of torque for that joint action; in this app, prime movers of directly trained actions (rated 4–5) count as a full set for volume.
+- term: Helper
+  basic: A muscle that assists the main muscle but does less of the work.
+  expert: A synergist. In this app, helpers count as half a set for weekly volume.
+- term: Hard set
+  basic: A set you take close to the point where you could not do another rep. These are the sets that make muscles grow.
+  expert: A working set taken to within about 0–4 reps in reserve. Warm-ups and easier sets are excluded from volume.
+- term: RIR
+  basic: Reps in reserve, meaning how many more reps you could have done before failing. RIR 0 means you could not do another one.
+  expert: A proximity-to-failure scale; RIR 0–3 gives similar growth for most people, and very easy sets add little.
+- term: Volume
+  basic: How much training a muscle gets, counted as hard sets per week.
+  expert: Weekly hard sets per muscle, with fractional counting for helpers. The best-supported driver of hypertrophy you can control.
+- term: Zone 10–20
+  basic: A good weekly target for most people, between 10 and 20 hard sets per muscle.
+  expert: A practical range from dose-response meta-analyses; gains keep rising with volume but with diminishing returns and higher fatigue at the top.
+- term: Frequency
+  basic: How many days a week you train a muscle. Two or more is usually better than one.
+  expert: Splitting weekly volume across two or more sessions keeps set quality high; frequency matters mostly through its effect on volume.
+- term: Stretched position
+  basic: The part of a movement where the muscle is at its longest, like the bottom of a fly.
+  expert: Long muscle lengths under load; exercises that load the stretched position tend to grow muscles more, which is why many ratings favor them.
+- term: Compound
+  basic: An exercise that moves several joints at once, like a squat or a row.
+  expert: A multi-joint exercise; efficient but usually loads each muscle less directly than an isolation exercise.
+- term: Isolation
+  basic: An exercise that moves one joint, like a curl or a leg extension.
+  expert: A single-joint exercise that targets specific muscles and is easy to take close to failure.
+- term: Rating
+  basic: The dots next to an exercise show how good it is for that joint action, from 1 (barely involved) to 5 (one of the best choices).
+  expert: A judgement of how directly and heavily the exercise loads the action through a full range, favouring load in the stretched position. Ratings 4–5 count as direct training for volume.
+- term: e1RM
+  basic: Your estimated one-rep max, meaning the most weight you could probably lift once, calculated from a set of several reps.
+  expert: Epley estimate (weight × (1 + reps/30)), computed only for sets of 12 reps or fewer, where it is reasonably accurate.
+- term: Progressive overload
+  basic: Doing a little more over time, like adding weight or reps, so your muscles keep having a reason to grow.
+  expert: Gradually increasing load, reps or sets at a similar RIR; the "last time" numbers in a workout help you beat your previous session.
+- term: Warm-up set
+  basic: A light set before your working sets to get ready. It does not count toward volume.
+  expert: Submaximal sets far from failure; marked with W and excluded from all volume and e1RM calculations.

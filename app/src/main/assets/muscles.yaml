@@ -1,0 +1,217 @@
+# Muscle groups and their regions, each explained twice:
+#   basic  = plain language for beginners
+#   expert = anatomy and training detail
+# The group as a whole is always available as a region-less entry.
+
+- muscleGroup: Chest
+  basic: The pecs, the big fan-shaped muscle on the front of your chest. It pushes things away from you and pulls your arms across your body.
+  expert: Pectoralis major. Fibers converge from the clavicle, sternum and ribs onto the humerus, so different regions pull at different angles; all of it horizontally adducts and internally rotates the shoulder.
+  regions:
+    - name: Clavicular Head
+      basic: The upper chest, just under the collarbone. It works most when you push or raise your arms upward at an angle.
+      expert: Originates on the medial clavicle. Its line of pull adds shoulder flexion, so incline pressing and low-to-high flys bias it.
+    - name: Sternocostal Head
+      basic: The main, lower part of the chest. It does most of the work in flat presses and flys.
+      expert: Originates on the sternum and upper costal cartilages; the largest part of the pec. Also extends the shoulder from a flexed position, which is why dips and pullovers load it.
+
+- muscleGroup: Shoulders
+  basic: The delts, the round cap on top of your shoulder. They lift your arm forward, out to the side and back.
+  expert: Deltoid, three heads with a shared insertion on the deltoid tuberosity. Each head has a different line of pull, so no single exercise trains all three well.
+  regions:
+    - name: Anterior Head
+      basic: The front of the shoulder. It helps with every press and with raising the arm in front of you.
+      expert: Flexes and internally rotates the shoulder. Gets substantial work from pressing, so it rarely needs much isolation.
+    - name: Lateral Head
+      basic: The side of the shoulder, which makes shoulders look wider. It lifts your arm out to the side.
+      expert: Primary shoulder abductor with the supraspinatus. Pressing trains it poorly, so it needs direct lateral-raise work, ideally with tension at the bottom.
+    - name: Posterior Head
+      basic: The back of the shoulder. It pulls your arm backward and out, as in rows and reverse flys.
+      expert: Horizontally abducts, extends and externally rotates the shoulder. Wide-elbow rows and rear-delt flys load it; narrow rows mostly hit the lats instead.
+
+- muscleGroup: Rotator Cuff
+  basic: Four small muscles deep in the shoulder that keep the ball of the joint centered and twist the arm in and out.
+  expert: Supraspinatus, infraspinatus, teres minor and subscapularis. They compress and steer the humeral head during every shoulder movement and are the main rotators.
+  regions:
+    - name: Supraspinatus
+      basic: Sits on top of the shoulder blade and helps start lifting the arm out to the side.
+      expert: Initiates abduction and resists upward migration of the humeral head; works throughout lateral raises alongside the lateral delt.
+    - name: Infraspinatus/Teres Minor
+      basic: On the back of the shoulder blade. They turn your arm outward.
+      expert: The external rotators. Face pulls and cable external rotations train them directly.
+    - name: Subscapularis
+      basic: On the front surface of the shoulder blade, against the ribs. It turns your arm inward.
+      expert: The largest cuff muscle and main internal rotator; also a key anterior stabilizer of the joint.
+
+- muscleGroup: Lats
+  basic: The biggest muscles of your back, running from your armpits down to your lower back. They pull your arms down and back and make your back wide.
+  expert: Latissimus dorsi and teres major. Both adduct, extend and internally rotate the shoulder; the lats also help depress the shoulder blades.
+  regions:
+    - name: Latissimus Dorsi
+      basic: The wide sheet of muscle that gives the back its V shape.
+      expert: Spans from the thoracolumbar fascia and pelvis to the humerus, so it is longest with the arm overhead and the torso side-bent away; single-arm pulldowns exploit this.
+    - name: Teres Major
+      basic: A small muscle at the edge of the shoulder blade that works together with the lats.
+      expert: Runs from the inferior angle of the scapula to the humerus; acts like a one-joint lat helper in rows and pulldowns.
+
+- muscleGroup: Traps
+  basic: The diamond-shaped muscle covering your upper back and neck. It moves and holds your shoulder blades.
+  expert: Trapezius, with upper, middle and lower fibers that elevate, retract and depress the scapula, and together rotate it upward.
+  regions:
+    - name: Upper Traps
+      basic: The part between your neck and shoulders. It shrugs your shoulders up.
+      expert: Elevates and upwardly rotates the scapula. Shrugs, carries and heavy deadlifts train it.
+    - name: Mid Traps
+      basic: The part between your shoulder blades. It squeezes them together.
+      expert: Retracts the scapula; trained by rows with a hard squeeze and by Kelso shrugs.
+    - name: Lower Traps
+      basic: The lower part, down the middle of your back. It pulls your shoulder blades down.
+      expert: Depresses and upwardly rotates the scapula; Y-raises and pull-downs load it.
+
+- muscleGroup: Rhomboids
+  basic: Muscles between your spine and shoulder blades that pull the shoulder blades together.
+  expert: Rhomboid major and minor. Retract and downwardly rotate the scapula; they work with the mid traps in every row.
+
+- muscleGroup: Serratus Anterior
+  basic: The finger-like muscle on the side of your ribs, under the armpit. It pushes your shoulder blade forward around the ribcage.
+  expert: Protracts and upwardly rotates the scapula and holds it flat against the thorax. Weakness contributes to "winging" and poor overhead mechanics.
+
+- muscleGroup: Biceps
+  basic: The front of your upper arm. It bends your elbow and turns your palm up.
+  expert: Biceps brachii, a two-joint muscle crossing both shoulder and elbow. Flexes the elbow, supinates the forearm and weakly flexes the shoulder.
+  regions:
+    - name: Long Head
+      basic: The outer part of the biceps.
+      expert: Crosses the shoulder joint, so it is most stretched with the arm behind the body; incline and Bayesian curls bias it.
+    - name: Short Head
+      basic: The inner part of the biceps.
+      expert: Attaches to the coracoid process; relatively more active with the arm in front of the body, as in preacher or spider curls.
+
+- muscleGroup: Brachialis
+  basic: A muscle underneath the biceps. It bends the elbow no matter which way your palm faces, and pushes the biceps up so the arm looks bigger.
+  expert: Pure elbow flexor inserting on the ulna, so forearm rotation does not change its leverage; emphasized with neutral or pronated grips when the biceps is disadvantaged.
+
+- muscleGroup: Brachioradialis
+  basic: The big muscle on the thumb side of your forearm near the elbow. It bends the elbow, especially with a thumbs-up grip.
+  expert: Elbow flexor with its best leverage in a neutral grip; hammer and reverse curls load it most.
+
+- muscleGroup: Triceps
+  basic: The back of your upper arm, about two thirds of its size. It straightens your elbow.
+  expert: Triceps brachii, three heads sharing a common tendon on the olecranon. Only the long head crosses the shoulder.
+  regions:
+    - name: Long Head
+      basic: The biggest head, on the inner back of the arm. It works hardest when your arms are overhead.
+      expert: Two-joint muscle that also extends the shoulder; overhead extensions lengthen it and have grown the triceps more than pushdowns in direct comparisons.
+    - name: Lateral Head
+      basic: The outer head, which forms the horseshoe shape.
+      expert: One-joint head; heavily loaded by pushdowns and pressing.
+    - name: Medial Head
+      basic: The deep head, close to the bone near the elbow. It helps in every elbow-straightening movement.
+      expert: Active at all loads and through the whole range; the workhorse of elbow extension.
+
+- muscleGroup: Forearms
+  basic: The muscles between elbow and wrist. They grip, bend your wrist and turn your hand.
+  expert: A compartment of many small muscles, with wrist and finger flexors on the palm side, extensors on the back, plus the pronators and supinator.
+  regions:
+    - name: Flexors
+      basic: On the palm side of the forearm. They close your hand and curl your wrist.
+      expert: Wrist and finger flexors from the medial epicondyle; trained by wrist curls and heavy grip work.
+    - name: Extensors
+      basic: On the back of the forearm. They lift the back of your hand.
+      expert: Wrist extensors from the lateral epicondyle; reverse wrist curls and reverse curls load them.
+    - name: Pronators
+      basic: Small muscles that turn your palm down.
+      expert: Pronator teres and pronator quadratus.
+    - name: Supinator
+      basic: A small muscle near the elbow that turns your palm up, helping the biceps.
+      expert: Supinates without contributing to elbow flexion, so it dominates supination with the elbow straight.
+
+- muscleGroup: Core
+  basic: The muscles around your belly and waist. They bend and twist your torso and keep it stable when you lift.
+  expert: The abdominal wall plus quadratus lumborum; flexes, laterally flexes and rotates the spine, and braces it against load.
+  regions:
+    - name: Rectus Abdominis
+      basic: The "six-pack" muscle down the front. It curls your ribs toward your hips.
+      expert: Primary spinal flexor. Crunch variations that let the spine extend first (ball crunches, cable crunches) load it through a longer range.
+    - name: Obliques
+      basic: On the sides of your waist. They twist and bend your torso sideways.
+      expert: External and internal obliques; rotate and laterally flex the trunk and resist rotation.
+    - name: Quadratus Lumborum
+      basic: A deep muscle in the lower back, on each side of the spine. It bends you sideways and steadies the pelvis.
+      expert: Laterally flexes the lumbar spine and hikes the pelvis; heavily involved in carries and side bends.
+
+- muscleGroup: Erector Spinae
+  basic: The two thick columns of muscle along your spine. They straighten your back and keep it from rounding under load.
+  expert: Iliocostalis, longissimus and spinalis. Extend the spine and work isometrically in squats, deadlifts and rows.
+
+- muscleGroup: Glutes
+  basic: Your butt muscles, some of the biggest and strongest in the body. They drive your hips forward and move your legs out to the side.
+  expert: Gluteus maximus, medius and minimus. Extend, abduct and rotate the hip and stabilize the pelvis in single-leg stance.
+  regions:
+    - name: Gluteus Maximus
+      basic: The big outer glute that shapes the butt. It straightens your hips, as when standing up from a squat.
+      expert: The main hip extensor and external rotator; longest in deep hip flexion, so deep squats, lunges and RDLs load it at the stretch.
+    - name: Gluteus Medius/Minimus
+      basic: The upper side of the hip. They move the leg outward and keep your hips level when you stand on one leg.
+      expert: Primary hip abductors; anterior fibers also internally rotate. Hip abduction machines and single-leg work train them.
+
+- muscleGroup: Hip Flexors
+  basic: Muscles at the front of your hip that lift your knee toward your chest.
+  expert: Chiefly the iliopsoas, helped by rectus femoris, sartorius and TFL.
+  regions:
+    - name: Iliopsoas
+      basic: A deep muscle running from your lower spine to the top of your thigh.
+      expert: Psoas major and iliacus; the strongest hip flexor, working hard in leg raises and above 90° of hip flexion.
+
+- muscleGroup: Adductors
+  basic: The muscles of your inner thigh. They pull your legs together and help you stand up out of squats.
+  expert: Adductor magnus, longus and brevis plus pectineus and gracilis. The magnus is also a powerful hip extensor.
+  regions:
+    - name: Adductor Magnus
+      basic: The biggest inner-thigh muscle. It works hard in squats, lunges and deadlifts.
+      expert: Its posterior part behaves like a hamstring and is a major hip extensor, especially in deep flexion.
+    - name: Adductor Longus/Brevis
+      basic: The inner-thigh muscles you feel when squeezing your knees together.
+      expert: Adduct and help flex the hip; trained by the adduction machine and Copenhagen planks.
+
+- muscleGroup: Quadriceps
+  basic: The quads, four muscles on the front of your thigh. They straighten your knee.
+  expert: Rectus femoris plus three vasti, all inserting through the patellar tendon.
+  regions:
+    - name: Rectus Femoris
+      basic: The middle quad, running over both hip and knee. It also lifts your thigh.
+      expert: The only two-joint quad; it is shortened at the hip in squats, so leg extensions and sissy squats train it far better.
+    - name: Vastus Lateralis
+      basic: The outer quad, the largest of the four.
+      expert: One-joint knee extensor; grows well from squats, leg presses and extensions.
+    - name: Vastus Medialis
+      basic: The inner quad, the teardrop shape above the knee.
+      expert: One-joint knee extensor; heavily used in deep knee flexion.
+    - name: Vastus Intermedius
+      basic: The deep quad, under the rectus femoris.
+      expert: One-joint knee extensor lying on the femur; trained by any heavy knee extension.
+
+- muscleGroup: Hamstrings
+  basic: The muscles on the back of your thigh. They bend your knee and help drive your hips forward.
+  expert: Biceps femoris and the semitendinosus and semimembranosus. Mostly two-joint muscles, flexing the knee and extending the hip.
+  regions:
+    - name: Biceps Femoris
+      basic: The outer hamstring.
+      expert: The long head crosses the hip; the short head only crosses the knee, so it is trained only by leg curls.
+    - name: Semitendinosus/Semimembranosus
+      basic: The inner hamstrings.
+      expert: Two-joint muscles; seated leg curls, with the hip flexed, lengthen them and outgrew lying curls in direct comparisons.
+
+- muscleGroup: Calves
+  basic: The muscles on the back of your lower leg. They point your foot and lift you onto your toes.
+  expert: Triceps surae, gastrocnemius plus soleus, joined in the Achilles tendon.
+  regions:
+    - name: Gastrocnemius
+      basic: The visible, diamond-shaped upper calf.
+      expert: Two-joint muscle crossing the knee, so it works best with the knee straight (standing and donkey raises).
+    - name: Soleus
+      basic: The flat muscle underneath, lower on the leg.
+      expert: One-joint muscle; takes over when the knee is bent, which is why seated calf raises target it.
+
+- muscleGroup: Tibialis Anterior
+  basic: The muscle on the front of your shin. It pulls your toes up.
+  expert: Primary dorsiflexor; also controls the foot as it lands when walking and running.

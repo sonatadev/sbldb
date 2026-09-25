@@ -1,0 +1,630 @@
+# Exercises and the joint actions they train, rated 1–5:
+#   5 = one of the best choices for that action
+#   4 = trains it directly
+#   3 = trains it meaningfully as part of a compound lift
+#   2 = involves it
+#   1 = minor or stabilising role
+# Muscles for volume are derived from the actions: PRIMARY when the muscle is a prime mover of an
+# action rated 4 or 5, otherwise SECONDARY. An optional `muscles` block replaces the derivation.
+
+# ---------- Chest ----------
+- name: Barbell Bench Press
+  equipment: Barbell
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 2, Elbow / Extension: 3}
+- name: Incline Barbell Bench Press
+  equipment: Barbell
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 3, Elbow / Extension: 3}
+- name: Dumbbell Bench Press
+  equipment: Dumbbell
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 2, Elbow / Extension: 3}
+- name: Incline Dumbbell Press
+  equipment: Dumbbell
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 3, Elbow / Extension: 3}
+- name: Machine Chest Press
+  equipment: Machine
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 2, Elbow / Extension: 3}
+- name: Close-Grip Bench Press
+  equipment: Barbell
+  actions: {Elbow / Extension: 4, Shoulder / Horizontal Adduction: 3, Shoulder / Flexion: 2}
+- name: Cable Fly
+  equipment: Cable
+  attachment: D-Handle
+  note: Constant cable tension with the pecs loaded hard at the stretch.
+  actions: {Shoulder / Horizontal Adduction: 5}
+- name: Low-to-High Cable Fly
+  equipment: Cable
+  attachment: D-Handle
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 4}
+- name: Pec Deck
+  equipment: Machine
+  actions: {Shoulder / Horizontal Adduction: 4}
+- name: Dumbbell Fly
+  equipment: Dumbbell
+  actions: {Shoulder / Horizontal Adduction: 4}
+- name: Push-Up
+  equipment: Bodyweight
+  actions: {Shoulder / Horizontal Adduction: 4, Elbow / Extension: 3, Scapula / Protraction: 2, Shoulder / Flexion: 2}
+- name: Dip
+  equipment: Bodyweight
+  actions: {Elbow / Extension: 4, Shoulder / Extension: 3, Shoulder / Horizontal Adduction: 3}
+  muscles:
+    primary: [Chest / Sternocostal Head, Triceps]
+    secondary: [Shoulders / Anterior Head, Chest / Clavicular Head]
+
+# ---------- Shoulders ----------
+- name: Barbell Overhead Press
+  equipment: Barbell
+  actions: {Shoulder / Flexion: 4, Elbow / Extension: 3, Scapula / Upward Rotation: 3, Shoulder / Abduction: 2}
+  muscles:
+    primary: [Shoulders / Anterior Head]
+    secondary: [Shoulders / Lateral Head, Triceps, Chest / Clavicular Head, Traps / Upper Traps, Serratus Anterior]
+- name: Seated Dumbbell Shoulder Press
+  equipment: Dumbbell
+  actions: {Shoulder / Flexion: 4, Shoulder / Abduction: 3, Elbow / Extension: 3, Scapula / Upward Rotation: 3}
+  muscles:
+    primary: [Shoulders / Anterior Head]
+    secondary: [Shoulders / Lateral Head, Triceps, Chest / Clavicular Head, Traps / Upper Traps, Serratus Anterior]
+- name: Machine Shoulder Press
+  equipment: Machine
+  actions: {Shoulder / Flexion: 4, Elbow / Extension: 3, Shoulder / Abduction: 2}
+  muscles:
+    primary: [Shoulders / Anterior Head]
+    secondary: [Shoulders / Lateral Head, Triceps, Chest / Clavicular Head]
+- name: Dumbbell Front Raise
+  equipment: Dumbbell
+  actions: {Shoulder / Flexion: 4}
+- name: Dumbbell Lateral Raise
+  equipment: Dumbbell
+  note: Easy to load but hardest only at the top; cables and lean-aways load the stretch better.
+  actions: {Shoulder / Abduction: 4, Scapula / Upward Rotation: 2}
+- name: Cable Lateral Raise
+  equipment: Cable
+  attachment: D-Handle
+  note: The cable keeps the side delts loaded at the bottom, where dumbbells go slack.
+  actions: {Shoulder / Abduction: 5, Scapula / Upward Rotation: 2}
+- name: Machine Lateral Raise
+  equipment: Machine
+  actions: {Shoulder / Abduction: 4}
+- name: Incline Dumbbell Y-Raise
+  equipment: Dumbbell
+  actions: {Scapula / Upward Rotation: 4, Shoulder / Abduction: 3, Scapula / Depression: 2}
+- name: Reverse Pec Deck
+  equipment: Machine
+  actions: {Shoulder / Horizontal Abduction: 5, Scapula / Retraction: 2}
+- name: Bent-Over Dumbbell Reverse Fly
+  equipment: Dumbbell
+  actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 2}
+- name: Face Pull
+  equipment: Cable
+  attachment: Rope
+  actions: {Shoulder / Horizontal Abduction: 4, Shoulder / External Rotation: 4, Scapula / Retraction: 3}
+- name: Cable External Rotation
+  equipment: Cable
+  attachment: D-Handle
+  actions: {Shoulder / External Rotation: 5}
+- name: Cable Internal Rotation
+  equipment: Cable
+  attachment: D-Handle
+  actions: {Shoulder / Internal Rotation: 5}
+
+# ---------- Back ----------
+- name: Pull-Up
+  equipment: Bodyweight
+  actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
+- name: Chin-Up
+  equipment: Bodyweight
+  actions: {Shoulder / Extension: 4, Elbow / Flexion: 4, Scapula / Depression: 3, Scapula / Downward Rotation: 2}
+- name: Lat Pulldown
+  equipment: Cable
+  attachment: Wide Bar
+  actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
+- name: Close-Grip Lat Pulldown
+  equipment: Cable
+  attachment: V-Bar
+  actions: {Shoulder / Extension: 4, Elbow / Flexion: 3, Scapula / Depression: 3}
+- name: Straight-Arm Pulldown
+  equipment: Cable
+  attachment: Straight Bar
+  actions: {Shoulder / Extension: 4, Scapula / Depression: 2}
+- name: Dumbbell Pullover
+  equipment: Dumbbell
+  actions: {Shoulder / Extension: 4, Shoulder / Horizontal Adduction: 1}
+- name: Barbell Row
+  equipment: Barbell
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2, Spine / Extension: 2}
+- name: Chest-Supported Dumbbell Row
+  equipment: Dumbbell
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2}
+- name: One-Arm Dumbbell Row
+  equipment: Dumbbell
+  actions: {Shoulder / Extension: 5, Scapula / Retraction: 3, Elbow / Flexion: 3}
+- name: Seated Cable Row
+  equipment: Cable
+  attachment: V-Bar
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3}
+- name: Wide-Grip Cable Row
+  equipment: Cable
+  attachment: Wide Bar
+  actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Extension: 2}
+- name: Chest-Supported T-Bar Row
+  equipment: Machine
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2}
+- name: Barbell Shrug
+  equipment: Barbell
+  actions: {Scapula / Elevation: 5}
+- name: Dumbbell Shrug
+  equipment: Dumbbell
+  actions: {Scapula / Elevation: 5}
+- name: Cable Serratus Punch
+  equipment: Cable
+  attachment: D-Handle
+  actions: {Scapula / Protraction: 5}
+- name: Push-Up Plus
+  equipment: Bodyweight
+  actions: {Scapula / Protraction: 4, Shoulder / Horizontal Adduction: 3, Elbow / Extension: 3}
+- name: 45° Back Extension
+  equipment: Bodyweight
+  actions: {Spine / Extension: 4, Hip / Extension: 4}
+
+# ---------- Arms ----------
+- name: Barbell Curl
+  equipment: Barbell
+  note: Solid classic, but the resistance fades at the stretch; incline or Bayesian curls load it better.
+  actions: {Elbow / Flexion: 4, Forearm / Supination: 2}
+- name: Dumbbell Curl
+  equipment: Dumbbell
+  actions: {Elbow / Flexion: 4, Forearm / Supination: 3}
+- name: Incline Dumbbell Curl
+  equipment: Dumbbell
+  note: Arm behind the body puts the biceps long head under stretch.
+  actions: {Elbow / Flexion: 5, Forearm / Supination: 3}
+- name: EZ-Bar Preacher Curl
+  equipment: Barbell
+  attachment: EZ Bar
+  actions: {Elbow / Flexion: 5}
+- name: Cable Curl
+  equipment: Cable
+  attachment: Straight Bar
+  actions: {Elbow / Flexion: 4}
+- name: Bayesian Cable Curl
+  equipment: Cable
+  attachment: D-Handle
+  note: Face-away cable curl that loads the biceps hardest in the stretched position.
+  actions: {Elbow / Flexion: 5, Forearm / Supination: 3}
+- name: Hammer Curl
+  equipment: Dumbbell
+  actions: {Elbow / Flexion: 4}
+  muscles:
+    primary: [Brachialis, Brachioradialis]
+    secondary: [Biceps]
+- name: EZ-Bar Reverse Curl
+  equipment: Barbell
+  attachment: EZ Bar
+  actions: {Elbow / Flexion: 3, Wrist / Extension: 2}
+  muscles:
+    primary: [Brachioradialis, Brachialis]
+    secondary: [Biceps, Forearms / Extensors]
+- name: Tricep Pushdown (Rope Attachment)
+  equipment: Cable
+  attachment: Rope
+  actions: {Elbow / Extension: 4}
+  muscles:
+    primary: [Triceps / Lateral Head, Triceps / Medial Head]
+    secondary: [Triceps / Long Head]
+- name: Tricep Pushdown (Straight Bar)
+  equipment: Cable
+  attachment: Straight Bar
+  actions: {Elbow / Extension: 4}
+  muscles:
+    primary: [Triceps / Lateral Head, Triceps / Medial Head]
+    secondary: [Triceps / Long Head]
+- name: Overhead Cable Triceps Extension
+  equipment: Cable
+  attachment: Rope
+  note: Overhead arm position stretches the long head, which drives more triceps growth than pushdowns.
+  actions: {Elbow / Extension: 5}
+- name: Dumbbell Overhead Triceps Extension
+  equipment: Dumbbell
+  actions: {Elbow / Extension: 4}
+- name: EZ-Bar Skull Crusher
+  equipment: Barbell
+  attachment: EZ Bar
+  actions: {Elbow / Extension: 4}
+- name: Dumbbell Kickback
+  equipment: Dumbbell
+  actions: {Elbow / Extension: 4}
+  muscles:
+    primary: [Triceps / Lateral Head, Triceps / Medial Head]
+    secondary: [Triceps / Long Head]
+- name: Dumbbell Wrist Curl
+  equipment: Dumbbell
+  actions: {Wrist / Flexion: 5}
+- name: Dumbbell Reverse Wrist Curl
+  equipment: Dumbbell
+  actions: {Wrist / Extension: 5}
+- name: Dumbbell Pronation
+  equipment: Dumbbell
+  actions: {Forearm / Pronation: 4}
+- name: Dumbbell Supination
+  equipment: Dumbbell
+  actions: {Forearm / Supination: 4}
+  muscles:
+    primary: [Forearms / Supinator]
+    secondary: [Biceps]
+- name: Farmer's Carry
+  equipment: Dumbbell
+  actions: {Wrist / Flexion: 3, Scapula / Elevation: 3, Spine / Lateral Flexion: 3}
+
+# ---------- Quads and hips ----------
+- name: Barbell Back Squat
+  equipment: Barbell
+  actions: {Knee / Extension: 5, Hip / Extension: 4, Spine / Extension: 2}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+    secondary: [Quadriceps / Rectus Femoris, Hamstrings, Erector Spinae]
+- name: Front Squat
+  equipment: Barbell
+  actions: {Knee / Extension: 5, Hip / Extension: 3, Spine / Extension: 2}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus, Erector Spinae]
+- name: Hack Squat
+  equipment: Machine
+  actions: {Knee / Extension: 5, Hip / Extension: 3}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+- name: Leg Press
+  equipment: Machine
+  actions: {Knee / Extension: 4, Hip / Extension: 3}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+- name: Bulgarian Split Squat
+  equipment: Dumbbell
+  actions: {Knee / Extension: 4, Hip / Extension: 4, Hip / Abduction: 2}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+    secondary: [Quadriceps / Rectus Femoris, Hamstrings, Glutes / Gluteus Medius/Minimus]
+- name: Walking Lunge
+  equipment: Dumbbell
+  actions: {Knee / Extension: 4, Hip / Extension: 4, Hip / Abduction: 2}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+    secondary: [Quadriceps / Rectus Femoris, Hamstrings, Glutes / Gluteus Medius/Minimus]
+- name: Leg Extension
+  equipment: Machine
+  note: The only way to fully load the rectus femoris through knee extension.
+  actions: {Knee / Extension: 5}
+- name: Reverse Nordic
+  equipment: Bodyweight
+  actions: {Knee / Extension: 4}
+- name: Cable Hip Flexion
+  equipment: Cable
+  attachment: Ankle Strap
+  actions: {Hip / Flexion: 4}
+- name: Hip Abduction Machine
+  equipment: Machine
+  actions: {Hip / Abduction: 5}
+- name: Cable Hip Abduction
+  equipment: Cable
+  attachment: Ankle Strap
+  actions: {Hip / Abduction: 4}
+- name: Hip Adduction Machine
+  equipment: Machine
+  actions: {Hip / Adduction: 5}
+- name: Copenhagen Plank
+  equipment: Bodyweight
+  actions: {Hip / Adduction: 4, Spine / Lateral Flexion: 3}
+- name: Seated Cable Hip Internal Rotation
+  equipment: Cable
+  attachment: Ankle Strap
+  actions: {Hip / Internal Rotation: 4}
+- name: Seated Cable Hip External Rotation
+  equipment: Cable
+  attachment: Ankle Strap
+  actions: {Hip / External Rotation: 4}
+
+# ---------- Hinges, glutes and hamstrings ----------
+- name: Conventional Deadlift
+  equipment: Barbell
+  actions: {Hip / Extension: 4, Spine / Extension: 4, Knee / Extension: 3, Scapula / Elevation: 2, Wrist / Flexion: 2}
+  muscles:
+    primary: [Glutes / Gluteus Maximus, Adductors / Adductor Magnus, Erector Spinae]
+    secondary: [Hamstrings, Quadriceps, Traps / Upper Traps, Forearms / Flexors]
+- name: Romanian Deadlift
+  equipment: Barbell
+  note: Loads glutes, adductors and hamstrings deep in the stretch with a short, controlled range.
+  actions: {Hip / Extension: 5, Spine / Extension: 3}
+- name: Good Morning
+  equipment: Barbell
+  actions: {Hip / Extension: 4, Spine / Extension: 3}
+- name: Barbell Hip Thrust
+  equipment: Barbell
+  actions: {Hip / Extension: 4}
+  muscles:
+    primary: [Glutes / Gluteus Maximus]
+    secondary: [Hamstrings, Adductors / Adductor Magnus, Quadriceps]
+- name: Cable Pull-Through
+  equipment: Cable
+  attachment: Rope
+  actions: {Hip / Extension: 4}
+- name: Lying Leg Curl
+  equipment: Machine
+  actions: {Knee / Flexion: 4}
+- name: Seated Leg Curl
+  equipment: Machine
+  note: Hip flexion lengthens the hamstrings; seated curls outgrew lying curls in direct comparisons.
+  actions: {Knee / Flexion: 5}
+- name: Nordic Hamstring Curl
+  equipment: Bodyweight
+  actions: {Knee / Flexion: 5}
+
+# ---------- Calves and shins ----------
+- name: Standing Calf Raise
+  equipment: Machine
+  note: Straight knee lengthens the gastrocnemius; pause in the deep stretch at the bottom.
+  actions: {Ankle / Plantarflexion: 5}
+  muscles:
+    primary: [Calves / Gastrocnemius]
+    secondary: [Calves / Soleus]
+- name: Leg Press Calf Raise
+  equipment: Machine
+  actions: {Ankle / Plantarflexion: 4}
+  muscles:
+    primary: [Calves / Gastrocnemius]
+    secondary: [Calves / Soleus]
+- name: Seated Calf Raise
+  equipment: Machine
+  actions: {Ankle / Plantarflexion: 4}
+  muscles:
+    primary: [Calves / Soleus]
+    secondary: [Calves / Gastrocnemius]
+- name: Tibialis Raise
+  equipment: Bodyweight
+  actions: {Ankle / Dorsiflexion: 5}
+
+# ---------- Core ----------
+- name: Cable Crunch
+  equipment: Cable
+  attachment: Rope
+  actions: {Spine / Flexion: 5}
+- name: Crunch
+  equipment: Bodyweight
+  actions: {Spine / Flexion: 4}
+- name: Hanging Leg Raise
+  equipment: Bodyweight
+  actions: {Hip / Flexion: 4, Spine / Flexion: 4}
+- name: Ab Wheel Rollout
+  equipment: Bodyweight
+  actions: {Spine / Flexion: 4, Shoulder / Extension: 2}
+- name: Plank
+  equipment: Bodyweight
+  actions: {Spine / Flexion: 2}
+- name: Cable Woodchop
+  equipment: Cable
+  attachment: D-Handle
+  actions: {Spine / Rotation: 4}
+- name: Pallof Press
+  equipment: Cable
+  attachment: D-Handle
+  actions: {Spine / Rotation: 3}
+- name: Dumbbell Side Bend
+  equipment: Dumbbell
+  actions: {Spine / Lateral Flexion: 4}
+
+# ---------- Modern variations ----------
+- name: Smith Machine Incline Press
+  equipment: Machine
+  note: Fixed bar path lets you push close to failure safely with the upper chest loaded at the stretch.
+  actions: {Shoulder / Horizontal Adduction: 4, Shoulder / Flexion: 3, Elbow / Extension: 3}
+- name: Deficit Push-Up
+  equipment: Bodyweight
+  note: Hands on plates add range, so the pecs work deeper into the stretch than a floor push-up.
+  actions: {Shoulder / Horizontal Adduction: 4, Elbow / Extension: 3, Shoulder / Flexion: 2, Scapula / Protraction: 2}
+- name: Seated Cable Fly
+  equipment: Cable
+  attachment: D-Handle
+  note: Seated with back support removes stability demands; the cables load the pecs through the whole stretch.
+  actions: {Shoulder / Horizontal Adduction: 5}
+- name: Machine Fly
+  equipment: Machine
+  note: Set the handles so the arms start well behind the torso for a deep, loaded stretch.
+  actions: {Shoulder / Horizontal Adduction: 5}
+- name: Cable Press-Around
+  equipment: Cable
+  attachment: D-Handle
+  note: Hits the fully shortened, arms-crossed position; pair it with a stretch-focused press or fly.
+  actions: {Shoulder / Horizontal Adduction: 4}
+- name: Lean-Away Cable Lateral Raise
+  equipment: Cable
+  attachment: D-Handle
+  note: Leaning away shifts peak tension to the bottom, where the side delt is lengthened.
+  actions: {Shoulder / Abduction: 5}
+- name: Behind-the-Back Cable Lateral Raise
+  equipment: Cable
+  attachment: D-Handle
+  note: Cable from behind the body pre-stretches the side delt at the start of each rep.
+  actions: {Shoulder / Abduction: 5}
+- name: Cable Y-Raise
+  equipment: Cable
+  attachment: D-Handle
+  note: Raising in the plane of the shoulder blade trains side delts and lower traps together.
+  actions: {Shoulder / Abduction: 4, Scapula / Upward Rotation: 4}
+- name: Lying Incline Dumbbell Lateral Raise
+  equipment: Dumbbell
+  note: Lying sideways on an incline bench moves the hardest point to the stretched bottom range.
+  actions: {Shoulder / Abduction: 4}
+- name: Cross-Body Cable Rear Delt Fly
+  equipment: Cable
+  note: Crossed cables start the rear delts from a stretch and keep tension through the full arc.
+  actions: {Shoulder / Horizontal Abduction: 5}
+- name: Chest-Supported Rear Delt Row
+  equipment: Dumbbell
+  note: Elbows flared at 90° on an incline bench bias the rear delts and mid traps over the lats.
+  actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 2}
+- name: Kneeling Single-Arm Lat Pulldown
+  equipment: Cable
+  attachment: D-Handle
+  note: One arm at a time lets the lat reach a full overhead stretch and pull straight down in line with its fibers.
+  actions: {Shoulder / Adduction: 5, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3}
+- name: Single-Arm Cable Row (Lat Focus)
+  equipment: Cable
+  attachment: D-Handle
+  note: Pull toward the hip with a forward reach at the start to stretch and load the lat.
+  actions: {Shoulder / Extension: 5, Elbow / Flexion: 3, Scapula / Retraction: 2}
+- name: Cable Lat Prayer
+  equipment: Cable
+  attachment: Rope
+  note: Straight-arm shoulder extension that isolates the lats without the biceps limiting the set.
+  actions: {Shoulder / Extension: 5}
+- name: Machine Pullover
+  equipment: Machine
+  note: Loads the lats from a deep overhead stretch with no grip or biceps involvement.
+  actions: {Shoulder / Extension: 5}
+- name: Meadows Row
+  equipment: Barbell
+  note: Landmine row with a staggered stance; the long range loads the lats and upper back at the stretch.
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 3, Shoulder / Horizontal Abduction: 3, Elbow / Flexion: 3}
+- name: Kroc Row
+  equipment: Dumbbell
+  note: Heavy, higher-rep one-arm row with a bit of body english to extend the set past failure.
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 3, Elbow / Flexion: 3, Scapula / Elevation: 2}
+- name: Pendlay Row
+  equipment: Barbell
+  note: Each rep starts dead from the floor, forcing a strict pull with the torso parallel.
+  actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Spine / Extension: 3, Shoulder / Horizontal Abduction: 2}
+- name: Helms Row
+  equipment: Dumbbell
+  note: Chest braced on a bench, elbows out; strict upper-back work with no lower-back fatigue.
+  actions: {Scapula / Retraction: 4, Shoulder / Horizontal Abduction: 4, Elbow / Flexion: 3, Shoulder / Extension: 3}
+- name: Seal Row
+  equipment: Barbell
+  note: Lying face-down on a high bench removes all momentum and lower-back strain.
+  actions: {Scapula / Retraction: 5, Shoulder / Extension: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 3}
+- name: Assisted Pull-Up Machine
+  equipment: Machine
+  note: Lets you take vertical pulls close to failure at any strength level.
+  actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
+- name: Kelso Shrug
+  equipment: Dumbbell
+  note: Chest-supported shrug pulling the shoulder blades back, targeting the mid traps and rhomboids.
+  actions: {Scapula / Retraction: 5}
+- name: Spider Curl
+  equipment: Dumbbell
+  note: Chest on an incline bench; hardest at the top, so it complements stretch-focused curls.
+  actions: {Elbow / Flexion: 4}
+- name: Preacher Curl Machine
+  equipment: Machine
+  note: A good machine keeps tension in the stretched bottom range where the biceps grow most.
+  actions: {Elbow / Flexion: 5}
+- name: Cable Rope Hammer Curl
+  equipment: Cable
+  attachment: Rope
+  note: Neutral grip shifts work to the brachialis and brachioradialis with constant cable tension.
+  actions: {Elbow / Flexion: 4}
+  muscles:
+    primary: [Brachialis, Brachioradialis]
+    secondary: [Biceps]
+- name: Cross-Body Cable Triceps Extension
+  equipment: Cable
+  note: Single-arm extension across the body, comfortable on the elbow and easy to push to failure.
+  actions: {Elbow / Extension: 5}
+- name: Single-Arm Overhead Cable Extension
+  equipment: Cable
+  attachment: D-Handle
+  note: Overhead single-arm version for a deep long-head stretch without the elbows flaring.
+  actions: {Elbow / Extension: 5}
+- name: JM Press
+  equipment: Barbell
+  note: Hybrid of close-grip press and skull crusher that lets the triceps handle heavy loads.
+  actions: {Elbow / Extension: 5, Shoulder / Horizontal Adduction: 2}
+- name: Pendulum Squat
+  equipment: Machine
+  note: Arc path keeps the torso upright and the quads loaded deep in knee flexion.
+  actions: {Knee / Extension: 5, Hip / Extension: 3}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+- name: Belt Squat
+  equipment: Machine
+  note: Load hangs from the hips, so legs train to failure without the spine being the limit.
+  actions: {Knee / Extension: 5, Hip / Extension: 4}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+    secondary: [Quadriceps / Rectus Femoris, Hamstrings]
+- name: Smith Machine Squat
+  equipment: Machine
+  note: Feet slightly forward and a fixed path let you squat deep and safe near failure.
+  actions: {Knee / Extension: 5, Hip / Extension: 3}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+- name: Heel-Elevated Goblet Squat
+  equipment: Dumbbell
+  note: Raised heels allow more forward knee travel and depth, biasing the quads.
+  actions: {Knee / Extension: 4, Hip / Extension: 3}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+- name: Sissy Squat
+  equipment: Bodyweight
+  note: Hips stay extended while the knees bend, putting the rectus femoris under a big stretch.
+  actions: {Knee / Extension: 5}
+- name: Deficit Reverse Lunge
+  equipment: Dumbbell
+  note: Stepping back from a raised platform deepens hip flexion for more glute and adductor stretch.
+  actions: {Hip / Extension: 5, Knee / Extension: 3, Hip / Abduction: 2}
+  muscles:
+    primary: [Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
+    secondary: [Quadriceps, Hamstrings, Glutes / Gluteus Medius/Minimus]
+- name: Stiff-Leg Deadlift
+  equipment: Barbell
+  note: Straighter knees than an RDL push the hamstrings further into the stretch.
+  actions: {Hip / Extension: 5, Spine / Extension: 3}
+- name: B-Stance RDL
+  equipment: Dumbbell
+  note: Kickstand stance loads one leg at a time with less balance demand than a single-leg RDL.
+  actions: {Hip / Extension: 5}
+- name: 45° Hip Extension (Glute Bias)
+  equipment: Bodyweight
+  note: Round the upper back and turn the feet out to shift the work from the lower back to the glutes.
+  actions: {Hip / Extension: 5, Spine / Extension: 2}
+  muscles:
+    primary: [Glutes / Gluteus Maximus]
+    secondary: [Hamstrings, Adductors / Adductor Magnus, Erector Spinae]
+- name: Cable Glute Kickback
+  equipment: Cable
+  attachment: Ankle Strap
+  note: Lean forward so the glute starts from a stretch with the hip flexed.
+  actions: {Hip / Extension: 4}
+  muscles:
+    primary: [Glutes / Gluteus Maximus]
+    secondary: [Hamstrings]
+- name: Standing Single-Leg Curl
+  equipment: Machine
+  note: One leg at a time, with a slight forward lean to lengthen the hamstrings.
+  actions: {Knee / Flexion: 4}
+- name: Glute-Ham Raise
+  equipment: Bodyweight
+  note: Trains the hamstrings at both the knee and the hip in one movement.
+  actions: {Knee / Flexion: 5, Hip / Extension: 3}
+- name: Donkey Calf Raise
+  equipment: Machine
+  note: Hips flexed and knees straight give the gastrocnemius its deepest stretch.
+  actions: {Ankle / Plantarflexion: 5}
+  muscles:
+    primary: [Calves / Gastrocnemius]
+    secondary: [Calves / Soleus]
+- name: Machine Crunch
+  equipment: Machine
+  note: Easy to load progressively, which bodyweight crunches are not.
+  actions: {Spine / Flexion: 5}
+- name: Weighted Decline Sit-Up
+  equipment: Bodyweight
+  note: The decline and load make the abs work through a long range under real tension.
+  actions: {Spine / Flexion: 4, Hip / Flexion: 4}
+- name: Stability Ball Crunch
+  equipment: Bodyweight
+  note: The ball lets the spine extend past neutral, so the abs work from a stretch.
+  actions: {Spine / Flexion: 5}

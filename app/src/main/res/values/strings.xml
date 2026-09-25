@@ -1,0 +1,226 @@
+<resources>
+    <string name="app_name">sbl.db</string>
+
+    <!-- Navigation -->
+    <string name="tab_home">Home</string>
+    <string name="tab_actions">Actions</string>
+    <string name="tab_log">Log</string>
+    <string name="tab_settings">Settings</string>
+    <string name="back">Back</string>
+
+    <!-- Workout home -->
+    <string name="start_workout">Start workout</string>
+    <string name="resume_workout">Resume workout</string>
+    <string name="history">History</string>
+    <string name="module_session">01 · Session</string>
+    <string name="ready_to_train">Ready when you are</string>
+    <string name="in_progress">In progress</string>
+    <string name="library_label">Library · %1$d moves</string>
+    <string name="pick_label">Pick one · %1$d moves</string>
+    <string name="module_joint_actions">01 · Joint actions</string>
+    <string name="module_muscles_2">02 · Muscles</string>
+    <string name="best_e1rm_3">03 · Best estimated 1RM</string>
+    <string name="actions_label">Library · %1$d joint actions</string>
+    <string name="search_actions">Search actions or muscles</string>
+    <string name="all_exercises_label">A–Z</string>
+    <string name="all_exercises">All exercises</string>
+    <string name="module_trains">01 · Trains</string>
+    <string name="module_what_it_is">01 · What it is</string>
+    <string name="module_why_it_matters">02 · Why it matters</string>
+    <string name="module_action_muscles">03 · Muscles</string>
+    <string name="module_how_to_feel_it">04 · How to feel it</string>
+    <string name="module_exercises_numbered">05 · Exercises · %1$d</string>
+    <string name="roles">Roles</string>
+    <string name="tab_overview">Overview</string>
+    <string name="tab_muscles_count">Muscles · %1$d</string>
+    <string name="tab_exercises_count">Exercises · %1$d</string>
+    <string name="tab_actions_count">Actions · %1$d</string>
+    <string name="summary_main">main</string>
+    <string name="summary_exercises">exercises</string>
+    <string name="summary_main_actions">main actions</string>
+    <string name="summary_regions">regions</string>
+    <string name="section_what_it_is">What it is</string>
+    <string name="section_why_it_matters">Why it matters</string>
+    <string name="section_how_to_feel_it">How to feel it</string>
+    <string name="section_about">About</string>
+    <string name="regions">Regions</string>
+    <string name="top_picks">Top picks</string>
+    <string name="see_all_exercises">See all %1$d exercises</string>
+    <string name="tap_to_expand">Tap a muscle to see how it takes part</string>
+    <string name="sorted_by_rating">Best first</string>
+    <string name="role_main">Main</string>
+    <string name="role_helper">Helper</string>
+    <string name="role_prime_mover">Prime mover</string>
+    <string name="role_synergist">Synergist</string>
+    <string name="muscle_label">Muscle</string>
+    <string name="module_about">01 · About</string>
+    <string name="module_regions">02 · Regions</string>
+    <string name="module_muscle_actions">03 · Joint actions</string>
+    <string name="module_best_exercises">04 · Best exercises</string>
+    <string name="about_muscle">About %1$s</string>
+    <string name="glossary">Glossary</string>
+    <string name="glossary_short">?</string>
+    <string name="glossary_label">Learn · %1$d terms</string>
+    <string name="glossary_hint">Terms used in the app, explained</string>
+    <string name="prime_movers">Prime movers</string>
+    <string name="helpers">Helpers</string>
+    <string name="module_exercises">02 · Exercises · %1$d</string>
+    <string name="rating_short">Rating</string>
+    <string name="rating_explainer">Rating = how directly and how hard the exercise loads this action through a full range, favouring load in the stretched position. 5 = one of the best choices, 1 = barely involved.</string>
+    <string name="home_label">Week %1$d · %2$s</string>
+    <string name="module_this_week">01 · This week</string>
+    <string name="module_next_up">02 · Next up</string>
+    <string name="module_in_progress">02 · In progress</string>
+    <string name="start_routine">Start %1$s</string>
+    <string name="no_routine_hint">Build a routine to get a suggested session here</string>
+    <string name="module_volume_check">03 · Volume check</string>
+    <string name="lagging_hint">Furthest below 10 hard sets this week</string>
+    <string name="all_in_zone">Every muscle you train is in the 10–20 zone this week.</string>
+    <string name="module_last_session">04 · Last session</string>
+    <string name="module_routines">05 · Routines</string>
+    <string name="start_empty_workout">Start empty workout</string>
+    <string name="routine">Routine</string>
+    <string name="routine_empty">No exercises yet</string>
+    <string name="start">Start</string>
+    <string name="new_routine">New routine</string>
+    <string name="new_routine_name">Routine %1$d</string>
+    <string name="edit_routine">Edit routine</string>
+    <string name="routine_name_hint">Tap the name to rename it. Changes save as you go.</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="sets_label">Sets</string>
+    <string name="reps_min">Min reps</string>
+    <string name="reps_max">Max reps</string>
+    <string name="delete_routine">Delete routine</string>
+    <string name="delete_routine_message">The routine is deleted. Workouts you already logged with it stay in your history.</string>
+    <string name="log_label">Log · %1$d</string>
+    <string name="previous_month">Previous month</string>
+    <string name="next_month">Next month</string>
+    <string name="module_calendar">01 · Calendar</string>
+    <string name="rest_day">No workout logged this day.</string>
+    <string name="module_month_stats">02 · This month</string>
+    <string name="sessions">Sessions</string>
+    <string name="hard_sets">Hard sets</string>
+    <string name="top_muscles">Most trained</string>
+    <string name="avg_per_week">Average hard sets per week</string>
+    <string name="by_session">By session</string>
+    <string name="module_weekly_volume">03 · Weekly volume</string>
+    <string name="weekly_volume_cta">Sets per muscle, week by week</string>
+    <string name="no_estimate">No estimate yet: log a set of 12 reps or fewer.</string>
+    <string name="e1rm_hint">Epley estimate from sets of 12 reps or fewer</string>
+    <string name="volume_label">Weekly volume · %1$s – %2$s</string>
+    <string name="in_zone">In zone</string>
+    <string name="below_zone">Below 10</string>
+    <string name="above_zone">Above 20</string>
+    <string name="module_by_muscle">02 · By muscle</string>
+    <string name="zone_legend">Zone 10–20</string>
+    <string name="frequency_short">%1$d×/week</string>
+    <string name="volume_explainer_short">One dot = one hard set. Secondary muscles earn half a dot. Warm-ups and RIR above 4 do not count.</string>
+    <string name="no_workouts">No workouts yet. Start your first one!</string>
+    <string name="workout_summary">%1$s · %2$s</string>
+    <plurals name="summary_helpers">
+        <item quantity="one">helper</item>
+        <item quantity="other">helpers</item>
+    </plurals>
+    <plurals name="session_count">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+    <plurals name="exercise_count">
+        <item quantity="one">%d exercise</item>
+        <item quantity="other">%d exercises</item>
+    </plurals>
+    <plurals name="set_count">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
+
+    <!-- Active workout -->
+    <string name="add_exercise">Add exercise</string>
+    <string name="finish">Finish</string>
+    <string name="discard">Discard</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="finish_title">Finish workout?</string>
+    <string name="finish_message">Sets not marked as done will be removed.</string>
+    <string name="discard_title">Discard workout?</string>
+    <string name="discard_message">All sets of this workout will be deleted.</string>
+    <string name="add_set">Add set</string>
+    <string name="remove_exercise">Remove exercise</string>
+    <string name="col_set">Set</string>
+    <string name="col_previous">Previous</string>
+    <string name="col_reps">Reps</string>
+    <string name="col_rir">RIR</string>
+    <string name="warmup_short">W</string>
+    <string name="toggle_warmup">Toggle warm-up</string>
+    <string name="mark_done">Mark set as done</string>
+    <string name="delete_set">Delete set</string>
+    <string name="empty_workout">Add an exercise to start logging sets.</string>
+    <string name="rir_hint">RIR = reps in reserve. Sets with RIR above 4 do not count toward volume.</string>
+    <string name="workout_name">Workout name</string>
+    <string name="module_time">01 · Time</string>
+    <string name="module_hard_sets">02 · Hard sets</string>
+    <string name="module_now">Now</string>
+    <string name="module_next">Next</string>
+    <string name="module_done">Done</string>
+    <string name="live_since">Live · since %1$s</string>
+    <string name="sets_done_of">%1$d / %2$d sets</string>
+    <string name="col_load">Load (%1$s)</string>
+    <string name="col_effort">Effort</string>
+    <string name="last_time">Last</string>
+    <string name="target">Target</string>
+    <string name="first_time">First time on this exercise</string>
+    <string name="log_set">Log set %1$d</string>
+    <string name="log_warmup">Log warm-up</string>
+    <string name="undo_set">Mark set as not done</string>
+    <string name="rir_hint_short">RIR above 4 does not count toward volume</string>
+
+    <!-- Workout detail -->
+    <string name="delete_workout">Delete workout</string>
+    <string name="delete_workout_message">This workout will be permanently deleted.</string>
+
+    <!-- Exercises -->
+    <string name="search_exercises">Search exercises</string>
+    <string name="all_groups">All</string>
+    <string name="primary">Primary</string>
+    <string name="secondary">Secondary</string>
+    <string name="best_e1rm">02 · Best estimated 1RM</string>
+    <string name="no_history">No sets logged for this exercise yet.</string>
+    <string name="muscles">Muscles</string>
+    <string name="equipment_attachment">%1$s · %2$s</string>
+
+    <!-- Volume -->
+    <string name="this_week">This week</string>
+    <string name="last_week">Last week</string>
+    <string name="week_of">Week of %1$s</string>
+    <string name="previous_week">Previous week</string>
+    <string name="next_week">Next week</string>
+    <string name="frequency">%1$d×/week</string>
+    <string name="sets_value">%1$s sets</string>
+    <string name="band_low">Low</string>
+    <string name="band_optimal">Optimal</string>
+    <string name="band_high">High</string>
+    <string name="volume_explainer">Weekly hard sets per muscle. A set counts 1 for primary muscles and 0.5 for secondary ones; warm-ups and sets with RIR above 4 are excluded. Reference range: 10–20 sets per week.</string>
+    <string name="no_regions">No region-specific work this week.</string>
+
+    <!-- Settings -->
+    <string name="weight_unit">Weight unit</string>
+    <string name="unit_kg">kg</string>
+    <string name="unit_lb">lb</string>
+    <string name="settings_label">Preferences</string>
+    <string name="settings_appearance">01 · Appearance</string>
+    <string name="settings_explanations">02 · Explanations</string>
+    <string name="settings_units">03 · Units</string>
+    <string name="settings_about">04 · About</string>
+    <string name="level_beginner">Beginner</string>
+    <string name="level_expert">Expert</string>
+    <string name="explanations_basic_hint">Plain-language explanations of joint actions, muscles and terms.</string>
+    <string name="explanations_expert_hint">Technical explanations with biomechanics, muscle lengths and training details.</string>
+    <string name="open_glossary">Open the glossary</string>
+    <string name="theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="accent_color">Accent color</string>
+    <string name="about">sbl.db is completely free: science-based training, no paywalls.</string>
+</resources>

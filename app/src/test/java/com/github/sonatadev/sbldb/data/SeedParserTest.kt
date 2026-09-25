@@ -65,7 +65,7 @@ class SeedParserTest {
     fun `every exercise has at least one primary muscle`() {
         val none = exercises.filter { e -> MuscleDerivation.derive(e, actionsByKey).values.none { it == com.github.sonatadev.sbldb.data.entity.Role.PRIMARY } }
         // Isometric or low-rated movements may legitimately have no primary muscle
-        val allowed = setOf("Plank", "Farmer's Carry", "Pallof Press")
+        val allowed = setOf("Plank", "Farmer's Carry", "Pallof Press", "Jefferson Curl")
         assertTrue(none.map { it.name }.filter { it !in allowed }.toString(), none.all { it.name in allowed })
     }
 

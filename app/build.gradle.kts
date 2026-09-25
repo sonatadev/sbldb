@@ -41,6 +41,11 @@ android {
     sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 }
 
+// Content tests read the YAML in src/main/assets directly, so edits there must rerun them
+tasks.withType<Test>().configureEach {
+    inputs.dir("src/main/assets")
+}
+
 ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }

@@ -742,3 +742,51 @@
   equipment: Dumbbell
   note: Unsupported version of the incline Y-raise; lighter weights and a strict torso keep the lower traps working.
   actions: {Scapula / Upward Rotation: 4, Shoulder / Abduction: 3, Scapula / Depression: 2}
+
+# ---------- Named classics ----------
+- name: Zottman Curl
+  aliases: [Curl Zottman]
+  equipment: Dumbbell
+  note: Curl up with palms facing up, turn them down at the top and lower slowly with an overhand grip, so the lowering phase loads the brachialis and brachioradialis.
+  actions: {Elbow / Flexion: 4, Forearm / Supination: 3, Forearm / Pronation: 2}
+- name: Drag Curl
+  aliases: [Curl trascinato]
+  equipment: Barbell
+  note: The bar slides up along the torso while the elbows travel back, which keeps the front delts out of the movement.
+  actions: {Elbow / Flexion: 4, Shoulder / Extension: 1}
+- name: Lu Raise
+  aliases: [Lu Xiaojun raise, Alzate laterali fino sopra la testa]
+  equipment: Dumbbell
+  note: A lateral raise continued all the way overhead with the thumbs up; side delts work through the full arc, with the traps and serratus rotating the shoulder blades.
+  actions: {Shoulder / Abduction: 4, Scapula / Upward Rotation: 4, Scapula / Elevation: 2}
+- name: Cuban Press
+  aliases: [Cuban rotation press]
+  equipment: Dumbbell
+  note: Upright row to elbow height, rotate the forearms up, then press overhead; a light drill for the rotator cuff and overhead positions.
+  actions: {Shoulder / External Rotation: 4, Shoulder / Abduction: 3, Scapula / Upward Rotation: 2, Elbow / Extension: 2}
+- name: Spanish Squat
+  aliases: [Squat spagnolo]
+  equipment: Band
+  note: A heavy band behind the knees lets you sit back with vertical shins, loading the quads with little strain on the knees.
+  actions: {Knee / Extension: 4}
+  muscles:
+    primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
+    secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus]
+- name: Tate Press
+  aliases: [Tate press manubri]
+  equipment: Dumbbell
+  note: Lying on a bench with elbows flared, lower the dumbbells toward the chest and press them back out using only the elbows.
+  actions: {Elbow / Extension: 4}
+- name: Frog Pump
+  aliases: [Glute bridge a rana]
+  equipment: Bodyweight
+  note: A glute bridge with the soles of the feet together and knees out; high-rep glute work near full hip extension.
+  actions: {Hip / Extension: 4, Hip / External Rotation: 3}
+  muscles:
+    primary: [Glutes / Gluteus Maximus]
+    secondary: [Hamstrings, Glutes / Gluteus Medius/Minimus]
+- name: Jefferson Curl
+  aliases: [Jefferson curl]
+  equipment: Barbell
+  note: Light and slow, rolling the spine down one vertebra at a time and back up; mobility and back-extensor control, not a strength lift.
+  actions: {Spine / Extension: 3, Hip / Extension: 2}

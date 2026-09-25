@@ -14,8 +14,8 @@ android {
         applicationId = "com.github.sonatadev.sbldb"
         minSdk = 24
         targetSdk = 37
-        versionCode = 12
-        versionName = "0.12.0"
+        versionCode = 13
+        versionName = "0.13.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,6 +33,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
         isCoreLibraryDesugaringEnabled = true
+    }
+    lint {
+        // Every string needs its Italian version too
+        error += "MissingTranslation"
     }
     buildFeatures {
         compose = true

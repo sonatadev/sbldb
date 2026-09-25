@@ -50,6 +50,7 @@ import com.github.sonatadev.sbldb.ui.formatDate
 import com.github.sonatadev.sbldb.ui.formatDuration
 import com.github.sonatadev.sbldb.ui.formatSets
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
+import com.github.sonatadev.sbldb.ui.weekdayLetters
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
 import kotlinx.coroutines.delay
 import java.time.LocalDate
@@ -57,7 +58,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.IsoFields
 import java.util.Locale
 
-private val heroDate = DateTimeFormatter.ofPattern("EEE d", Locale.ENGLISH)
+private val heroDate: DateTimeFormatter get() = DateTimeFormatter.ofPattern("EEE d", Locale.getDefault())
 
 @Composable
 fun HomeScreen(
@@ -232,7 +233,7 @@ private fun NextRoutine(routine: RoutineWithExercises) {
 private fun WeekStrip(monday: LocalDate, today: LocalDate, trained: Set<LocalDate>, modifier: Modifier) {
     val colors = SbldbTheme.colors
     Row(modifier, horizontalArrangement = Arrangement.SpaceBetween) {
-        listOf("M", "T", "W", "T", "F", "S", "S").forEachIndexed { i, letter ->
+        weekdayLetters().forEachIndexed { i, letter ->
             val day = monday.plusDays(i.toLong())
             val done = day in trained
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {

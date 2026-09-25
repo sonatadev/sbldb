@@ -53,6 +53,7 @@ object ContentValidator {
 
         content.actions.forEach { a ->
             if (a.primary.isEmpty()) problems += "${a.key} has no prime mover"
+            a.animation?.problem()?.let { problems += "${a.key}: $it" }
             (a.primary + a.secondary).filter { it !in known }.forEach { problems += "${a.key}: unknown muscle $it" }
         }
         content.exercises.forEach { e ->

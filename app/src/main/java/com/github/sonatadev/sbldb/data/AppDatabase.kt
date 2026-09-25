@@ -38,7 +38,7 @@ import com.github.sonatadev.sbldb.data.entity.WorkoutSet
         Routine::class, RoutineExercise::class, GlossaryTerm::class,
         ExerciseNote::class, BodyEntry::class, MuscleTarget::class
     ],
-    version = 7
+    version = 8
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDAO(): ExerciseDAO
@@ -58,6 +58,13 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         /** Set types, notes, rest times, routine frequency, custom exercises, body entries, volume targets. */
+        /** Joint-action animations, filled by the next content sync. */
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE joint_actions ADD COLUMN animation TEXT")
+            }
+        }
+
         val MIGRATION_6_7 = object : Migration(6, 7) {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE workout_sets ADD COLUMN setType TEXT NOT NULL DEFAULT 'NORMAL'")
@@ -116,7 +123,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "sbldb_database"
                 )
-                    .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+                    .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                     // Versions 1–2 only ever existed on development devices
                     .fallbackToDestructiveMigrationFrom(true, 1, 2)
                     .build()

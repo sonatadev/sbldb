@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb
 
+import com.github.sonatadev.sbldb.R
 import android.app.Application
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.backup.BackupManager
@@ -20,7 +21,15 @@ import kotlinx.coroutines.launch
 class AppContainer(application: Application) {
     val database = AppDatabase.getDatabase(application)
     val exerciseRepository = ExerciseRepository(database)
-    val workoutRepository = WorkoutRepository(database)
+    val workoutRepository = WorkoutRepository(database) { part ->
+        application.getString(
+            when (part) {
+                WorkoutRepository.PartOfDay.MORNING -> R.string.workout_morning
+                WorkoutRepository.PartOfDay.AFTERNOON -> R.string.workout_afternoon
+                WorkoutRepository.PartOfDay.EVENING -> R.string.workout_evening
+            }
+        )
+    }
     val settingsRepository = SettingsRepository(application)
     val jointActionRepository = JointActionRepository(database)
     val routineRepository = RoutineRepository(database)

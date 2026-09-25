@@ -49,6 +49,18 @@ object ContentSource {
         return ContentFiles(files.mapValues { it.value.readBytes() })
     }
 
+    /**
+     * An app update ships the repository's content as of its build, which can be newer than the
+     * last download (for example after updating offline). A download older than the installed APK
+     * is dropped, so the bundled copy is used and the next check downloads GitHub's afresh.
+     */
+    fun dropCacheIfOlderThanApk(context: Context) {
+        val manifest = File(cacheDir(context), MANIFEST)
+        if (!manifest.exists()) return
+        val installed = runCatching { context.packageManager.getPackageInfo(context.packageName, 0).lastUpdateTime }.getOrNull() ?: return
+        if (manifest.lastModified() < installed) cacheDir(context).deleteRecursively()
+    }
+
     fun saveCache(context: Context, content: ContentFiles) {
         val dir = cacheDir(context).apply { mkdirs() }
         ALL_FILES.forEach { name ->

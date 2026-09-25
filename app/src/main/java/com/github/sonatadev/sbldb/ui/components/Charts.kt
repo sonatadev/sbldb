@@ -23,7 +23,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val chartDate = DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
+private val chartDate: DateTimeFormatter get() = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
 
 /**
  * Line of a value over time (e.g. best e1RM per session), x spaced by real dates.

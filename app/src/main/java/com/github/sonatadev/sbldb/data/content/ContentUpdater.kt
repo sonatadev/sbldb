@@ -8,8 +8,8 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
- * Keeps the library content current: starts from the best local copy (last GitHub download,
- * else the APK), then checks GitHub and applies new content only after it passes validation.
+ * Keeps the library content current: starts from the best local copy (last GitHub download if it
+ * is newer than the installed APK, else the APK's own copy), then checks GitHub and applies new content only after it passes validation.
  */
 class ContentUpdater(
     private val context: Context,
@@ -19,6 +19,7 @@ class ContentUpdater(
     private val mutex = Mutex()
 
     suspend fun loadLocal() = mutex.withLock {
+        ContentSource.dropCacheIfOlderThanApk(context)
         val cached = ContentSource.cached(context)?.takeIf { ContentValidator.check(it) is ContentValidator.Result.Valid }
         SeedData.sync(cached ?: ContentSource.bundled(context), db, settings)
         settings.setContentStatus(source = if (cached != null) SOURCE_GITHUB else SOURCE_APP, checkedAt = null, error = null)

@@ -100,7 +100,7 @@ fun CustomExerciseScreen(
         }
         item {
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_basics)) {
-                TextInput(stringResource(R.string.field_name), form.name, { v -> viewModel.edit { it.copy(name = v) } }, placeholder = "Incline Machine Press")
+                TextInput(stringResource(R.string.field_name), form.name, { v -> viewModel.edit { it.copy(name = v) } }, placeholder = stringResource(R.string.placeholder_exercise_name))
                 MonoCaption(stringResource(R.string.field_equipment))
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     EquipmentOptions.forEach { option ->
@@ -108,7 +108,7 @@ fun CustomExerciseScreen(
                         MonoChip(option, filled = selected, onClick = { viewModel.edit { it.copy(equipment = option) } })
                     }
                 }
-                TextInput(stringResource(R.string.field_attachment), form.attachment, { v -> viewModel.edit { it.copy(attachment = v) } }, placeholder = "Rope, V-handle…")
+                TextInput(stringResource(R.string.field_attachment), form.attachment, { v -> viewModel.edit { it.copy(attachment = v) } }, placeholder = stringResource(R.string.placeholder_attachment))
                 TextInput(stringResource(R.string.field_note), form.note, { v -> viewModel.edit { it.copy(note = v) } }, singleLine = false)
                 TextInput(stringResource(R.string.field_aliases), form.aliases, { v -> viewModel.edit { it.copy(aliases = v) } }, placeholder = stringResource(R.string.aliases_hint))
             }

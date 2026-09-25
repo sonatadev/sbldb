@@ -18,7 +18,7 @@ class MigrationTest {
     val helper = MigrationTestHelper(InstrumentationRegistry.getInstrumentation(), AppDatabase::class.java)
 
     @Test
-    fun migrate3To7KeepsWorkouts() {
+    fun migrate3To8KeepsWorkouts() {
         helper.createDatabase(dbName, 3).apply {
             execSQL("INSERT INTO exercises (exerciseId, name, equipment, attachment) VALUES (1, 'Barbell Row', 'Barbell', NULL)")
             execSQL("INSERT INTO workouts (workoutId, name, startedAt, endedAt, notes, routineId) VALUES (1, 'Upper', 1000, 2000, NULL, NULL)")
@@ -29,8 +29,9 @@ class MigrationTest {
         }
 
         val db = helper.runMigrationsAndValidate(
-            dbName, 7, true,
-            AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6, AppDatabase.MIGRATION_6_7
+            dbName, 8, true,
+            AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6, AppDatabase.MIGRATION_6_7,
+            AppDatabase.MIGRATION_7_8
         )
 
         db.query("SELECT name, note FROM exercises WHERE exerciseId = 1").use { c ->
@@ -45,6 +46,10 @@ class MigrationTest {
         db.query("SELECT setType FROM workout_sets ORDER BY setId").use { c ->
             c.moveToFirst(); assertEquals("NORMAL", c.getString(0))
             c.moveToNext(); assertEquals("WARMUP", c.getString(0))
+        }
+        db.query("SELECT COUNT(animation) FROM joint_actions").use { c ->
+            c.moveToFirst()
+            assertEquals(0, c.getInt(0))
         }
         db.query("SELECT weightKg, reps FROM workout_sets WHERE setId = 1").use { c ->
             c.moveToFirst()

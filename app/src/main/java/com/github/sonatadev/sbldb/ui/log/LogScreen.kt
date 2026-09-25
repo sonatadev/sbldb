@@ -47,6 +47,7 @@ import com.github.sonatadev.sbldb.ui.components.StatusDot
 import com.github.sonatadev.sbldb.ui.formatDuration
 import com.github.sonatadev.sbldb.ui.formatSets
 import com.github.sonatadev.sbldb.ui.formatTime
+import com.github.sonatadev.sbldb.ui.weekdayLetters
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
 import java.time.LocalDate
@@ -54,8 +55,8 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val monthFormatter = DateTimeFormatter.ofPattern("MMM", Locale.ENGLISH)
-private val dayFormatter = DateTimeFormatter.ofPattern("EEE d MMM", Locale.ENGLISH)
+private val monthFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("MMM", Locale.getDefault())
+private val dayFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("EEE d MMM", Locale.getDefault())
 
 @Composable
 fun LogScreen(
@@ -161,7 +162,7 @@ private fun Calendar(month: YearMonth, selected: LocalDate, counts: Map<LocalDat
     val today = LocalDate.now()
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Row(Modifier.fillMaxWidth()) {
-            listOf("M", "T", "W", "T", "F", "S", "S").forEach {
+            weekdayLetters().forEach {
                 Text(it, style = SbldbType.label, color = colors.dim, textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
             }
         }

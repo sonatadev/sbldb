@@ -19,7 +19,9 @@ data class JointAction(
     val whyBasic: String? = null,
     val whyExpert: String? = null,
     val feelBasic: String? = null,
-    val feelExpert: String? = null
+    val feelExpert: String? = null,
+    /** [com.github.sonatadev.sbldb.domain.ActionAnimation] in its encoded form, if the content has one. */
+    val animation: String? = null
 )
 
 /** A muscle that produces a joint action; PRIMARY = prime mover, SECONDARY = helper. */

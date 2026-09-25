@@ -8,8 +8,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val dateFormatter = DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.ENGLISH)
-private val shortDateFormatter = DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH)
+private val dateFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.getDefault())
+private val shortDateFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("d MMM", Locale.getDefault())
 
 fun formatDate(millis: Long): String =
     Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).format(dateFormatter)
@@ -38,7 +38,7 @@ fun formatClock(millis: Long): String {
     return if (h > 0) "%d:%02d:%02d".format(h, m, s) else "%02d:%02d".format(m, s)
 }
 
-private val timeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH)
+private val timeFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault())
 
 fun formatTime(millis: Long): String =
     Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).format(timeFormatter)
@@ -53,3 +53,7 @@ fun formatSet(weightKg: Double?, reps: Int?, rir: Int?, unit: WeightUnit): Strin
     append("× ${reps ?: "–"}")
     if (rir != null) append(" @$rir")
 }
+
+/** Monday-first one-letter weekday names in the app's language (M T W… or L M M…). */
+fun weekdayLetters(): List<String> =
+    java.time.DayOfWeek.entries.map { it.getDisplayName(java.time.format.TextStyle.NARROW, Locale.getDefault()).uppercase() }

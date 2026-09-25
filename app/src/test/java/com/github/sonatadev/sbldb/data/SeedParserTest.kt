@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
@@ -67,6 +68,15 @@ class SeedParserTest {
         // Isometric or low-rated movements may legitimately have no primary muscle
         val allowed = setOf("Plank", "Farmer's Carry", "Pallof Press", "Jefferson Curl")
         assertTrue(none.map { it.name }.filter { it !in allowed }.toString(), none.all { it.name in allowed })
+    }
+
+    @Test
+    fun `every joint action has a valid animation`() {
+        actions.forEach { a ->
+            val animation = a.animation
+            assertTrue("${a.key} has no animation", animation != null)
+            assertEquals("${a.key}: ${animation!!.problem()}", null, animation.problem())
+        }
     }
 
     @Test

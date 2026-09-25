@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.github.sonatadev.sbldb.R
+import com.github.sonatadev.sbldb.ui.UiText
 
 data class SettingsUiState(
     val weightUnit: WeightUnit = WeightUnit.KG,
@@ -43,7 +45,7 @@ class SettingsViewModel(
     private val checking = MutableStateFlow(false)
 
     /** Short result of the last data action, shown under the buttons. */
-    val dataMessage = MutableStateFlow<String?>(null)
+    val dataMessage = MutableStateFlow<UiText?>(null)
     val pendingRestore = MutableStateFlow<PendingRestore?>(null)
 
     private val preferences = combine(settings.weightUnit, settings.themeMode, settings.accentColor, settings.explanationLevel) { unit, mode, accent, level ->
@@ -56,9 +58,9 @@ class SettingsViewModel(
         }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
-    fun exportJson(uri: Uri) = dataAction { backups.write(uri, backups.exportJson()); "Backup saved" }
+    fun exportJson(uri: Uri) = dataAction { backups.write(uri, backups.exportJson()); UiText.Res(R.string.msg_backup_saved) }
 
-    fun exportCsv(uri: Uri) = dataAction { backups.write(uri, backups.exportCsv()); "CSV saved" }
+    fun exportCsv(uri: Uri) = dataAction { backups.write(uri, backups.exportCsv()); UiText.Res(R.string.msg_csv_saved) }
 
     fun inspect(uri: Uri) = dataAction {
         val json = backups.read(uri)
@@ -69,7 +71,7 @@ class SettingsViewModel(
     fun confirmRestore() {
         val pending = pendingRestore.value ?: return
         pendingRestore.value = null
-        dataAction { backups.restore(pending.json); "Backup restored: ${pending.summary.workouts} workouts" }
+        dataAction { backups.restore(pending.json); UiText.Res(R.string.msg_restored, listOf(pending.summary.workouts)) }
     }
 
     fun cancelRestore() {
@@ -78,17 +80,23 @@ class SettingsViewModel(
 
     fun setBackupFolder(uri: Uri?) = dataAction {
         settings.setBackupFolder(uri?.toString())
-        if (uri != null && !backups.autoBackup()) "Could not write to that folder" else if (uri != null) "Backed up to the folder" else "Automatic backup turned off"
+        UiText.Res(
+            when {
+                uri == null -> R.string.msg_backup_off
+                backups.autoBackup() -> R.string.msg_backup_folder_ok
+                else -> R.string.msg_backup_folder_failed
+            }
+        )
     }
 
-    private fun dataAction(block: suspend () -> String?) {
+    private fun dataAction(block: suspend () -> UiText?) {
         viewModelScope.launch {
             dataMessage.value = try {
                 block()
             } catch (e: BackupException) {
-                e.message
+                e.message?.let(UiText::Raw)
             } catch (e: Exception) {
-                "Something went wrong: ${e.message}"
+                UiText.Res(R.string.msg_error, listOf(e.message.orEmpty()))
             }
         }
     }

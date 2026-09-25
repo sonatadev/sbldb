@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">sbl.db</string>
+    <string name="app_name" translatable="false">sbl.db</string>
 
     <!-- Navigation -->
     <string name="tab_home">Home</string>
@@ -59,7 +59,7 @@
     <string name="module_best_exercises">04 · Best exercises</string>
     <string name="about_muscle">About %1$s</string>
     <string name="glossary">Glossary</string>
-    <string name="glossary_short">?</string>
+    <string name="glossary_short" translatable="false">?</string>
     <string name="glossary_label">Learn · %1$d terms</string>
     <string name="glossary_hint">Terms used in the app, explained</string>
     <string name="prime_movers">Prime movers</string>
@@ -150,7 +150,7 @@
     <string name="col_set">Set</string>
     <string name="col_previous">Previous</string>
     <string name="col_reps">Reps</string>
-    <string name="col_rir">RIR</string>
+    <string name="col_rir" translatable="false">RIR</string>
     <string name="warmup_short">W</string>
     <string name="toggle_warmup">Toggle warm-up</string>
     <string name="mark_done">Mark set as done</string>
@@ -218,8 +218,8 @@
 
     <!-- Settings -->
     <string name="weight_unit">Weight unit</string>
-    <string name="unit_kg">kg</string>
-    <string name="unit_lb">lb</string>
+    <string name="unit_kg" translatable="false">kg</string>
+    <string name="unit_lb" translatable="false">lb</string>
     <string name="settings_label">Preferences</string>
     <string name="settings_appearance">01 · Appearance</string>
     <string name="settings_explanations">02 · Explanations</string>
@@ -286,7 +286,7 @@
     <string name="delete_exercise">Delete exercise</string>
     <string name="delete_exercise_message">If it is already in your history or a routine it is hidden from lists instead, so past workouts stay intact.</string>
     <string name="module_actions_2">02 · Joint actions</string>
-    <string name="pr">PR</string>
+    <string name="pr" translatable="false">PR</string>
     <string name="next_label">NEXT</string>
     <string name="next_apply">Fill</string>
     <string name="next_add_load">Top of the range last time: more load</string>
@@ -370,4 +370,20 @@
     <string name="onboarding_backup_text">Pick a folder, for example on Google Drive, and the app saves a copy of your data there after every workout. It keeps the latest plus one per week for a month.</string>
     <string name="onboarding_backup_on">Automatic backup is on</string>
     <string name="onboarding_backup_later">Optional · you can set it later in Settings → Your data</string>
+    <string name="module_movement">Movement</string>
+    <string name="view_side">Side view</string>
+    <string name="view_front">Front view</string>
+    <string name="view_top">From above</string>
+    <string name="msg_backup_saved">Backup saved</string>
+    <string name="msg_csv_saved">CSV saved</string>
+    <string name="msg_restored">Backup restored: %1$d workouts</string>
+    <string name="msg_backup_off">Automatic backup turned off</string>
+    <string name="msg_backup_folder_ok">Backed up to the folder</string>
+    <string name="msg_backup_folder_failed">Could not write to that folder</string>
+    <string name="msg_error">Something went wrong: %1$s</string>
+    <string name="placeholder_exercise_name">Incline Machine Press</string>
+    <string name="placeholder_attachment">Rope, V-handle…</string>
+    <string name="workout_morning">Morning workout</string>
+    <string name="workout_afternoon">Afternoon workout</string>
+    <string name="workout_evening">Evening workout</string>
 </resources>

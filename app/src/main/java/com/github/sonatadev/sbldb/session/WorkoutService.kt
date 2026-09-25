@@ -109,7 +109,9 @@ class WorkoutService : Service() {
     private fun vibrate() {
         val vibrator = if (Build.VERSION.SDK_INT >= 31) getSystemService(VibratorManager::class.java).defaultVibrator
         else @Suppress("DEPRECATION") getSystemService(Vibrator::class.java)
-        vibrator.vibrate(VibrationEffect.createWaveform(longArrayOf(0, 300, 150, 300), -1))
+        val pattern = longArrayOf(0, 300, 150, 300)
+        if (Build.VERSION.SDK_INT >= 26) vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+        else @Suppress("DEPRECATION") vibrator.vibrate(pattern, -1)
     }
 
     override fun onDestroy() {
@@ -124,6 +126,8 @@ class WorkoutService : Service() {
         private const val REST_ID = 2
 
         fun createChannels(context: Context) {
+            // Channels exist from Android 8; older versions use the builder's own priority
+            if (Build.VERSION.SDK_INT < 26) return
             val manager = context.getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(
                 NotificationChannel(CHANNEL_WORKOUT, context.getString(R.string.channel_workout), NotificationManager.IMPORTANCE_LOW)

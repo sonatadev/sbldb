@@ -17,6 +17,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import com.github.sonatadev.sbldb.domain.ActionAnimation
+import com.github.sonatadev.sbldb.domain.Dof
+import com.github.sonatadev.sbldb.domain.FigureView
+import com.github.sonatadev.sbldb.ui.components.JointFigure
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -73,6 +78,7 @@ fun ActionDetailScreen(
     val helperCount = state.muscles.size - mainCount
     // Muscle notes are resolved here because LazyColumn content is not composable
     val muscleNotes = state.muscles.map { explained(it.noteBasic, it.noteExpert) }
+    val animation = remember(action.animation) { ActionAnimation.decode(action.animation) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -99,6 +105,19 @@ fun ActionDetailScreen(
 
         when (tab) {
             TAB_OVERVIEW -> {
+                animation?.let { anim ->
+                    item {
+                        Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_movement), trailing = {
+                            MonoCaption(stringResource(viewLabel(anim.view)))
+                        }) {
+                            JointFigure(anim, "${action.joint} ${action.name}", Modifier.fillMaxWidth().height(220.dp))
+                            MonoCaption(
+                                "${anim.from.toInt()}${unitMark(anim)} → ${anim.to.toInt()}${unitMark(anim)}",
+                                color = colors.accent
+                            )
+                        }
+                    }
+                }
                 item {
                     Module(Modifier.fillMaxWidth()) {
                         Text(
@@ -215,6 +234,16 @@ private fun ExerciseRow(exercise: RatedExercise, onClick: () -> Unit) {
         RatingDots(exercise.rating)
     }
 }
+
+private fun viewLabel(view: FigureView): Int = when (view) {
+    FigureView.SIDE -> R.string.view_side
+    FigureView.FRONT -> R.string.view_front
+    FigureView.TOP -> R.string.view_top
+}
+
+/** Scapula moves are shifts, not angles, so they get no degree sign. */
+private fun unitMark(animation: ActionAnimation): String =
+    if (animation.dof == Dof.SCAP_ELEV || animation.dof == Dof.SCAP_PROTRACT) "" else "°"
 
 @Composable
 private fun Divider() {

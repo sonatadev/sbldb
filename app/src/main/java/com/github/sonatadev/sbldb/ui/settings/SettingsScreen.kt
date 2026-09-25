@@ -50,6 +50,7 @@ import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SegmentedControl
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.color
+import com.github.sonatadev.sbldb.ui.resolve
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -200,7 +201,7 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
                     SecondaryButton(stringResource(R.string.turn_off), onClick = { viewModel.setBackupFolder(null) }, modifier = Modifier.weight(1f))
                 }
             }
-            dataMessage?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = colors.accent) }
+            dataMessage?.let { Text(it.resolve(), style = MaterialTheme.typography.bodySmall, color = colors.accent) }
         }
 
         Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_library)) {

@@ -7,6 +7,7 @@
 # ======================= SHOULDER =======================
 - joint: Shoulder
   name: Flexion
+  animation: {view: side, dof: shoulder_flex, from: 0, to: 170}
   what:
     basic: Raising your arm forward and up in front of you, like reaching for a high shelf.
     expert: Sagittal-plane elevation of the humerus at the glenohumeral joint, from the arm at the side up to overhead; past about 60° the scapula upwardly rotates with it.
@@ -32,6 +33,7 @@
 
 - joint: Shoulder
   name: Extension
+  animation: {view: side, dof: shoulder_flex, from: 150, to: -45}
   what:
     basic: Pulling your arm down and back from in front of you, like pulling a rope toward your hips.
     expert: Sagittal-plane movement of the humerus from flexion back toward and behind the torso.
@@ -65,6 +67,7 @@
 
 - joint: Shoulder
   name: Abduction
+  animation: {view: front, dof: shoulder_abd, from: 0, to: 170}
   what:
     basic: Lifting your arm out to the side, like a lateral raise or flapping a wing.
     expert: Frontal-plane elevation of the humerus; beyond about 30° the scapula upwardly rotates in a roughly 2:1 rhythm with the humerus.
@@ -90,6 +93,7 @@
 
 - joint: Shoulder
   name: Adduction
+  animation: {view: front, dof: shoulder_abd, from: 170, to: 0}
   what:
     basic: Pulling your arm down to your side from out wide or from overhead, like a pull-up.
     expert: Frontal-plane depression of the humerus from abduction or overhead back to the side of the body.
@@ -119,6 +123,7 @@
 
 - joint: Shoulder
   name: Horizontal Adduction
+  animation: {view: top, dof: shoulder_hz, from: -20, to: 100}
   what:
     basic: Bringing your arm across the front of your body at chest height, like hugging a tree or doing a fly.
     expert: Transverse-plane movement of the humerus toward the midline with the shoulder near 90° of elevation; the defining action of the pecs.
@@ -144,6 +149,7 @@
 
 - joint: Shoulder
   name: Horizontal Abduction
+  animation: {view: top, dof: shoulder_hz, from: 100, to: -20}
   what:
     basic: Pulling your arm out and back at shoulder height, like a reverse fly or opening a double door.
     expert: Transverse-plane movement of the humerus away from the midline with the shoulder near 90° of elevation.
@@ -165,6 +171,7 @@
 
 - joint: Shoulder
   name: Internal Rotation
+  animation: {view: top, dof: shoulder_rot, from: 60, to: -70}
   what:
     basic: Turning your upper arm inward, bringing your forearm toward your belly like closing a door.
     expert: Rotation of the humerus about its long axis toward the body.
@@ -194,6 +201,7 @@
 
 - joint: Shoulder
   name: External Rotation
+  animation: {view: top, dof: shoulder_rot, from: -70, to: 80}
   what:
     basic: Turning your upper arm outward, moving your forearm away from your belly like opening a door.
     expert: Rotation of the humerus about its long axis away from the body.
@@ -216,6 +224,7 @@
 # ======================= SCAPULA =======================
 - joint: Scapula
   name: Elevation
+  animation: {view: front, dof: scap_elev, from: 0, to: 30}
   what:
     basic: Shrugging your shoulders up toward your ears.
     expert: Superior translation of the scapula on the thorax.
@@ -237,6 +246,7 @@
 
 - joint: Scapula
   name: Depression
+  animation: {view: front, dof: scap_elev, from: 20, to: -15}
   what:
     basic: Pulling your shoulder blades down, away from your ears.
     expert: Inferior translation of the scapula on the thorax.
@@ -262,6 +272,7 @@
 
 - joint: Scapula
   name: Protraction
+  animation: {view: top, dof: scap_protract, from: -20, to: 25}
   what:
     basic: Reaching forward so your shoulder blades spread apart around your ribs, like a push-up that goes a bit further.
     expert: Abduction of the scapula around the thorax.
@@ -279,6 +290,7 @@
 
 - joint: Scapula
   name: Retraction
+  animation: {view: top, dof: scap_protract, from: 25, to: -20}
   what:
     basic: Squeezing your shoulder blades together behind you.
     expert: Adduction of the scapula toward the spine.
@@ -304,6 +316,7 @@
 
 - joint: Scapula
   name: Upward Rotation
+  animation: {view: front, dof: scap_rot, from: 0, to: 60}
   what:
     basic: Your shoulder blades turning upward as you raise your arms overhead.
     expert: Rotation of the scapula so the glenoid faces upward; required for full overhead arm elevation.
@@ -329,6 +342,7 @@
 
 - joint: Scapula
   name: Downward Rotation
+  animation: {view: front, dof: scap_rot, from: 60, to: 0}
   what:
     basic: Your shoulder blades turning back down as your arms come down from overhead.
     expert: Rotation of the scapula so the glenoid faces downward, as when pulling from overhead.
@@ -351,6 +365,7 @@
 # ======================= ELBOW =======================
 - joint: Elbow
   name: Flexion
+  animation: {view: side, dof: elbow_flex, from: 5, to: 145}
   what:
     basic: Bending your elbow, bringing your hand toward your shoulder, like a curl.
     expert: Decreasing the angle between upper arm and forearm at the humeroulnar joint.
@@ -380,6 +395,7 @@
 
 - joint: Elbow
   name: Extension
+  animation: {view: side, dof: elbow_flex, from: 145, to: 5}
   what:
     basic: Straightening your elbow, like pushing a weight away or a triceps pushdown.
     expert: Increasing the angle between upper arm and forearm.
@@ -406,6 +422,7 @@
 # ======================= FOREARM =======================
 - joint: Forearm
   name: Pronation
+  animation: {view: front, dof: forearm_rot, from: 80, to: -80}
   what:
     basic: Turning your palm to face down, like turning a key or pouring water.
     expert: Rotation of the radius over the ulna at the radioulnar joints.
@@ -423,6 +440,7 @@
 
 - joint: Forearm
   name: Supination
+  animation: {view: front, dof: forearm_rot, from: -80, to: 80}
   what:
     basic: Turning your palm to face up, like turning a doorknob or a screwdriver.
     expert: Rotation of the radius back to lie parallel to the ulna.
@@ -449,6 +467,7 @@
 # ======================= WRIST =======================
 - joint: Wrist
   name: Flexion
+  animation: {view: side, dof: wrist_flex, from: -10, to: 70}
   what:
     basic: Curling your palm toward the inside of your forearm.
     expert: Flexion at the radiocarpal joint.
@@ -466,6 +485,7 @@
 
 - joint: Wrist
   name: Extension
+  animation: {view: side, dof: wrist_flex, from: 60, to: -60}
   what:
     basic: Bending the back of your hand toward the outside of your forearm.
     expert: Extension at the radiocarpal joint.
@@ -484,6 +504,7 @@
 # ======================= SPINE =======================
 - joint: Spine
   name: Flexion
+  animation: {view: side, dof: spine_flex, from: 0, to: 60}
   what:
     basic: Curling your torso forward, bringing your ribs toward your hips, like a crunch.
     expert: Flexion of the thoracic and lumbar spine.
@@ -505,6 +526,7 @@
 
 - joint: Spine
   name: Extension
+  animation: {view: side, dof: spine_flex, from: 60, to: -15}
   what:
     basic: Straightening your back, like standing up from a bent-over position, or keeping it straight under a weight.
     expert: Extension of the spine, performed dynamically or held isometrically against load.
@@ -526,6 +548,7 @@
 
 - joint: Spine
   name: Lateral Flexion
+  animation: {view: front, dof: spine_lat, from: -30, to: 30}
   what:
     basic: Bending your torso to the side.
     expert: Frontal-plane flexion of the spine.
@@ -551,6 +574,7 @@
 
 - joint: Spine
   name: Rotation
+  animation: {view: top, dof: spine_rot, from: -40, to: 40}
   what:
     basic: Twisting your torso, or stopping it from twisting.
     expert: Transverse-plane rotation of the spine, or resisting it (anti-rotation).
@@ -569,6 +593,7 @@
 # ======================= HIP =======================
 - joint: Hip
   name: Flexion
+  animation: {view: side, dof: hip_flex, from: -10, to: 100}
   what:
     basic: Lifting your thigh up toward your chest, like marching or a leg raise.
     expert: Sagittal-plane flexion at the hip joint.
@@ -594,6 +619,7 @@
 
 - joint: Hip
   name: Extension
+  animation: {view: side, dof: hip_flex, from: 100, to: -15}
   what:
     basic: Driving your thigh backward, like standing up from a squat or pushing your hips forward in a hip thrust.
     expert: Sagittal-plane extension at the hip.
@@ -623,6 +649,7 @@
 
 - joint: Hip
   name: Abduction
+  animation: {view: front, dof: hip_abd, from: 0, to: 45}
   what:
     basic: Moving your leg out to the side.
     expert: Frontal-plane abduction at the hip.
@@ -644,6 +671,7 @@
 
 - joint: Hip
   name: Adduction
+  animation: {view: front, dof: hip_abd, from: 45, to: -10}
   what:
     basic: Squeezing your leg in toward the middle of your body.
     expert: Frontal-plane adduction at the hip.
@@ -665,6 +693,7 @@
 
 - joint: Hip
   name: Internal Rotation
+  animation: {view: front, dof: hip_rot, from: 30, to: -40}
   what:
     basic: Turning your thigh inward, so your knee points toward the other leg.
     expert: Transverse-plane internal rotation of the femur.
@@ -686,6 +715,7 @@
 
 - joint: Hip
   name: External Rotation
+  animation: {view: front, dof: hip_rot, from: -40, to: 30}
   what:
     basic: Turning your thigh outward, so your knee points away from the other leg.
     expert: Transverse-plane external rotation of the femur.
@@ -708,6 +738,7 @@
 # ======================= KNEE =======================
 - joint: Knee
   name: Extension
+  animation: {view: side, dof: knee_flex, from: 110, to: 0}
   what:
     basic: Straightening your knee, like kicking or standing up from a squat.
     expert: Extension at the tibiofemoral joint.
@@ -737,6 +768,7 @@
 
 - joint: Knee
   name: Flexion
+  animation: {view: side, dof: knee_flex, from: 0, to: 120}
   what:
     basic: Bending your knee, bringing your heel toward your butt, like a leg curl.
     expert: Flexion at the tibiofemoral joint.
@@ -763,6 +795,7 @@
 # ======================= ANKLE =======================
 - joint: Ankle
   name: Plantarflexion
+  animation: {view: side, dof: ankle_flex, from: -10, to: 40}
   what:
     basic: Pointing your foot down or rising onto your toes, like a calf raise.
     expert: Plantarflexion at the talocrural joint.
@@ -784,6 +817,7 @@
 
 - joint: Ankle
   name: Dorsiflexion
+  animation: {view: side, dof: ankle_flex, from: 30, to: -20}
   what:
     basic: Pulling your toes up toward your shin.
     expert: Dorsiflexion at the talocrural joint.

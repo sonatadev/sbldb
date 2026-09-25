@@ -1,6 +1,7 @@
 package com.github.sonatadev.sbldb.data
 
 import androidx.room.withTransaction
+import com.github.sonatadev.sbldb.domain.ActionAnimation
 import com.github.sonatadev.sbldb.data.content.ContentFiles
 import com.github.sonatadev.sbldb.data.content.ContentValidator
 import com.github.sonatadev.sbldb.data.entity.Exercise
@@ -47,7 +48,8 @@ data class JointActionSeed(
     val what: Explained,
     val why: Explained,
     val feel: Explained,
-    val muscles: List<ActionMuscleSeed>
+    val muscles: List<ActionMuscleSeed>,
+    val animation: ActionAnimation? = null
 ) {
     /** How exercises refer to this action: "Shoulder / Horizontal Adduction". */
     val key: String get() = "$joint / $name"
@@ -103,7 +105,8 @@ object SeedParser {
                     val muscle = raw as Map<*, *>
                     val ref = muscle.requireString("muscle")
                     ActionMuscleSeed(MuscleRef.parse(ref), Role.valueOf(muscle.requireString("role")), muscle.explained("$key $ref"))
-                }
+                },
+                animation = (entry["animation"] as? Map<*, *>)?.let { ActionAnimation.parse(it, key) }
             )
         }
 
@@ -247,7 +250,8 @@ object SeedData {
                 whyBasic = seed.why.basic,
                 whyExpert = seed.why.expert,
                 feelBasic = seed.feel.basic,
-                feelExpert = seed.feel.expert
+                feelExpert = seed.feel.expert,
+                animation = seed.animation?.encode()
             )
             val id = if (existing != null) existing.also { actionDao.update(row) } else actionDao.insert(row).toInt()
             actionIds[seed.key] = id

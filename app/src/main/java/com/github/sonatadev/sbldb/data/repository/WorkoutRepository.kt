@@ -18,7 +18,11 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class WorkoutRepository(private val db: AppDatabase) {
+class WorkoutRepository(
+    private val db: AppDatabase,
+    /** Name for a new workout by time of day; the app passes translated strings. */
+    private val workoutName: (PartOfDay) -> String = { "${it.name.lowercase().replaceFirstChar(Char::uppercase)} workout" }
+) {
     private val dao = db.workoutDAO()
 
     val activeWorkout: Flow<Workout?> = dao.getActiveWorkout()
@@ -162,10 +166,12 @@ class WorkoutRepository(private val db: AppDatabase) {
     private fun defaultName(millis: Long): String {
         val time = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault())
         val part = when (time.hour) {
-            in 5..11 -> "Morning"
-            in 12..17 -> "Afternoon"
-            else -> "Evening"
+            in 5..11 -> PartOfDay.MORNING
+            in 12..17 -> PartOfDay.AFTERNOON
+            else -> PartOfDay.EVENING
         }
-        return "$part workout · " + time.format(DateTimeFormatter.ofPattern("EEE d MMM", Locale.ENGLISH))
+        return workoutName(part) + " · " + time.format(DateTimeFormatter.ofPattern("EEE d MMM", Locale.getDefault()))
     }
+
+    enum class PartOfDay { MORNING, AFTERNOON, EVENING }
 }

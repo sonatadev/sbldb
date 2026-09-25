@@ -1,5 +1,10 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +29,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -39,7 +45,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
+import com.github.sonatadev.sbldb.domain.RestTimer
+import com.github.sonatadev.sbldb.session.WorkoutService
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -110,6 +120,18 @@ fun ActiveWorkoutScreen(
         }
     }
 
+    val rest by viewModel.rest.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
+    LaunchedEffect(workout.workout.workoutId) {
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        WorkoutService.start(context)
+    }
+
     val exercises = workout.exercises.sortedBy { it.workoutExercise.position }
     val focusedId = expandedId?.takeIf { id -> exercises.any { it.workoutExercise.workoutExerciseId == id } }
         ?: currentExerciseId(exercises)
@@ -155,6 +177,10 @@ fun ActiveWorkoutScreen(
             }
         }
 
+        if (rest.isRunning) {
+            item { RestModule(rest, now, onAdjust = viewModel::adjustRest, onSkip = viewModel::skipRest) }
+        }
+
         if (exercises.isEmpty()) {
             item {
                 Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_now)) {
@@ -190,8 +216,7 @@ fun ActiveWorkoutScreen(
         }
         item {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                InfoLink(stringResource(R.string.rir_hint_short), onClick = { onOpenGlossary("RIR") }, modifier = Modifier.weight(1f, fill = false))
-                Box(Modifier.weight(1f))
+                InfoLink(stringResource(R.string.rir_hint_short), onClick = { onOpenGlossary("RIR") }, modifier = Modifier.weight(1f))
                 TextButton(onClick = { showDiscard = true }) {
                     Text(stringResource(R.string.discard).uppercase(), style = SbldbType.mono, color = colors.muted)
                 }
@@ -341,7 +366,7 @@ private fun FocusedExercise(
             PrimaryButton(
                 text = if (current.isWarmup) stringResource(R.string.log_warmup) else stringResource(R.string.log_set, currentNumber),
                 onClick = {
-                    viewModel.toggleCompleted(current)
+                    viewModel.logSet(exercise, current)
                     onLogged()
                 },
                 accentDot = true,
@@ -512,4 +537,26 @@ private fun RenameDialog(initial: String, onConfirm: (String) -> Unit, onDismiss
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel), color = colors.ink) } }
     )
+}
+
+@Composable
+private fun RestModule(rest: RestTimer, now: Long, onAdjust: (Int) -> Unit, onSkip: () -> Unit) {
+    val colors = SbldbTheme.colors
+    val remaining = rest.remainingSeconds(now)
+    Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_rest)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("%d:%02d".format(remaining / 60, remaining % 60), style = SbldbType.hero(52), color = colors.accent, modifier = Modifier.weight(1f))
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                SecondaryButton("−15", onClick = { onAdjust(-15) })
+                SecondaryButton("+15", onClick = { onAdjust(15) })
+                SecondaryButton(stringResource(R.string.skip), onClick = onSkip, color = colors.accent)
+            }
+        }
+        LinearProgressIndicator(
+            progress = { rest.progress(now) },
+            color = colors.accent,
+            trackColor = colors.empty,
+            modifier = Modifier.fillMaxWidth().height(6.dp)
+        )
+    }
 }

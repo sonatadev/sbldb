@@ -5,6 +5,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.Alignment
+import com.github.sonatadev.sbldb.ui.theme.SbldbType
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.github.sonatadev.sbldb.ui.components.ConfirmDialog
@@ -149,6 +153,16 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = vi
                 label = { unitLabels.getValue(it) },
                 onSelect = viewModel::setWeightUnit
             )
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
+                Column(Modifier.weight(1f)) {
+                    ModuleLabel(stringResource(R.string.default_rest), color = colors.muted)
+                    Text("%d:%02d".format(state.restSeconds / 60, state.restSeconds % 60), style = SbldbType.hero(36), color = colors.accent)
+                }
+                SecondaryButton("−15", onClick = { viewModel.setRestSeconds(state.restSeconds - 15) })
+                Spacer(Modifier.width(6.dp))
+                SecondaryButton("+15", onClick = { viewModel.setRestSeconds(state.restSeconds + 15) })
+            }
+            MonoCaption(stringResource(R.string.default_rest_hint))
         }
 
         Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_data)) {

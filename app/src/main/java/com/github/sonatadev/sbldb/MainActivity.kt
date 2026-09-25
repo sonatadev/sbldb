@@ -19,9 +19,18 @@ import com.github.sonatadev.sbldb.ui.navigation.SbldbApp
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 
 class MainActivity : ComponentActivity() {
+    /** Set when the app is opened from the workout notification. */
+    private val openWorkoutRequests = kotlinx.coroutines.flow.MutableStateFlow(0)
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        super.onNewIntent(intent)
+        if (intent.getBooleanExtra(EXTRA_OPEN_WORKOUT, false)) openWorkoutRequests.value++
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        if (intent?.getBooleanExtra(EXTRA_OPEN_WORKOUT, false) == true) openWorkoutRequests.value++
         val settings = (application as SbldbApplication).container.settingsRepository
         setContent {
             val themeMode by settings.themeMode.collectAsStateWithLifecycle(ThemeMode.SYSTEM)
@@ -41,9 +50,14 @@ class MainActivity : ComponentActivity() {
             }
             SbldbTheme(themeMode = themeMode, accent = accent) {
                 CompositionLocalProvider(LocalExplanationLevel provides explanations) {
-                    SbldbApp()
+                    val openWorkout by openWorkoutRequests.collectAsStateWithLifecycle()
+                    SbldbApp(openWorkoutRequest = openWorkout)
                 }
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_OPEN_WORKOUT = "open_workout"
     }
 }

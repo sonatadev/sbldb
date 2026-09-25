@@ -173,7 +173,18 @@
     <string name="log_set">Log set %1$d</string>
     <string name="log_warmup">Log warm-up</string>
     <string name="undo_set">Mark set as not done</string>
-    <string name="rir_hint_short">RIR above 4 does not count toward volume</string>
+    <string name="rest_over">Rest over</string>
+    <string name="module_rest">Rest</string>
+    <string name="skip">Skip</string>
+    <string name="default_rest">Default rest</string>
+    <string name="default_rest_hint">Used when a routine does not set its own rest</string>
+    <string name="rest_label">Rest</string>
+    <string name="rest_over_hint">Time for your next set</string>
+    <string name="resting">Resting</string>
+    <string name="workout_in_progress">Workout in progress</string>
+    <string name="channel_workout">Workout in progress</string>
+    <string name="channel_rest">Rest timer</string>
+    <string name="rir_hint_short">RIR above 4 is not counted</string>
 
     <!-- Workout detail -->
     <string name="delete_workout">Delete workout</string>
@@ -212,7 +223,7 @@
     <string name="settings_label">Preferences</string>
     <string name="settings_appearance">01 · Appearance</string>
     <string name="settings_explanations">02 · Explanations</string>
-    <string name="settings_units">03 · Units</string>
+    <string name="settings_units">03 · Workout</string>
     <string name="settings_data">04 · Your data</string>
     <string name="settings_library">05 · Exercise library</string>
     <string name="settings_about">06 · About</string>

@@ -152,6 +152,16 @@ private fun PlannedExercise(
             Stepper(stringResource(R.string.reps_max), plan.repMax, plan.repMin..50) { viewModel.update(plan.copy(repMax = it)) }
             Stepper(stringResource(R.string.col_rir), plan.targetRir ?: 0, 0..5) { viewModel.update(plan.copy(targetRir = it)) }
         }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            ModuleLabel(stringResource(R.string.rest_label), color = colors.muted, modifier = Modifier.weight(1f))
+            GlyphButton("−", stringResource(R.string.rest_label) + " −", enabled = plan.restSeconds > 15) {
+                viewModel.update(plan.copy(restSeconds = plan.restSeconds - 15))
+            }
+            Text("%d:%02d".format(plan.restSeconds / 60, plan.restSeconds % 60), style = SbldbType.monoLarge, color = colors.ink, modifier = Modifier.width(52.dp), textAlign = TextAlign.Center)
+            GlyphButton("+", stringResource(R.string.rest_label) + " +", enabled = plan.restSeconds < 600) {
+                viewModel.update(plan.copy(restSeconds = plan.restSeconds + 15))
+            }
+        }
     }
 }
 

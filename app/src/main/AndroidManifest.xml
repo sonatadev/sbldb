@@ -4,6 +4,11 @@
 
     <!-- Downloads library content (exercises, joint actions) from the public GitHub repository -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Workout in progress notification and end-of-rest alert -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".SbldbApplication"
@@ -27,6 +32,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".session.WorkoutService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Shows the workout in progress and alerts the user when the rest between sets is over." />
+        </service>
     </application>
 
 </manifest>

@@ -36,7 +36,8 @@ object AppViewModelProvider {
                 container().exerciseRepository,
                 container().routineRepository,
                 container().settingsRepository,
-                container().backupManager
+                container().backupManager,
+                container().workoutSession
             )
         }
         initializer {

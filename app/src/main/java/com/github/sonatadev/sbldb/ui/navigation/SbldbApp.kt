@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -98,7 +99,11 @@ private enum class Tab(val route: String, @param:StringRes val label: Int) {
 }
 
 @Composable
-fun SbldbApp(navController: NavHostController = rememberNavController()) {
+fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rememberNavController()) {
+    // Opened from the workout notification: jump to the workout in progress
+    LaunchedEffect(openWorkoutRequest) {
+        if (openWorkoutRequest > 0) navController.navigate(Routes.ACTIVE_WORKOUT) { launchSingleTop = true }
+    }
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
     val showBottomBar = Tab.entries.any { it.route == currentRoute }

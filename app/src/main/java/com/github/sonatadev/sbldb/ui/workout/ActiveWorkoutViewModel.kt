@@ -9,6 +9,7 @@ import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
 import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
 import com.github.sonatadev.sbldb.data.backup.BackupManager
+import com.github.sonatadev.sbldb.session.WorkoutSession
 import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
@@ -55,8 +56,12 @@ class ActiveWorkoutViewModel(
     private val exerciseRepository: ExerciseRepository,
     private val routineRepository: RoutineRepository,
     settings: SettingsRepository,
-    private val backupManager: BackupManager
+    private val backupManager: BackupManager,
+    private val session: WorkoutSession
 ) : ViewModel() {
+    val rest = session.rest
+
+    private val defaultRest = settings.restSeconds.stateIn(viewModelScope, SharingStarted.Eagerly, 120)
 
     private val workout = repository.activeWorkout
         .map { it?.workoutId }
@@ -105,17 +110,32 @@ class ActiveWorkoutViewModel(
 
     fun toggleCompleted(set: WorkoutSet) = launch { repository.updateCompleted(set.setId, !set.isCompleted) }
 
+    /** Completes a set and starts the rest timer for its exercise. */
+    fun logSet(exercise: WorkoutExerciseWithSets, set: WorkoutSet) = launch {
+        repository.updateCompleted(set.setId, true)
+        val seconds = uiState.value.info[exercise.exercise.exerciseId]?.target?.restSeconds ?: defaultRest.value
+        session.startRest(seconds, exercise.exercise.name)
+    }
+
+    fun adjustRest(deltaSeconds: Int) = session.adjustRest(deltaSeconds)
+
+    fun skipRest() = session.skipRest()
+
     fun toggleWarmup(set: WorkoutSet) = launch { repository.updateWarmup(set.setId, !set.isWarmup) }
 
     fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
 
     fun finish() = launch {
+        session.skipRest()
         current()?.let { repository.finish(it.workout) }
         // Keeps the backup folder current; silently skipped when none is set
         backupManager.autoBackup()
     }
 
-    fun discard() = launch { current()?.let { repository.delete(it.workout) } }
+    fun discard() = launch {
+        session.skipRest()
+        current()?.let { repository.delete(it.workout) }
+    }
 
     private fun current(): WorkoutWithExercises? = uiState.value.workout
 

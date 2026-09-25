@@ -27,6 +27,7 @@ data class SettingsUiState(
     val explanations: ExplanationLevel = ExplanationLevel.BASIC,
     val content: ContentStatus = ContentStatus(null, null, null),
     val checking: Boolean = false,
+    val restSeconds: Int = 120,
     val backupFolder: String? = null,
     val lastBackup: Long? = null
 )
@@ -50,8 +51,8 @@ class SettingsViewModel(
     }
 
     val uiState: StateFlow<SettingsUiState> =
-        combine(preferences, settings.contentStatus, checking, settings.backupStatus) { prefs, content, busy, backup ->
-            prefs.copy(content = content, checking = busy, backupFolder = backup.first, lastBackup = backup.second)
+        combine(preferences, settings.contentStatus, checking, settings.backupStatus, settings.restSeconds) { prefs, content, busy, backup, rest ->
+            prefs.copy(content = content, checking = busy, backupFolder = backup.first, lastBackup = backup.second, restSeconds = rest)
         }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
@@ -107,6 +108,8 @@ class SettingsViewModel(
     fun setAccent(accent: AccentColor) = launch { settings.setAccentColor(accent) }
 
     fun setExplanations(level: ExplanationLevel) = launch { settings.setExplanationLevel(level) }
+
+    fun setRestSeconds(seconds: Int) = launch { settings.setRestSeconds(seconds) }
 
     private fun launch(block: suspend () -> Unit) {
         viewModelScope.launch { block() }

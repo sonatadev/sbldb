@@ -33,8 +33,9 @@ class VolumeViewModel(
             val week = WeekRange.of(ago)
             combine(
                 workoutRepository.volumeRows(week.startMillis, week.endMillis),
-                exerciseRepository.muscleGroups
-            ) { rows, groups -> VolumeUiState(ago, week, VolumeCalculator.calculate(rows, groups)) }
+                exerciseRepository.muscleGroups,
+                exerciseRepository.volumeTargets
+            ) { rows, groups, targets -> VolumeUiState(ago, week, VolumeCalculator.calculate(rows, groups, targets = targets)) }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), VolumeUiState())
 

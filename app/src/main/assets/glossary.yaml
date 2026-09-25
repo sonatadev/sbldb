@@ -44,4 +44,22 @@
   expert: Gradually increasing load, reps or sets at a similar RIR; the "last time" numbers in a workout help you beat your previous session.
 - term: Warm-up set
   basic: A light set before your working sets to get ready. It does not count toward volume.
-  expert: Submaximal sets far from failure; marked with W and excluded from all volume and e1RM calculations.
+  expert: Submaximal sets far from failure; marked with W and excluded from all volume and e1RM calculations. Tap the set number to change a set's type.
+- term: Drop set
+  basic: Right after a hard set you lower the weight and keep going with no rest. Marked D. It counts as a set, but not for records or progression.
+  expert: An extra near-failure set at a reduced load with minimal rest; a time-efficient way to add volume. Counted as a hard set, excluded from PRs and the progression suggestion because the load is deliberately lighter.
+- term: Myo-reps
+  basic: One hard set, then a few short sets with only a few breaths of rest between them. Marked M.
+  expert: An activation set near failure followed by mini-sets of 3–5 reps on 10–20 s rests; each logged set counts as a hard set.
+- term: Lengthened partials
+  basic: Reps done only in the stretched half of the movement, usually after you can't do full reps any more. Marked P.
+  expert: Partial range reps biased to long muscle lengths, often used past full-range failure; research suggests growth similar to or better than full range. Excluded from records because the range is shorter.
+- term: To failure
+  basic: A set where you could not do another rep with good form. Marked F, the same as RIR 0.
+  expert: Momentary muscular failure (RIR 0). Useful sparingly, mostly on isolation and machine work, as fatigue rises faster than the benefit.
+- term: Double progression
+  basic: Keep the same weight and add reps each session. When every set reaches the top of your rep range, add weight and start again from the bottom.
+  expert: The NEXT line in a workout applies this with your routine's range (8–12 by default) and target RIR. Sets that hit the top by grinding past the target effort do not earn more load. Increments are 2.5 kg (2 kg for dumbbells) or 5 lb.
+- term: PR
+  basic: A personal record, meaning more weight, more reps at a weight, or a higher e1RM than ever before on that exercise.
+  expert: Checked against all your finished sessions plus the earlier sets of the current one. A first-ever session sets the baseline and shows no PRs. Drop sets and partials never count.

@@ -15,6 +15,9 @@ enum class WeightUnit(val label: String, private val decimals: Int) {
     fun format(kg: Double): String =
         BigDecimal(fromKg(kg)).setScale(decimals, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString()
 
+    /** Whole number in this unit, for estimates like e1RM where decimals are false precision. */
+    fun formatRounded(kg: Double): String = kotlin.math.round(fromKg(kg)).toLong().toString()
+
     companion object {
         const val LB_PER_KG = 2.2046226218
     }

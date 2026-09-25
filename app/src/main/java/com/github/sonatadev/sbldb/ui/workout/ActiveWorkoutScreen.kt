@@ -1,5 +1,8 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.data.entity.Exercise
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.runtime.produceState
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -57,9 +60,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.sonatadev.sbldb.R
+import com.github.sonatadev.sbldb.data.entity.SetType
 import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
 import com.github.sonatadev.sbldb.domain.OneRepMax
+import com.github.sonatadev.sbldb.domain.PastSet
+import com.github.sonatadev.sbldb.domain.PersonalRecords
+import com.github.sonatadev.sbldb.domain.PrKind
+import com.github.sonatadev.sbldb.domain.Progression
+import com.github.sonatadev.sbldb.domain.Suggestion
 import com.github.sonatadev.sbldb.domain.WeightUnit
 import com.github.sonatadev.sbldb.ui.AppViewModelProvider
 import com.github.sonatadev.sbldb.ui.components.CompactNumberField
@@ -265,6 +274,15 @@ private fun FocusedExercise(
 ) {
     val colors = SbldbTheme.colors
     var menuOpen by remember { mutableStateOf(false) }
+    var swapOpen by remember { mutableStateOf(false) }
+    if (swapOpen) {
+        SwapDialog(
+            exerciseId = exercise.exercise.exerciseId,
+            load = viewModel::swapCandidates,
+            onPick = { viewModel.swap(exercise.workoutExercise, it) },
+            onDismiss = { swapOpen = false }
+        )
+    }
     val sets = exercise.sets.sortedBy { it.position }
     val current = sets.firstOrNull { !it.isCompleted }
 
@@ -283,6 +301,13 @@ private fun FocusedExercise(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, containerColor = colors.module) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.swap_exercise), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            swapOpen = true
+                        }
+                    )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.remove_exercise), color = colors.ink) },
                         onClick = {
@@ -315,12 +340,42 @@ private fun FocusedExercise(
             Box(Modifier.width(ActionColumn))
         }
 
+        val version by viewModel.prefillVersion.collectAsStateWithLifecycle()
+        val doneWorking = sets.filter { it.isCompleted && !it.isWarmup && it.setType != SetType.DROP && it.setType != SetType.PARTIALS }
+        val records = PersonalRecords.beatenInSession(info.records, doneWorking.map { PastSet(it.weightKg, it.reps, it.rir) })
+        // On assisted machines more weight means easier, so only rep records mean anything
+        val assisted = Progression.isAssisted(exercise.exercise.name)
+        val recordSets = doneWorking.zip(records)
+            .filter { (_, kinds) -> if (assisted) PrKind.REPS in kinds else kinds.isNotEmpty() }
+            .map { it.first.setId }.toSet()
         Column {
             var workingIndex = 0
             sets.forEach { set ->
                 val label = if (set.isWarmup) null else ++workingIndex
-                SetRow(set = set, label = label, isCurrent = set == current, unit = unit, targetRir = info.target?.targetRir, actions = viewModel)
+                SetRow(
+                    set = set,
+                    label = label,
+                    isCurrent = set == current,
+                    unit = unit,
+                    targetRir = info.target?.targetRir,
+                    actions = viewModel,
+                    isRecord = set.setId in recordSets,
+                    version = version
+                )
             }
+        }
+
+        val suggestion = Progression.suggest(
+            last = info.previous.filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir) },
+            equipment = exercise.exercise.equipment,
+            unit = unit,
+            repMin = info.target?.repMin ?: Progression.DEFAULT_REP_MIN,
+            repMax = info.target?.repMax ?: Progression.DEFAULT_REP_MAX,
+            targetRir = info.target?.targetRir,
+            assisted = Progression.isAssisted(exercise.exercise.name)
+        )
+        if (suggestion != null && sets.any { !it.isCompleted && !it.isWarmup }) {
+            NextRow(suggestion, unit, onApply = { viewModel.applySuggestion(exercise, suggestion) })
         }
 
         info.target?.let { target ->
@@ -343,7 +398,7 @@ private fun FocusedExercise(
                     append(" ")
                     append(last.weightKg?.let { unit.format(it) + " × " } ?: "× ")
                     append(last.reps ?: "–")
-                    if (lastE1rm != null) append(" · e1RM ${unit.format(lastE1rm)}")
+                    if (lastE1rm != null) append(" · e1RM ${unit.formatRounded(lastE1rm)}")
                 },
                 Modifier.weight(1f)
             )
@@ -401,6 +456,78 @@ private fun CollapsedExercise(number: Int, exercise: WorkoutExerciseWithSets, on
                 }
             }
         }
+    }
+}
+
+/** Replacements that load the same joint actions, closest first; the sets stay. */
+@Composable
+private fun SwapDialog(exerciseId: Int, load: suspend (Int) -> List<Exercise>, onPick: (Int) -> Unit, onDismiss: () -> Unit) {
+    val colors = SbldbTheme.colors
+    val candidates by produceState<List<Exercise>?>(null, exerciseId) { value = load(exerciseId) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = colors.module,
+        title = { Text(stringResource(R.string.swap_exercise), color = colors.ink) },
+        text = {
+            Column {
+                MonoCaption(stringResource(R.string.swap_hint))
+                val list = candidates
+                when {
+                    list == null -> Unit
+                    list.isEmpty() -> Text(stringResource(R.string.swap_none), color = colors.muted)
+                    else -> LazyColumn(Modifier.heightIn(max = 420.dp)) {
+                        items(list, key = { it.exerciseId }) { candidate ->
+                            Column(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onPick(candidate.exerciseId)
+                                        onDismiss()
+                                    }
+                                    .padding(vertical = 10.dp)
+                            ) {
+                                Text(candidate.name, style = MaterialTheme.typography.titleMedium, color = colors.ink)
+                                MonoCaption(candidate.attachment?.let { "${candidate.equipment} · $it" } ?: candidate.equipment)
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel), color = colors.ink) } }
+    )
+}
+
+/** Double-progression target for today; tapping fills the sets still to do. */
+@Composable
+private fun NextRow(suggestion: Suggestion, unit: WeightUnit, onApply: () -> Unit) {
+    val colors = SbldbTheme.colors
+    val load = suggestion.weightKg?.let { "${unit.format(it)} ${unit.label} × " } ?: "× "
+    val reason = stringResource(
+        when (suggestion.kind) {
+            Suggestion.Kind.ADD_LOAD -> R.string.next_add_load
+            Suggestion.Kind.ADD_REP -> R.string.next_add_rep
+            Suggestion.Kind.HARDER_VARIATION -> R.string.next_harder
+            Suggestion.Kind.LESS_ASSISTANCE -> R.string.next_less_assistance
+        }
+    )
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.small)
+            .background(colors.accentTint)
+            .clickable(role = Role.Button, onClickLabel = stringResource(R.string.next_apply), onClick = onApply)
+            .padding(horizontal = 10.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        Text(stringResource(R.string.next_label), style = SbldbType.label, color = colors.accent)
+        Column(Modifier.weight(1f)) {
+            Text(load + suggestion.reps, style = MaterialTheme.typography.titleMedium, color = colors.ink)
+            MonoCaption(reason)
+        }
+        Text(stringResource(R.string.next_apply).uppercase(), style = SbldbType.mono, color = colors.accent)
     }
 }
 

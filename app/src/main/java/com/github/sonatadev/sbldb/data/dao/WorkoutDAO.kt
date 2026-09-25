@@ -45,6 +45,9 @@ interface WorkoutDAO {
     @Insert
     suspend fun insertWorkoutExercise(workoutExercise: WorkoutExercise): Long
 
+    @Update
+    suspend fun updateWorkoutExercise(workoutExercise: WorkoutExercise)
+
     @Delete
     suspend fun deleteWorkoutExercise(workoutExercise: WorkoutExercise)
 
@@ -73,6 +76,10 @@ interface WorkoutDAO {
     @Query("UPDATE workout_sets SET isWarmup = :warmup, setType = CASE WHEN :warmup THEN 'WARMUP' ELSE 'NORMAL' END WHERE setId = :setId")
     suspend fun updateWarmup(setId: Long, warmup: Boolean)
 
+    /** [type] is a [com.github.sonatadev.sbldb.data.entity.SetType] name; isWarmup is kept in sync. */
+    @Query("UPDATE workout_sets SET setType = :type, isWarmup = (:type = 'WARMUP') WHERE setId = :setId")
+    suspend fun updateSetType(setId: Long, type: String)
+
     @Query("SELECT COALESCE(MAX(position) + 1, 0) FROM workout_sets WHERE workoutExerciseId = :workoutExerciseId")
     suspend fun nextSetPosition(workoutExerciseId: Long): Int
 
@@ -97,7 +104,7 @@ interface WorkoutDAO {
     /** Completed working sets of the most recent finished workout that included the exercise. */
     @Query(
         """
-        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir FROM workout_sets s
+        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType FROM workout_sets s
         JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
         JOIN workouts w ON w.workoutId = we.workoutId
         WHERE we.exerciseId = :exerciseId AND s.isCompleted = 1 AND s.isWarmup = 0

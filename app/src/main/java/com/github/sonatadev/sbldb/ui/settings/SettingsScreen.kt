@@ -53,7 +53,7 @@ import com.github.sonatadev.sbldb.ui.theme.color
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val dataMessage by viewModel.dataMessage.collectAsStateWithLifecycle()
     val pendingRestore by viewModel.pendingRestore.collectAsStateWithLifecycle()
@@ -163,6 +163,16 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, viewModel: SettingsViewModel = vi
                 SecondaryButton("+15", onClick = { viewModel.setRestSeconds(state.restSeconds + 15) })
             }
             MonoCaption(stringResource(R.string.default_rest_hint))
+            Row(
+                Modifier.fillMaxWidth().clickable(onClick = onOpenTargets).padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.volume_targets), style = MaterialTheme.typography.titleMedium, color = colors.ink)
+                    MonoCaption(stringResource(R.string.targets_cta))
+                }
+                Text("›", style = SbldbType.monoLarge, color = colors.accent)
+            }
         }
 
         Module(Modifier.fillMaxWidth(), label = stringResource(R.string.settings_data)) {

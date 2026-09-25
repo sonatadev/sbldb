@@ -13,14 +13,34 @@ data class MuscleGroupVolume(
     val muscleGroup: String,
     val sets: Double,
     val frequency: Int,
-    val regions: List<RegionVolume>
+    val regions: List<RegionVolume>,
+    /** Weekly target zone for this muscle: the user's own, or 10–20. */
+    val target: VolumeTarget = VolumeTarget.DEFAULT
 ) {
-    val band: VolumeBand
-        get() = when {
-            sets < VolumeCalculator.OPTIMAL_MIN_SETS -> VolumeBand.LOW
-            sets <= VolumeCalculator.OPTIMAL_MAX_SETS -> VolumeBand.OPTIMAL
-            else -> VolumeBand.HIGH
+    val band: VolumeBand get() = target.band(sets)
+}
+
+/** Weekly hard-set zone for a muscle group. */
+data class VolumeTarget(val minSets: Int, val maxSets: Int) {
+    fun band(sets: Double): VolumeBand = when {
+        sets < minSets -> VolumeBand.LOW
+        sets <= maxSets -> VolumeBand.OPTIMAL
+        else -> VolumeBand.HIGH
+    }
+
+    val label: String get() = "$minSets–$maxSets"
+
+    companion object {
+        val DEFAULT = VolumeTarget(VolumeCalculator.OPTIMAL_MIN_SETS.toInt(), VolumeCalculator.OPTIMAL_MAX_SETS.toInt())
+        const val LOWEST = 0
+        const val HIGHEST = 40
+
+        /** Keeps min ≤ max inside the allowed range. */
+        fun of(minSets: Int, maxSets: Int): VolumeTarget {
+            val min = minSets.coerceIn(LOWEST, HIGHEST)
+            return VolumeTarget(min, maxSets.coerceIn(min, HIGHEST))
         }
+    }
 }
 
 /**
@@ -49,7 +69,8 @@ object VolumeCalculator {
     fun calculate(
         rows: List<VolumeRow>,
         allGroups: List<String> = emptyList(),
-        zone: ZoneId = ZoneId.systemDefault()
+        zone: ZoneId = ZoneId.systemDefault(),
+        targets: Map<String, VolumeTarget> = emptyMap()
     ): List<MuscleGroupVolume> {
         val hard = rows.filter { isHardSet(it.rir) }
 
@@ -81,7 +102,8 @@ object VolumeCalculator {
                     regions = regionSets
                         .filterKeys { it.first == group }
                         .map { (key, sets) -> RegionVolume(key.second, sets) }
-                        .sortedByDescending { it.sets }
+                        .sortedByDescending { it.sets },
+                    target = targets[group] ?: VolumeTarget.DEFAULT
                 )
             }
             .sortedWith(compareByDescending<MuscleGroupVolume> { it.sets }.thenBy { it.muscleGroup })

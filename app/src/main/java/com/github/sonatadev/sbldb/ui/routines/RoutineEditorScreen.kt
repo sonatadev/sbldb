@@ -1,5 +1,8 @@
 package com.github.sonatadev.sbldb.ui.routines
 
+import com.github.sonatadev.sbldb.ui.formatSets
+import com.github.sonatadev.sbldb.ui.components.MonoChip
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,13 +51,16 @@ import com.github.sonatadev.sbldb.ui.components.SecondaryButton
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
 
+@OptIn(androidx.compose.foundation.layout.ExperimentalLayoutApi::class)
 @Composable
 fun RoutineEditorScreen(
     onBack: () -> Unit,
     onAddExercise: (routineId: Long) -> Unit,
+    onOpenPlan: () -> Unit,
     viewModel: RoutineEditorViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val routine by viewModel.routine.collectAsStateWithLifecycle()
+    val plan by viewModel.plan.collectAsStateWithLifecycle()
     val colors = SbldbTheme.colors
     var showDelete by remember { mutableStateOf(false) }
     val current = routine ?: return
@@ -87,6 +93,31 @@ fun RoutineEditorScreen(
                 )
                 Box(Modifier.fillMaxWidth().height(1.dp).background(colors.edge))
                 MonoCaption(stringResource(R.string.routine_name_hint), Modifier.padding(top = 6.dp))
+            }
+        }
+        item {
+            Module(
+                Modifier.fillMaxWidth(),
+                label = stringResource(R.string.module_per_week),
+                trailing = {
+                    Text(
+                        stringResource(R.string.weekly_plan).uppercase() + "  ›",
+                        style = SbldbType.mono,
+                        color = colors.accent,
+                        modifier = Modifier.clickable(onClick = onOpenPlan).padding(vertical = 4.dp)
+                    )
+                }
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.times_per_week), style = MaterialTheme.typography.bodyLarge, color = colors.ink, modifier = Modifier.weight(1f))
+                    Stepper("", current.routine.timesPerWeek, 1..7) { viewModel.setTimesPerWeek(it) }
+                }
+                if (plan.isNotEmpty()) {
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        plan.forEach { (group, sets) -> MonoChip("$group ${formatSets(sets)}") }
+                    }
+                    MonoCaption(stringResource(R.string.per_week_hint))
+                }
             }
         }
         if (current.exercises.isEmpty()) {
@@ -170,7 +201,7 @@ private fun PlannedExercise(
 private fun Stepper(label: String, value: Int, range: IntRange, onChange: (Int) -> Unit) {
     val colors = SbldbTheme.colors
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        ModuleLabel(label, color = colors.muted)
+        if (label.isNotEmpty()) ModuleLabel(label, color = colors.muted)
         Row(verticalAlignment = Alignment.CenterVertically) {
             GlyphButton("−", "$label −", enabled = value > range.first) { onChange(value - 1) }
             Text("$value", style = SbldbType.monoLarge, color = colors.ink, modifier = Modifier.width(26.dp), textAlign = TextAlign.Center)

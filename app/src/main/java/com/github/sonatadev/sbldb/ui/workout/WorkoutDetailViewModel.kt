@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
+import com.github.sonatadev.sbldb.data.entity.SetType
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
 import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
@@ -68,6 +69,8 @@ class WorkoutDetailViewModel(
     override fun toggleCompleted(set: WorkoutSet) = launch { repository.updateCompleted(set.setId, !set.isCompleted) }
 
     override fun toggleWarmup(set: WorkoutSet) = launch { repository.updateWarmup(set.setId, !set.isWarmup) }
+
+    override fun setType(set: WorkoutSet, type: SetType) = launch { repository.updateSetType(set.setId, type) }
 
     override fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
 }

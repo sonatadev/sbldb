@@ -4,6 +4,10 @@ import androidx.room.withTransaction
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.entity.SetHistoryRow
 import com.github.sonatadev.sbldb.data.entity.VolumeRow
+import com.github.sonatadev.sbldb.data.entity.Exercise
+import com.github.sonatadev.sbldb.data.entity.SetType
+import com.github.sonatadev.sbldb.domain.ExerciseSwap
+import kotlinx.coroutines.flow.first
 import com.github.sonatadev.sbldb.data.entity.Workout
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
@@ -100,6 +104,20 @@ class WorkoutRepository(private val db: AppDatabase) {
 
     suspend fun removeExercise(workoutExercise: WorkoutExercise) = dao.deleteWorkoutExercise(workoutExercise)
 
+    /** Replaces the exercise but keeps its sets, for when the machine is taken. */
+    suspend fun swapExercise(workoutExercise: WorkoutExercise, exerciseId: Int) =
+        dao.updateWorkoutExercise(workoutExercise.copy(exerciseId = exerciseId))
+
+    /** Up to [limit] replacements for [exerciseId], closest first. */
+    suspend fun swapCandidates(exerciseId: Int, limit: Int = 10): List<Exercise> {
+        val ratings = db.jointActionDAO().allExerciseLinks()
+            .groupBy({ it.exerciseId }, { it.jointActionId to it.rating })
+            .mapValues { it.value.toMap() }
+        val ids = ExerciseSwap.rank(exerciseId, ratings, limit)
+        val exercises = db.exerciseDAO()
+        return ids.mapNotNull { exercises.getExercise(it).first() }
+    }
+
     /** Adds a set copying weight and reps from [previous], so repeating a set is one tap. */
     suspend fun addSet(workoutExerciseId: Long, previous: WorkoutSet?, completed: Boolean = false) = db.withTransaction {
         dao.insertSet(
@@ -116,6 +134,14 @@ class WorkoutRepository(private val db: AppDatabase) {
 
     suspend fun updateWeight(setId: Long, weightKg: Double?) = dao.updateWeight(setId, weightKg)
 
+    /** Sets load and reps on several sets at once (progression suggestion). */
+    suspend fun prefill(setIds: Collection<Long>, weightKg: Double?, reps: Int) = db.withTransaction {
+        setIds.forEach { id ->
+            dao.updateWeight(id, weightKg)
+            dao.updateReps(id, reps)
+        }
+    }
+
     suspend fun updateReps(setId: Long, reps: Int?) = dao.updateReps(setId, reps)
 
     suspend fun updateRir(setId: Long, rir: Int?) = dao.updateRir(setId, rir)
@@ -123,6 +149,8 @@ class WorkoutRepository(private val db: AppDatabase) {
     suspend fun updateCompleted(setId: Long, completed: Boolean) = dao.updateCompleted(setId, completed)
 
     suspend fun updateWarmup(setId: Long, warmup: Boolean) = dao.updateWarmup(setId, warmup)
+
+    suspend fun updateSetType(setId: Long, type: SetType) = dao.updateSetType(setId, type.name)
 
     suspend fun deleteSet(set: WorkoutSet) = dao.deleteSet(set)
 

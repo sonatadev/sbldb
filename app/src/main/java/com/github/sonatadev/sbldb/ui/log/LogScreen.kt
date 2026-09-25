@@ -61,6 +61,7 @@ private val dayFormatter = DateTimeFormatter.ofPattern("EEE d MMM", Locale.ENGLI
 fun LogScreen(
     onOpenWorkout: (Long) -> Unit,
     onOpenVolume: () -> Unit,
+    onOpenPlan: () -> Unit,
     viewModel: LogViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -109,7 +110,7 @@ fun LogScreen(
                     stats.topGroups.forEach { group ->
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(group.muscleGroup, style = MaterialTheme.typography.bodyLarge, color = colors.ink, modifier = Modifier.weight(1f), maxLines = 1)
-                            DotRow(group.sets)
+                            DotRow(group.sets, target = group.target)
                             Text(formatSets(group.sets), style = SbldbType.mono, color = colors.ink, textAlign = TextAlign.End, modifier = Modifier.width(32.dp))
                         }
                     }
@@ -130,6 +131,14 @@ fun LogScreen(
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_weekly_volume), onClick = onOpenVolume) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.weekly_volume_cta), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
+                    Text("›", style = SbldbType.monoLarge, color = colors.dim)
+                }
+            }
+        }
+        item {
+            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.weekly_plan), onClick = onOpenPlan) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.plan_cta), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
                     Text("›", style = SbldbType.monoLarge, color = colors.dim)
                 }
             }

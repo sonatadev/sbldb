@@ -22,6 +22,8 @@ class RoutineRepository(private val db: AppDatabase) {
 
     suspend fun rename(routine: Routine, name: String) = dao.update(routine.copy(name = name))
 
+    suspend fun setTimesPerWeek(routine: Routine, times: Int) = dao.update(routine.copy(timesPerWeek = times.coerceIn(1, 7)))
+
     suspend fun delete(routine: Routine) = dao.delete(routine)
 
     suspend fun addExercise(routineId: Long, exerciseId: Int) = db.withTransaction {

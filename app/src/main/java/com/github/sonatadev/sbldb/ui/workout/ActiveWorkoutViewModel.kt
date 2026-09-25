@@ -2,10 +2,12 @@ package com.github.sonatadev.sbldb.ui.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.sonatadev.sbldb.data.entity.Exercise
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.SetHistoryRow
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
+import com.github.sonatadev.sbldb.data.entity.SetType
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
 import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
 import com.github.sonatadev.sbldb.data.backup.BackupManager
@@ -17,7 +19,16 @@ import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
 import com.github.sonatadev.sbldb.domain.VolumeCalculator
 import com.github.sonatadev.sbldb.domain.WeightUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withTimeoutOrNull
+import com.github.sonatadev.sbldb.domain.PastSet
+import com.github.sonatadev.sbldb.domain.PersonalRecords
+import com.github.sonatadev.sbldb.domain.Records
+import com.github.sonatadev.sbldb.domain.Suggestion
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -40,7 +51,9 @@ data class ExerciseInfo(
     val previous: List<SetHistoryRow> = emptyList(),
     val muscles: List<MuscleChip> = emptyList(),
     /** Plan from the routine this workout was started from, if any. */
-    val target: RoutineExercise? = null
+    val target: RoutineExercise? = null,
+    /** Personal bests before this workout, for PR chips. */
+    val records: Records = Records()
 )
 
 data class ActiveWorkoutUiState(
@@ -90,7 +103,8 @@ class ActiveWorkoutViewModel(
                 .groupBy { it.muscleGroup }
                 .map { (group, rows) -> MuscleChip(group, rows.maxOf { VolumeCalculator.weight(it.role) }) }
                 .sortedWith(compareByDescending<MuscleChip> { it.weight }.thenBy { it.group })
-            ExerciseInfo(previous = repository.lastPerformance(id), muscles = chips, target = targets[id])
+            val history = exerciseRepository.setHistory(id).first().filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir) }
+            ExerciseInfo(previous = repository.lastPerformance(id), muscles = chips, target = targets[id], records = PersonalRecords.of(history))
         }
     }
 
@@ -101,6 +115,10 @@ class ActiveWorkoutViewModel(
     }
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }
+
+    suspend fun swapCandidates(exerciseId: Int): List<Exercise> = repository.swapCandidates(exerciseId)
+
+    fun swap(exercise: WorkoutExercise, exerciseId: Int) = launch { repository.swapExercise(exercise, exerciseId) }
 
     override fun updateWeight(set: WorkoutSet, weightKg: Double?) = launch { repository.updateWeight(set.setId, weightKg) }
 
@@ -117,11 +135,32 @@ class ActiveWorkoutViewModel(
         session.startRest(seconds, exercise.exercise.name)
     }
 
+    private val _prefillVersion = MutableStateFlow(0)
+    /** Bumped after sets were filled from outside the fields, so they re-read their values. */
+    val prefillVersion: StateFlow<Int> = _prefillVersion.asStateFlow()
+
+    /** Fills the sets still to do with the suggested load and reps. */
+    fun applySuggestion(exercise: WorkoutExerciseWithSets, suggestion: Suggestion) = launch {
+        val pending = exercise.sets.filter { !it.isCompleted && !it.isWarmup }.map { it.setId }.toSet()
+        if (pending.isEmpty()) return@launch
+        repository.prefill(pending, suggestion.weightKg, suggestion.reps)
+        // Wait until the new values are visible so the fields re-read them, not the stale ones
+        withTimeoutOrNull(2_000) {
+            workout.first { w ->
+                w?.exercises?.flatMap { it.sets }?.filter { it.setId in pending }
+                    ?.all { it.reps == suggestion.reps && it.weightKg == suggestion.weightKg } ?: true
+            }
+        }
+        _prefillVersion.update { it + 1 }
+    }
+
     fun adjustRest(deltaSeconds: Int) = session.adjustRest(deltaSeconds)
 
     fun skipRest() = session.skipRest()
 
     override fun toggleWarmup(set: WorkoutSet) = launch { repository.updateWarmup(set.setId, !set.isWarmup) }
+
+    override fun setType(set: WorkoutSet, type: SetType) = launch { repository.updateSetType(set.setId, type) }
 
     override fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
 

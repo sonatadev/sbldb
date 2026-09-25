@@ -34,6 +34,16 @@ interface JointActionDAO {
     @Insert
     suspend fun insertExerciseLink(link: ExerciseJointAction)
 
+    /** Every rating of every visible exercise, for swap suggestions. */
+    @Query(
+        """
+        SELECT eja.* FROM exercise_joint_actions eja
+        JOIN exercises e ON e.exerciseId = eja.exerciseId
+        WHERE e.isArchived = 0
+        """
+    )
+    suspend fun allExerciseLinks(): List<ExerciseJointAction>
+
     @Query("DELETE FROM exercise_joint_actions WHERE exerciseId = :exerciseId")
     suspend fun deleteExerciseLinks(exerciseId: Int)
 

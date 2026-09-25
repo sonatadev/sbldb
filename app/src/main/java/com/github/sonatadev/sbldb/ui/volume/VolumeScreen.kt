@@ -129,7 +129,7 @@ private fun MuscleRow(group: MuscleGroupVolume, expanded: Boolean, onOpenMuscle:
                 Text(group.muscleGroup, style = MaterialTheme.typography.bodyLarge, color = colors.ink, maxLines = 1)
                 MonoCaption(stringResource(R.string.frequency_short, group.frequency), color = colors.dim)
             }
-            DotRow(group.sets)
+            DotRow(group.sets, target = group.target)
             Text(
                 formatSets(group.sets),
                 style = SbldbType.mono.copy(fontSize = SbldbType.monoLarge.fontSize),

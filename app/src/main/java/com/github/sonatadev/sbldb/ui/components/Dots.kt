@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.sonatadev.sbldb.domain.VolumeCalculator
+import com.github.sonatadev.sbldb.domain.VolumeTarget
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 
 enum class DotFill { EMPTY, HALF, FULL }
@@ -45,7 +46,8 @@ data class Dot(val fill: DotFill, val inZone: Boolean)
 fun volumeDots(
     sets: Double,
     count: Int = VolumeCalculator.OPTIMAL_MAX_SETS.toInt(),
-    zoneFrom: Int = VolumeCalculator.OPTIMAL_MIN_SETS.toInt()
+    zoneFrom: Int = VolumeCalculator.OPTIMAL_MIN_SETS.toInt(),
+    zoneTo: Int = count
 ): List<Dot> = List(count) { i ->
     val remaining = sets - i
     Dot(
@@ -54,7 +56,7 @@ fun volumeDots(
             remaining >= 0.5 -> DotFill.HALF
             else -> DotFill.EMPTY
         },
-        inZone = i >= zoneFrom - 1
+        inZone = i >= zoneFrom - 1 && i < zoneTo
     )
 }
 
@@ -67,27 +69,43 @@ fun effortFor(rir: Int?): Effort = when {
     else -> Effort((5 - rir).coerceIn(0, 5), true)
 }
 
-/** Volume as a row of dots with the 10–20 zone behind it. */
+/**
+ * Volume as a row of dots with the muscle's target zone behind it. Rows are always as wide as
+ * 20 dots: a target above 20 sets shrinks the dots instead of widening the row.
+ */
 @Composable
-fun DotRow(sets: Double, modifier: Modifier = Modifier, dotSize: Dp = 6.5.dp, gap: Dp = 3.5.dp) {
+fun DotRow(
+    sets: Double,
+    modifier: Modifier = Modifier,
+    target: VolumeTarget = VolumeTarget.DEFAULT,
+    dotSize: Dp = 6.5.dp,
+    gap: Dp = 3.5.dp
+) {
     val colors = SbldbTheme.colors
-    val dots = volumeDots(sets)
-    val zoneStart = dots.indexOfFirst { it.inZone }
+    val base = VolumeCalculator.OPTIMAL_MAX_SETS.toInt()
+    val count = maxOf(base, target.maxSets)
+    val dots = volumeDots(sets, count = count, zoneFrom = target.minSets.coerceAtLeast(1), zoneTo = target.maxSets)
+    val scale = base.toFloat() / count
+    val d0 = dotSize * scale
+    val g0 = gap * scale
+    val first = dots.indexOfFirst { it.inZone }
+    val last = dots.indexOfLast { it.inZone }
     Canvas(
         modifier
-            .width(dotSize * dots.size + gap * (dots.size - 1))
+            .width(dotSize * base + gap * (base - 1))
             .height(dotSize * 2.3f)
-            .semantics { contentDescription = "${com.github.sonatadev.sbldb.ui.formatSets(sets)} sets" }
+            .semantics { contentDescription = "${com.github.sonatadev.sbldb.ui.formatSets(sets)} sets, target ${target.label}" }
     ) {
-        val d = dotSize.toPx()
-        val g = gap.toPx()
+        val d = d0.toPx()
+        val g = g0.toPx()
         val cy = size.height / 2
-        if (zoneStart >= 0) {
-            val left = zoneStart * (d + g) - g / 2
+        if (first >= 0) {
+            val left = first * (d + g) - g / 2
+            val right = (last + 1) * (d + g) - g / 2
             drawRoundRect(
                 color = colors.accentTint,
-                topLeft = Offset(left, 0f),
-                size = Size(size.width - left + g / 2, size.height),
+                topLeft = Offset(left.coerceAtLeast(0f), 0f),
+                size = Size(right.coerceAtMost(size.width) - left.coerceAtLeast(0f), size.height),
                 cornerRadius = CornerRadius(size.height / 2)
             )
         }

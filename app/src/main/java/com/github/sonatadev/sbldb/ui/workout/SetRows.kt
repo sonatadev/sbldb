@@ -1,5 +1,7 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.data.entity.SetType
+import androidx.annotation.StringRes
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
@@ -90,6 +92,7 @@ interface SetActions {
     fun updateRir(set: WorkoutSet, rir: Int?)
     fun toggleCompleted(set: WorkoutSet)
     fun toggleWarmup(set: WorkoutSet)
+    fun setType(set: WorkoutSet, type: SetType)
     fun deleteSet(set: WorkoutSet)
 }
 
@@ -106,7 +109,11 @@ internal fun SetRow(
     targetRir: Int?,
     actions: SetActions,
     /** Editing a past workout: every set keeps its fields editable and can be deleted. */
-    alwaysEditable: Boolean = false
+    alwaysEditable: Boolean = false,
+    /** Records this completed set broke. */
+    isRecord: Boolean = false,
+    /** Changes when values were filled from outside the fields (progression suggestion). */
+    version: Int = 0
 ) {
     val showAsDone = set.isCompleted && !alwaysEditable
     val colors = SbldbTheme.colors
@@ -120,29 +127,19 @@ internal fun SetRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = label?.let { "%02d".format(it) } ?: stringResource(R.string.warmup_short),
-                style = SbldbType.mono,
-                color = when {
-                    isCurrent -> colors.accent
-                    set.isWarmup -> colors.muted
-                    else -> colors.dim
-                },
-                modifier = Modifier
-                    .width(SetColumn)
-                    .clickable(onClickLabel = stringResource(R.string.toggle_warmup)) { actions.toggleWarmup(set) }
-                    .padding(vertical = 12.dp)
-            )
+            SetLabel(set, label, isCurrent, onSelect = { actions.setType(set, it) })
             if (showAsDone) {
-                Text(
-                    buildString {
-                        if (set.weightKg != null) append("${unit.format(set.weightKg)} ${unit.label} ")
-                        append("× ${set.reps ?: "–"}")
-                    },
-                    style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
-                    color = colors.ink,
-                    modifier = Modifier.weight(1f)
-                )
+                Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        buildString {
+                            if (set.weightKg != null) append("${unit.format(set.weightKg)} ${unit.label} ")
+                            append("× ${set.reps ?: "–"}")
+                        },
+                        style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                        color = colors.ink
+                    )
+                    if (isRecord) MonoChip(stringResource(R.string.pr), filled = true)
+                }
                 Row(Modifier.width(EffortColumn), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     EffortMeter(set.rir)
                     Text(set.rir?.let { "RIR $it" } ?: "RIR –", style = SbldbType.label, color = colors.muted)
@@ -155,8 +152,8 @@ internal fun SetRow(
                     contentAlignment = Alignment.Center
                 ) { StatusDot(colors.accent, size = 8.dp) }
             } else {
-                EditableLoad(set, unit, actions, Modifier.weight(1f))
-                EditableEffort(set, targetRir, actions, Modifier.width(EffortColumn))
+                EditableLoad(set, unit, version, actions, Modifier.weight(1f))
+                EditableEffort(set, targetRir, version, actions, Modifier.width(EffortColumn))
                 Box(
                     Modifier
                         .size(ActionColumn)
@@ -170,11 +167,11 @@ internal fun SetRow(
 }
 
 @Composable
-private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, actions: SetActions, modifier: Modifier) {
+private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, version: Int, actions: SetActions, modifier: Modifier) {
     val colors = SbldbTheme.colors
     // Local text state keyed on the set: DB re-emissions while typing must not reset the cursor
-    var weight by rememberSaveable(set.setId, unit) { mutableStateOf(set.weightKg?.let(unit::format).orEmpty()) }
-    var reps by rememberSaveable(set.setId) { mutableStateOf(set.reps?.toString().orEmpty()) }
+    var weight by rememberSaveable(set.setId, unit, version) { mutableStateOf(set.weightKg?.let(unit::format).orEmpty()) }
+    var reps by rememberSaveable(set.setId, version) { mutableStateOf(set.reps?.toString().orEmpty()) }
     Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         CompactNumberField(
             value = weight,
@@ -200,8 +197,8 @@ private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, actions: SetActions,
 }
 
 @Composable
-private fun EditableEffort(set: WorkoutSet, targetRir: Int?, actions: SetActions, modifier: Modifier) {
-    var rir by rememberSaveable(set.setId) { mutableStateOf(set.rir?.toString().orEmpty()) }
+private fun EditableEffort(set: WorkoutSet, targetRir: Int?, version: Int, actions: SetActions, modifier: Modifier) {
+    var rir by rememberSaveable(set.setId, version) { mutableStateOf(set.rir?.toString().orEmpty()) }
     Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         EffortMeter(rir.toIntOrNull() ?: set.rir, outlineOnly = true)
         CompactNumberField(
@@ -214,5 +211,68 @@ private fun EditableEffort(set: WorkoutSet, targetRir: Int?, actions: SetActions
             textStyle = SbldbType.mono.copy(fontSize = 14.sp),
             modifier = Modifier.weight(1f)
         )
+    }
+}
+
+@StringRes
+internal fun SetType.labelRes(): Int = when (this) {
+    SetType.NORMAL -> R.string.set_type_normal
+    SetType.WARMUP -> R.string.set_type_warmup
+    SetType.DROP -> R.string.set_type_drop
+    SetType.MYO -> R.string.set_type_myo
+    SetType.PARTIALS -> R.string.set_type_partials
+    SetType.FAILURE -> R.string.set_type_failure
+}
+
+/** One-letter code shown under the set number; none for normal sets. */
+internal val SetType.code: String?
+    get() = when (this) {
+        SetType.NORMAL -> null
+        SetType.WARMUP -> "W"
+        SetType.DROP -> "D"
+        SetType.MYO -> "M"
+        SetType.PARTIALS -> "P"
+        SetType.FAILURE -> "F"
+    }
+
+/** Set number (or W); tapping it opens the set-type menu. */
+@Composable
+private fun SetLabel(set: WorkoutSet, label: Int?, isCurrent: Boolean, onSelect: (SetType) -> Unit) {
+    val colors = SbldbTheme.colors
+    var open by remember { mutableStateOf(false) }
+    Box(
+        Modifier
+            .width(SetColumn)
+            .clickable(onClickLabel = stringResource(R.string.set_type)) { open = true }
+            .padding(vertical = 8.dp)
+    ) {
+        Column(horizontalAlignment = Alignment.Start) {
+            Text(
+                text = label?.let { "%02d".format(it) } ?: stringResource(R.string.warmup_short),
+                style = SbldbType.mono,
+                color = when {
+                    isCurrent -> colors.accent
+                    set.isWarmup -> colors.muted
+                    else -> colors.dim
+                }
+            )
+            if (!set.isWarmup) set.setType.code?.let { Text(it, style = SbldbType.label, color = colors.accent) }
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }, containerColor = colors.module) {
+            SetType.entries.forEach { type ->
+                DropdownMenuItem(
+                    text = {
+                        Text(
+                            (type.code?.let { "$it  " } ?: "    ") + stringResource(type.labelRes()),
+                            color = if (type == set.setType) colors.accent else colors.ink
+                        )
+                    },
+                    onClick = {
+                        open = false
+                        onSelect(type)
+                    }
+                )
+            }
+        }
     }
 }

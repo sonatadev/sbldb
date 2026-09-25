@@ -44,8 +44,12 @@ data class SetHistoryRow(
     val startedAt: Long,
     val weightKg: Double?,
     val reps: Int?,
-    val rir: Int?
-)
+    val rir: Int?,
+    val setType: SetType = SetType.NORMAL
+) {
+    /** Straight sets at full range: drop sets and partials would distort records and progression. */
+    val isStraight: Boolean get() = setType == SetType.NORMAL || setType == SetType.FAILURE || setType == SetType.MYO
+}
 
 /** A joint action with its prime movers, for the library list. */
 data class JointActionSummary(

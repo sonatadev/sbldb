@@ -49,7 +49,12 @@ class LogViewModel(
     private val monthData = month.flatMapLatest { m ->
         val from = m.atDay(1).atStartOfDay(zone).toInstant().toEpochMilli()
         val to = m.plusMonths(1).atDay(1).atStartOfDay(zone).toInstant().toEpochMilli()
-        combine(workouts.finishedBetween(from, to), workouts.volumeRows(from, to), exercises.muscleGroups) { list, rows, groups ->
+        combine(
+            workouts.finishedBetween(from, to),
+            workouts.volumeRows(from, to),
+            exercises.muscleGroups,
+            exercises.volumeTargets
+        ) { list, rows, groups, targets ->
             val byDay = list.groupBy { Instant.ofEpochMilli(it.workout.startedAt).atZone(zone).toLocalDate() }
             // Weeks elapsed so far in the current month, so early-month averages are not diluted
             val days = if (m == YearMonth.now()) LocalDate.now().dayOfMonth else m.lengthOfMonth()
@@ -57,7 +62,7 @@ class LogViewModel(
             val stats = MonthStats(
                 sessions = list.size,
                 hardSets = rows.filter { VolumeCalculator.isHardSet(it.rir) }.map { it.setId }.distinct().size,
-                topGroups = VolumeCalculator.calculate(rows, groups, zone)
+                topGroups = VolumeCalculator.calculate(rows, groups, zone, targets)
                     .filter { it.sets > 0 }
                     .take(3)
                     .map { it.copy(sets = it.sets / weeks) },

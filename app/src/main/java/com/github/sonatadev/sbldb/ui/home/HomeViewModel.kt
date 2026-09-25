@@ -48,15 +48,16 @@ class HomeViewModel(
         workouts.finishedBetween(week.startMillis, week.endMillis),
         workouts.volumeRows(week.startMillis, week.endMillis),
         workouts.volumeRows(lookbackStart, week.endMillis),
-        exercises.muscleGroups
-    ) { weekWorkouts, weekRows, recentRows, groups ->
+        exercises.muscleGroups,
+        exercises.volumeTargets
+    ) { weekWorkouts, weekRows, recentRows, groups, targets ->
         val trainedGroups = recentRows.map { it.muscleGroup }.toSet().ifEmpty { MAJOR_GROUPS }
-        val volume = VolumeCalculator.calculate(weekRows, groups.filter { it in trainedGroups }, zone)
+        val volume = VolumeCalculator.calculate(weekRows, groups.filter { it in trainedGroups }, zone, targets)
         WeekData(
             trainedDays = weekWorkouts.map { Instant.ofEpochMilli(it.workout.startedAt).atZone(zone).toLocalDate() }.toSet(),
             sessions = weekWorkouts.size,
             hardSets = weekRows.filter { VolumeCalculator.isHardSet(it.rir) }.map { it.setId }.distinct().size,
-            lagging = volume.filter { it.sets < VolumeCalculator.OPTIMAL_MIN_SETS }.sortedBy { it.sets }.take(3)
+            lagging = volume.filter { it.sets < it.target.minSets }.sortedBy { it.sets - it.target.minSets }.take(3)
         )
     }
 

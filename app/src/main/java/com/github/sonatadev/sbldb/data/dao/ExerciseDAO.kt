@@ -54,7 +54,7 @@ interface ExerciseDAO {
     /** Completed working sets for an exercise across finished workouts, newest first. */
     @Query(
         """
-        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir FROM workout_sets s
+        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType FROM workout_sets s
         JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
         JOIN workouts w ON w.workoutId = we.workoutId
         WHERE we.exerciseId = :exerciseId AND s.isCompleted = 1 AND s.isWarmup = 0

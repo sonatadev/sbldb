@@ -21,6 +21,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import com.github.sonatadev.sbldb.domain.Progression
+import com.github.sonatadev.sbldb.domain.Records
+import com.github.sonatadev.sbldb.domain.WeightUnit
+import com.github.sonatadev.sbldb.ui.components.TrendChart
+import com.github.sonatadev.sbldb.ui.components.SectionTabs
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -44,6 +52,10 @@ import com.github.sonatadev.sbldb.ui.formatDate
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
 
+private const val TAB_OVERVIEW = 0
+private const val TAB_PROGRESS = 1
+private const val TAB_HISTORY = 2
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ExerciseDetailScreen(
@@ -56,6 +68,7 @@ fun ExerciseDetailScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val colors = SbldbTheme.colors
     val exercise = state.exercise ?: return
+    var tab by rememberSaveable { mutableIntStateOf(TAB_OVERVIEW) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -88,6 +101,17 @@ fun ExerciseDetailScreen(
             }
         }
         item {
+            SectionTabs(
+                tabs = listOf(
+                    stringResource(R.string.tab_overview),
+                    stringResource(R.string.tab_progress),
+                    stringResource(R.string.tab_history_count, state.sessions.size)
+                ),
+                selected = tab,
+                onSelect = { tab = it }
+            )
+        }
+        if (tab == TAB_OVERVIEW) item {
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_joint_actions), trailing = { MonoCaption(stringResource(R.string.rating_short)) }) {
                 Column {
                     state.actions.forEachIndexed { i, action ->
@@ -106,7 +130,7 @@ fun ExerciseDetailScreen(
                 }
             }
         }
-        item {
+        if (tab == TAB_OVERVIEW) item {
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_muscles_2)) {
                 MuscleLine(stringResource(R.string.primary), "1.0", state.muscles.filter { it.role == Role.PRIMARY })
                 MuscleLine(stringResource(R.string.secondary), "0.5", state.muscles.filter { it.role == Role.SECONDARY })
@@ -117,24 +141,32 @@ fun ExerciseDetailScreen(
                 }
             }
         }
-        item {
-            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.best_e1rm_3)) {
+        // Counterweight machines: more load is easier, so e1RM and heaviest would mislead
+        val assisted = Progression.isAssisted(exercise.name)
+        if (tab == TAB_PROGRESS && !assisted) item {
+            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_best_e1rm)) {
                 val best = state.bestE1rmKg
                 if (best == null) {
                     Text(stringResource(R.string.no_estimate), style = MaterialTheme.typography.bodyLarge, color = colors.muted)
                 } else {
                     Row(verticalAlignment = Alignment.Bottom) {
-                        Text(state.unit.format(best), style = SbldbType.hero(52), color = colors.accent)
+                        Text(state.unit.formatRounded(best), style = SbldbType.hero(52), color = colors.accent)
                         Text(" " + state.unit.label, style = SbldbType.monoLarge, color = colors.muted, modifier = Modifier.padding(bottom = 8.dp))
                     }
+                }
+                if (state.e1rmSeries.size >= 2) {
+                    TrendChart(state.e1rmSeries, state.unit, Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
                 }
                 MonoCaption(stringResource(R.string.e1rm_hint))
             }
         }
-        if (state.sessions.isEmpty()) {
+        if (tab == TAB_PROGRESS && !state.records.isEmpty) item {
+            RecordsModule(state.records, state.unit, assisted)
+        }
+        if (tab != TAB_OVERVIEW && state.sessions.isEmpty()) {
             item { MonoCaption(stringResource(R.string.no_history), Modifier.width(300.dp)) }
         }
-        items(state.sessions, key = { it.workoutId }) { session ->
+        if (tab == TAB_HISTORY) items(state.sessions, key = { it.workoutId }) { session ->
             Module(Modifier.fillMaxWidth(), label = formatDate(session.startedAt)) {
                 Column {
                     session.sets.forEachIndexed { i, set ->
@@ -170,5 +202,32 @@ private fun MuscleLine(label: String, weight: String, muscles: List<MuscleWithRo
             style = MaterialTheme.typography.bodyLarge,
             color = colors.ink
         )
+    }
+}
+
+@Composable
+private fun RecordsModule(records: Records, unit: WeightUnit, assisted: Boolean) {
+    val colors = SbldbTheme.colors
+    Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_records)) {
+        if (!assisted) records.heaviest?.let {
+            RecordLine(stringResource(R.string.record_heaviest), "${unit.format(it)} ${unit.label}")
+        }
+        // Best reps at the heaviest loads, the ones worth chasing
+        records.repsAtWeight.entries.sortedByDescending { it.key }.take(5).forEach { (kg, reps) ->
+            RecordLine(
+                if (kg > 0) "${unit.format(kg)} ${unit.label}" else stringResource(R.string.bodyweight),
+                stringResource(R.string.record_reps, reps)
+            )
+        }
+        MonoCaption(stringResource(R.string.records_hint), color = colors.muted)
+    }
+}
+
+@Composable
+private fun RecordLine(label: String, value: String) {
+    val colors = SbldbTheme.colors
+    Row(Modifier.fillMaxWidth().padding(vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(label, style = MaterialTheme.typography.bodyLarge, color = colors.ink, modifier = Modifier.weight(1f))
+        Text(value, style = SbldbType.monoLarge, color = colors.accent)
     }
 }

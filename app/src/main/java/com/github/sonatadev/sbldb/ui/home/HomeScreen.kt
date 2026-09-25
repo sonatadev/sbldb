@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,6 +64,7 @@ fun HomeScreen(
     onOpenActiveWorkout: () -> Unit,
     onEditRoutine: (Long) -> Unit,
     onOpenVolume: () -> Unit,
+    onOpenPlan: () -> Unit,
     onOpenWorkout: (Long) -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
@@ -144,7 +146,7 @@ fun HomeScreen(
                     state.lagging.forEach { group ->
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(group.muscleGroup, style = MaterialTheme.typography.bodyLarge, color = colors.ink, modifier = Modifier.weight(1f), maxLines = 1)
-                            DotRow(group.sets)
+                            DotRow(group.sets, target = group.target)
                             Text(formatSets(group.sets), style = SbldbType.mono, color = colors.ink, textAlign = TextAlign.End, modifier = Modifier.width(32.dp))
                         }
                     }
@@ -164,7 +166,17 @@ fun HomeScreen(
         }
 
         item {
-            ModuleLabel(stringResource(R.string.module_routines), color = colors.muted, modifier = Modifier.padding(start = 6.dp, top = 8.dp))
+            Row(Modifier.fillMaxWidth().padding(start = 6.dp, top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+                ModuleLabel(stringResource(R.string.module_routines), color = colors.muted, modifier = Modifier.weight(1f))
+                if (state.routines.isNotEmpty()) {
+                    Text(
+                        stringResource(R.string.weekly_plan).uppercase() + "  ›",
+                        style = SbldbType.mono,
+                        color = colors.accent,
+                        modifier = Modifier.clickable(onClick = onOpenPlan).padding(horizontal = 6.dp, vertical = 4.dp)
+                    )
+                }
+            }
         }
         itemsIndexed(state.routines, key = { _, r -> r.routine.routineId }) { _, routine ->
             val sets = routine.exercises.sumOf { it.routineExercise.sets }

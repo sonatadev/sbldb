@@ -48,15 +48,12 @@ import com.github.sonatadev.sbldb.ui.formatSets
 import com.github.sonatadev.sbldb.ui.formatShortDate
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
-import java.time.temporal.IsoFields
 
 @Composable
 fun VolumeScreen(onBack: () -> Unit, onOpenMuscle: (String) -> Unit, onOpenGlossary: (String?) -> Unit, viewModel: VolumeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val colors = SbldbTheme.colors
     var expanded by rememberSaveable { mutableStateOf<String?>(null) }
-    val weekNumber = state.week.start.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
-    val weekEnd = state.week.start.plusDays(6)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -68,10 +65,17 @@ fun VolumeScreen(onBack: () -> Unit, onOpenMuscle: (String) -> Unit, onOpenGloss
                 Box(Modifier.padding(end = 10.dp, bottom = 8.dp)) { BackButton(onBack) }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     ModuleLabel(
-                        stringResource(R.string.volume_label, formatShortDate(state.week.start), formatShortDate(weekEnd)),
+                        stringResource(
+                            R.string.volume_label,
+                            when (state.weeksAgo) {
+                                0 -> stringResource(R.string.this_week)
+                                1 -> stringResource(R.string.last_week)
+                                else -> stringResource(R.string.weeks_ago, state.weeksAgo)
+                            }
+                        ),
                         color = colors.muted
                     )
-                    Text("W%02d".format(weekNumber), style = SbldbType.hero(60), color = colors.accent)
+                    Text(formatShortDate(state.week.start).uppercase(), style = SbldbType.hero(52), color = colors.accent)
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(bottom = 6.dp)) {
                     RoundButton("‹", stringResource(R.string.previous_week), onClick = viewModel::previousWeek)

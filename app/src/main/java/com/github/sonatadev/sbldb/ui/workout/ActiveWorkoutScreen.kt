@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.components.HeroText
 import com.github.sonatadev.sbldb.data.entity.Exercise
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.produceState
@@ -174,7 +175,7 @@ fun ActiveWorkoutScreen(
         item {
             Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Module(Modifier.weight(1.25f).fillMaxHeight(), label = stringResource(R.string.module_time)) {
-                    Text(formatClock(now - workout.workout.startedAt), style = SbldbType.hero(48), color = colors.accent)
+                    HeroText(formatClock(now - workout.workout.startedAt), 48, colors.accent)
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         StatusDot(colors.accent)
                         MonoCaption(stringResource(R.string.live_since, formatTime(workout.workout.startedAt)))
@@ -633,7 +634,7 @@ private fun RestModule(rest: RestTimer, now: Long, onAdjust: (Int) -> Unit, onSk
     val remaining = rest.remainingSeconds(now)
     Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_rest)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("%d:%02d".format(remaining / 60, remaining % 60), style = SbldbType.hero(52), color = colors.accent, modifier = Modifier.weight(1f))
+            HeroText("%d:%02d".format(remaining / 60, remaining % 60), 52, colors.accent, Modifier.weight(1f))
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 SecondaryButton("−15", onClick = { onAdjust(-15) })
                 SecondaryButton("+15", onClick = { onAdjust(15) })

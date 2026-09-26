@@ -48,7 +48,7 @@
     <string name="glossary_label">Learn · %1$d terms</string>
     <string name="glossary_hint">Terms used in the app, explained</string>
     <string name="rating_short">Rating</string>
-    <string name="home_label">Week %1$d · %2$s</string>
+    <string name="home_label">%1$s · %2$s this week</string>
     <string name="module_this_week">01 · This week</string>
     <string name="module_next_up">02 · Next up</string>
     <string name="module_in_progress">02 · In progress</string>
@@ -88,7 +88,7 @@
     <string name="weekly_volume_cta">Sets per muscle, week by week</string>
     <string name="no_estimate">No estimate yet: log a set of 12 reps or fewer.</string>
     <string name="e1rm_hint">Epley estimate from sets of 12 reps or fewer</string>
-    <string name="volume_label">Weekly volume · %1$s – %2$s</string>
+    <string name="volume_label">Weekly volume · %1$s</string>
     <string name="in_zone">In zone</string>
     <string name="below_zone">Below</string>
     <string name="above_zone">Above</string>
@@ -350,4 +350,14 @@
     <string name="save_as_routine">Save as routine</string>
     <string name="add_warmups">Add warm-up sets</string>
     <string name="plates_per_side">Per side %1$s · bar %2$s</string>
+    <string name="weeks_ago">%1$d weeks ago</string>
+    <string name="this_week">this week</string>
+    <string name="last_week">last week</string>
+    <string name="plan_routine">Plan a routine</string>
+    <string name="planned_label">Planned</string>
+    <string name="planned_missed">Planned · not done</string>
+    <string name="nothing_planned">Nothing planned for this day.</string>
+    <string name="plan_for">Plan for %1$s</string>
+    <string name="plan_no_routine">Build a routine on Home first, then plan it here.</string>
+    <string name="planned_today">Planned for today</string>
 </resources>

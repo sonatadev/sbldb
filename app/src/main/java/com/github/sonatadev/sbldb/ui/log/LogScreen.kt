@@ -1,5 +1,11 @@
 package com.github.sonatadev.sbldb.ui.log
 
+import com.github.sonatadev.sbldb.data.entity.RoutineWithExercises
+import com.github.sonatadev.sbldb.data.entity.PlannedRoutine
+import com.github.sonatadev.sbldb.ui.components.SecondaryButton
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -64,10 +70,20 @@ fun LogScreen(
     onOpenVolume: () -> Unit,
     onOpenPlan: () -> Unit,
     onOpenBody: () -> Unit,
+    onOpenActiveWorkout: () -> Unit,
     viewModel: LogViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val colors = SbldbTheme.colors
+    var picking by remember { mutableStateOf(false) }
+    if (picking) {
+        PlanDialog(
+            day = state.selected,
+            routines = state.routines,
+            onPick = { viewModel.plan(it); picking = false },
+            onDismiss = { picking = false }
+        )
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -82,23 +98,52 @@ fun LogScreen(
                 }
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.padding(bottom = 6.dp)) {
                     RoundButton("‹", stringResource(R.string.previous_month), onClick = { viewModel.changeMonth(-1) })
-                    RoundButton("›", stringResource(R.string.next_month), onClick = { viewModel.changeMonth(1) }, enabled = state.month < YearMonth.now())
+                    RoundButton(
+                        "›",
+                        stringResource(R.string.next_month),
+                        onClick = { viewModel.changeMonth(1) },
+                        enabled = state.month < YearMonth.now().plusMonths(LogViewModel.MAX_MONTHS_AHEAD)
+                    )
                 }
             }
         }
         item {
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_calendar)) {
-                Calendar(state.month, state.selected, state.workoutsByDay.mapValues { it.value.size }, viewModel::select)
+                Calendar(state.month, state.selected, state.workoutsByDay.mapValues { it.value.size }, state.plannedByDay.keys, viewModel::select)
             }
         }
         item {
             ModuleLabel(state.selected.format(dayFormatter), color = colors.muted, modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp))
         }
-        if (state.selectedWorkouts.isEmpty()) {
-            item { MonoCaption(stringResource(R.string.rest_day), Modifier.padding(horizontal = 6.dp)) }
+        if (state.selectedWorkouts.isEmpty() && state.selectedPlanned.isEmpty()) {
+            item {
+                MonoCaption(
+                    stringResource(if (state.canPlanSelected) R.string.nothing_planned else R.string.rest_day),
+                    Modifier.padding(horizontal = 6.dp)
+                )
+            }
         }
         items(state.selectedWorkouts, key = { it.workout.workoutId }) { workout ->
             DayWorkout(workout, onClick = { onOpenWorkout(workout.workout.workoutId) })
+        }
+        items(state.selectedPlanned, key = { "planned-${it.plannedId}" }) { planned ->
+            val isToday = state.selected == LocalDate.now()
+            PlannedCard(
+                planned = planned,
+                past = state.selected.isBefore(LocalDate.now()),
+                onStart = if (isToday && !state.hasActiveWorkout) ({ viewModel.start(planned, onOpenActiveWorkout) }) else null,
+                onRemove = { viewModel.unplan(planned) }
+            )
+        }
+        if (state.canPlanSelected) {
+            item {
+                SecondaryButton(
+                    "+ " + stringResource(R.string.plan_routine),
+                    onClick = { picking = true },
+                    color = colors.accent,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
         item {
             val stats = state.stats
@@ -157,7 +202,7 @@ fun LogScreen(
 }
 
 @Composable
-private fun Calendar(month: YearMonth, selected: LocalDate, counts: Map<LocalDate, Int>, onSelect: (LocalDate) -> Unit) {
+private fun Calendar(month: YearMonth, selected: LocalDate, counts: Map<LocalDate, Int>, planned: Set<LocalDate>, onSelect: (LocalDate) -> Unit) {
     val colors = SbldbTheme.colors
     val today = LocalDate.now()
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -174,6 +219,7 @@ private fun Calendar(month: YearMonth, selected: LocalDate, counts: Map<LocalDat
                             val isSelected = day == selected
                             val future = day.isAfter(today)
                             val trained = (counts[day] ?: 0) > 0
+                            val isPlanned = day in planned && !trained
                             Column(
                                 modifier = Modifier
                                     .size(40.dp)
@@ -182,11 +228,11 @@ private fun Calendar(month: YearMonth, selected: LocalDate, counts: Map<LocalDat
                                     .then(
                                         when {
                                             isSelected -> Modifier.border(2.dp, colors.ink, CircleShape)
-                                            day == today -> Modifier.border(1.5.dp, colors.accent, CircleShape)
+                                            day == today || isPlanned -> Modifier.border(1.5.dp, colors.accent, CircleShape)
                                             else -> Modifier
                                         }
                                     )
-                                    .clickable(enabled = !future, role = Role.Button) { onSelect(day) },
+                                    .clickable(role = Role.Button) { onSelect(day) },
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
@@ -195,11 +241,14 @@ private fun Calendar(month: YearMonth, selected: LocalDate, counts: Map<LocalDat
                                     style = SbldbType.mono,
                                     color = when {
                                         trained -> colors.onAccent
-                                        future -> colors.empty
-                                        day == today -> colors.accent
+                                        isPlanned || day == today -> colors.accent
+                                        future -> colors.muted
                                         else -> colors.ink
                                     }
                                 )
+                                if (isPlanned) {
+                                    Row(Modifier.height(6.dp).padding(top = 2.dp)) { StatusDot(colors.accent, size = 4.dp) }
+                                }
                                 // A second workout on the same day shows as small dots under the number
                                 if ((counts[day] ?: 0) > 1) {
                                     Row(Modifier.height(6.dp).padding(top = 2.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -240,4 +289,69 @@ private fun Stat(label: String, value: String, modifier: Modifier) {
         ModuleLabel(label, color = SbldbTheme.colors.muted)
         Text(value, style = SbldbType.hero(36), color = SbldbTheme.colors.accent)
     }
+}
+
+/** A routine planned for the selected day; today it can be started from here. */
+@Composable
+private fun PlannedCard(planned: PlannedRoutine, past: Boolean, onStart: (() -> Unit)?, onRemove: () -> Unit) {
+    val colors = SbldbTheme.colors
+    Module(
+        Modifier.fillMaxWidth(),
+        label = stringResource(if (past) R.string.planned_missed else R.string.planned_label),
+        trailing = {
+            Text(
+                "×",
+                style = SbldbType.monoLarge,
+                color = colors.dim,
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(role = Role.Button, onClickLabel = stringResource(R.string.remove), onClick = onRemove)
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                planned.name,
+                style = MaterialTheme.typography.titleLarge,
+                color = if (past) colors.muted else colors.ink,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (onStart != null) SecondaryButton(stringResource(R.string.start), onClick = onStart, color = colors.accent)
+        }
+    }
+}
+
+@Composable
+private fun PlanDialog(day: LocalDate, routines: List<RoutineWithExercises>, onPick: (Long) -> Unit, onDismiss: () -> Unit) {
+    val colors = SbldbTheme.colors
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = colors.module,
+        title = { Text(stringResource(R.string.plan_for, day.format(dayFormatter)), color = colors.ink) },
+        text = {
+            Column {
+                if (routines.isEmpty()) {
+                    Text(stringResource(R.string.plan_no_routine), color = colors.muted)
+                }
+                routines.forEach { routine ->
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(routine.routine.routineId) }
+                            .padding(vertical = 10.dp)
+                    ) {
+                        Text(routine.routine.name, style = MaterialTheme.typography.titleMedium, color = colors.ink)
+                        MonoCaption(pluralStringResource(R.plurals.exercise_count, routine.exercises.size, routine.exercises.size))
+                    }
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = {
+            androidx.compose.material3.TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel), color = colors.ink) }
+        }
+    )
 }

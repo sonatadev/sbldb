@@ -176,7 +176,8 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenWorkout = { navController.navigate(Routes.workoutDetail(it)) },
                     onOpenVolume = { navController.navigate(Routes.VOLUME) },
                     onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) },
-                    onOpenBody = { navController.navigate(Routes.BODY) }
+                    onOpenBody = { navController.navigate(Routes.BODY) },
+                    onOpenActiveWorkout = { navController.navigate(Routes.ACTIVE_WORKOUT) { launchSingleTop = true } }
                 )
             }
             composable(Routes.BODY) { BodyScreen(onBack = back, onOpenGlossary = openGlossary) }

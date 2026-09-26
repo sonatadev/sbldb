@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.home
 
+import com.github.sonatadev.sbldb.ui.components.HeroText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -55,9 +56,9 @@ import com.github.sonatadev.sbldb.ui.theme.SbldbType
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.IsoFields
 import java.util.Locale
 
+private val monthName: DateTimeFormatter get() = DateTimeFormatter.ofPattern("LLLL", Locale.getDefault())
 private val heroDate: DateTimeFormatter get() = DateTimeFormatter.ofPattern("EEE d", Locale.getDefault())
 
 @Composable
@@ -83,7 +84,7 @@ fun HomeScreen(
             ScreenHeader(
                 label = stringResource(
                     R.string.home_label,
-                    state.week.start.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR),
+                    today.format(monthName),
                     pluralStringResource(R.plurals.session_count, state.sessionsThisWeek, state.sessionsThisWeek)
                 ),
                 title = today.format(heroDate).uppercase(),
@@ -106,7 +107,11 @@ fun HomeScreen(
         item {
             val active = state.activeWorkout
             val next = state.nextRoutine
-            Module(Modifier.fillMaxWidth(), label = stringResource(if (active != null) R.string.module_in_progress else R.string.module_next_up)) {
+            Module(
+                Modifier.fillMaxWidth(),
+                label = stringResource(if (active != null) R.string.module_in_progress else R.string.module_next_up),
+                trailing = if (active == null && state.nextIsPlanned) ({ MonoCaption(stringResource(R.string.planned_today), color = colors.accent) }) else null
+            ) {
                 when {
                     active != null -> {
                         var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -117,7 +122,7 @@ fun HomeScreen(
                             }
                         }
                         Text(active.name, style = MaterialTheme.typography.headlineSmall, color = colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        Text(formatClock(now - active.startedAt), style = SbldbType.hero(44), color = colors.accent)
+                        HeroText(formatClock(now - active.startedAt), 44, colors.accent)
                         PrimaryButton(stringResource(R.string.resume_workout), onClick = onOpenActiveWorkout, accentDot = true, modifier = Modifier.fillMaxWidth())
                     }
                     next != null -> {

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.settings
 
+import com.github.sonatadev.sbldb.ui.components.HeroText
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -157,7 +158,7 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
                 Column(Modifier.weight(1f)) {
                     ModuleLabel(stringResource(R.string.default_rest), color = colors.muted)
-                    Text("%d:%02d".format(state.restSeconds / 60, state.restSeconds % 60), style = SbldbType.hero(36), color = colors.accent)
+                    HeroText("%d:%02d".format(state.restSeconds / 60, state.restSeconds % 60), 36, colors.accent)
                 }
                 SecondaryButton("−15", onClick = { viewModel.setRestSeconds(state.restSeconds - 15) })
                 Spacer(Modifier.width(6.dp))

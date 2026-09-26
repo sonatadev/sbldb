@@ -11,6 +11,7 @@ import com.github.sonatadev.sbldb.data.content.ContentSource
 import com.github.sonatadev.sbldb.data.entity.BodyEntry
 import com.github.sonatadev.sbldb.data.entity.ExerciseNote
 import com.github.sonatadev.sbldb.data.entity.MuscleTarget
+import com.github.sonatadev.sbldb.data.entity.PlannedWorkout
 import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.SetType
@@ -57,6 +58,8 @@ class BackupRoundTripTest {
         db.userDataDAO().upsertExerciseNote(ExerciseNote(bench, "grip 81 cm"))
         db.userDataDAO().insertBodyEntry(BodyEntry(date = 20000, weightKg = 80.5, waistCm = 82.0))
         db.userDataDAO().upsertTarget(MuscleTarget("Shoulders", 12, 22))
+        db.routineDAO().insertPlanned(PlannedWorkout(date = 20500, routineId = routine))
+        Unit
     }
 
     @After

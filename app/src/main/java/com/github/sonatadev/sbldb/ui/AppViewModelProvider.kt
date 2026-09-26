@@ -37,7 +37,7 @@ object AppViewModelProvider {
         initializer { MuscleDetailViewModel(createSavedStateHandle(), container().jointActionRepository) }
         initializer { GlossaryViewModel(createSavedStateHandle(), container().jointActionRepository) }
         initializer { ActionDetailViewModel(createSavedStateHandle(), container().jointActionRepository) }
-        initializer { LogViewModel(container().workoutRepository, container().exerciseRepository) }
+        initializer { LogViewModel(container().workoutRepository, container().exerciseRepository, container().routineRepository) }
         initializer {
             ActiveWorkoutViewModel(
                 container().workoutRepository,

@@ -24,6 +24,7 @@ import com.github.sonatadev.sbldb.data.entity.GlossaryTerm
 import com.github.sonatadev.sbldb.data.entity.JointAction
 import com.github.sonatadev.sbldb.data.entity.JointActionMuscle
 import com.github.sonatadev.sbldb.data.entity.Muscle
+import com.github.sonatadev.sbldb.data.entity.PlannedWorkout
 import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.Workout
@@ -36,9 +37,9 @@ import com.github.sonatadev.sbldb.data.entity.WorkoutSet
         Workout::class, WorkoutExercise::class, WorkoutSet::class,
         JointAction::class, JointActionMuscle::class, ExerciseJointAction::class,
         Routine::class, RoutineExercise::class, GlossaryTerm::class,
-        ExerciseNote::class, BodyEntry::class, MuscleTarget::class
+        ExerciseNote::class, BodyEntry::class, MuscleTarget::class, PlannedWorkout::class
     ],
-    version = 8
+    version = 9
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDAO(): ExerciseDAO
@@ -58,6 +59,19 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         /** Set types, notes, rest times, routine frequency, custom exercises, body entries, volume targets. */
+        /** Routines planned on calendar days. */
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS planned_workouts (plannedId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "date INTEGER NOT NULL, routineId INTEGER NOT NULL, " +
+                        "FOREIGN KEY(routineId) REFERENCES routines(routineId) ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_planned_workouts_date ON planned_workouts (date)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_planned_workouts_routineId ON planned_workouts (routineId)")
+            }
+        }
+
         /** Joint-action animations, filled by the next content sync. */
         val MIGRATION_7_8 = object : Migration(7, 8) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -123,7 +137,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "sbldb_database"
                 )
-                    .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+                    .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
                     // Versions 1–2 only ever existed on development devices
                     .fallbackToDestructiveMigrationFrom(true, 1, 2)
                     .build()

@@ -6,6 +6,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.github.sonatadev.sbldb.data.entity.PlannedRoutine
+import com.github.sonatadev.sbldb.data.entity.PlannedWorkout
 import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.RoutineWithExercises
@@ -15,6 +17,27 @@ import kotlinx.coroutines.flow.Flow
 interface RoutineDAO {
     @Insert
     suspend fun insert(routine: Routine): Long
+
+    @Insert
+    suspend fun insertPlanned(planned: PlannedWorkout): Long
+
+    @Query("DELETE FROM planned_workouts WHERE plannedId = :plannedId")
+    suspend fun deletePlanned(plannedId: Long)
+
+    @Query(
+        """
+        SELECT p.plannedId, p.date, p.routineId, r.name FROM planned_workouts p
+        JOIN routines r ON r.routineId = p.routineId
+        WHERE p.date BETWEEN :fromDay AND :toDay ORDER BY p.date, p.plannedId
+        """
+    )
+    fun plannedBetween(fromDay: Long, toDay: Long): Flow<List<PlannedRoutine>>
+
+    @Query("SELECT * FROM planned_workouts ORDER BY date")
+    suspend fun allPlanned(): List<PlannedWorkout>
+
+    @Query("DELETE FROM planned_workouts")
+    suspend fun deleteAllPlanned()
 
     @Update
     suspend fun update(routine: Routine)

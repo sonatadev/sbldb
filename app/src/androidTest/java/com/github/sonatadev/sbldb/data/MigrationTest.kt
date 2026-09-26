@@ -18,7 +18,7 @@ class MigrationTest {
     val helper = MigrationTestHelper(InstrumentationRegistry.getInstrumentation(), AppDatabase::class.java)
 
     @Test
-    fun migrate3To8KeepsWorkouts() {
+    fun migrate3To9KeepsWorkouts() {
         helper.createDatabase(dbName, 3).apply {
             execSQL("INSERT INTO exercises (exerciseId, name, equipment, attachment) VALUES (1, 'Barbell Row', 'Barbell', NULL)")
             execSQL("INSERT INTO workouts (workoutId, name, startedAt, endedAt, notes, routineId) VALUES (1, 'Upper', 1000, 2000, NULL, NULL)")
@@ -29,9 +29,9 @@ class MigrationTest {
         }
 
         val db = helper.runMigrationsAndValidate(
-            dbName, 8, true,
+            dbName, 9, true,
             AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6, AppDatabase.MIGRATION_6_7,
-            AppDatabase.MIGRATION_7_8
+            AppDatabase.MIGRATION_7_8, AppDatabase.MIGRATION_8_9
         )
 
         db.query("SELECT name, note FROM exercises WHERE exerciseId = 1").use { c ->
@@ -48,6 +48,10 @@ class MigrationTest {
             c.moveToNext(); assertEquals("WARMUP", c.getString(0))
         }
         db.query("SELECT COUNT(animation) FROM joint_actions").use { c ->
+            c.moveToFirst()
+            assertEquals(0, c.getInt(0))
+        }
+        db.query("SELECT COUNT(*) FROM planned_workouts").use { c ->
             c.moveToFirst()
             assertEquals(0, c.getInt(0))
         }

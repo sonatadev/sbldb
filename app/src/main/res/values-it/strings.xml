@@ -43,7 +43,7 @@
     <string name="glossary_label">Impara · %1$d termini</string>
     <string name="glossary_hint">I termini usati nell\'app, spiegati</string>
     <string name="rating_short">Voto</string>
-    <string name="home_label">Settimana %1$d · %2$s</string>
+    <string name="home_label">%1$s · %2$s questa settimana</string>
     <string name="module_this_week">01 · Questa settimana</string>
     <string name="module_next_up">02 · Prossimo</string>
     <string name="module_in_progress">02 · In corso</string>
@@ -83,7 +83,7 @@
     <string name="weekly_volume_cta">Serie per muscolo, settimana per settimana</string>
     <string name="no_estimate">Ancora nessuna stima: registra una serie da 12 ripetizioni o meno.</string>
     <string name="e1rm_hint">Stima di Epley da serie di 12 ripetizioni o meno</string>
-    <string name="volume_label">Volume settimanale · %1$s – %2$s</string>
+    <string name="volume_label">Volume settimanale · %1$s</string>
     <string name="in_zone">In zona</string>
     <string name="below_zone">Sotto</string>
     <string name="above_zone">Sopra</string>
@@ -335,4 +335,14 @@
     <string name="save_as_routine">Salva come routine</string>
     <string name="add_warmups">Aggiungi serie di riscaldamento</string>
     <string name="plates_per_side">Per lato %1$s · bilanciere %2$s</string>
+    <string name="weeks_ago">%1$d settimane fa</string>
+    <string name="this_week">questa settimana</string>
+    <string name="last_week">settimana scorsa</string>
+    <string name="plan_routine">Pianifica una routine</string>
+    <string name="planned_label">Pianificato</string>
+    <string name="planned_missed">Pianificato · non fatto</string>
+    <string name="nothing_planned">Niente di pianificato per questo giorno.</string>
+    <string name="plan_for">Pianifica per %1$s</string>
+    <string name="plan_no_routine">Crea prima una routine dalla Home, poi pianificala qui.</string>
+    <string name="planned_today">Pianificato per oggi</string>
 </resources>

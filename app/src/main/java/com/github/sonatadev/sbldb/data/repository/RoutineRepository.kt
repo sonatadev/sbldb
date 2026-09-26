@@ -6,6 +6,9 @@ import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.RoutineWithExercises
 import kotlinx.coroutines.flow.Flow
+import com.github.sonatadev.sbldb.data.entity.PlannedRoutine
+import com.github.sonatadev.sbldb.data.entity.PlannedWorkout
+import java.time.LocalDate
 import com.github.sonatadev.sbldb.data.entity.WorkoutWithExercises
 import com.github.sonatadev.sbldb.domain.PastSet
 import com.github.sonatadev.sbldb.domain.RoutinePlan
@@ -17,6 +20,13 @@ class RoutineRepository(private val db: AppDatabase) {
     val routines: Flow<List<RoutineWithExercises>> = dao.getAll()
 
     fun routine(id: Long): Flow<RoutineWithExercises?> = dao.get(id)
+
+    /** Routines planned between two days (inclusive). */
+    fun plannedBetween(from: LocalDate, to: LocalDate): Flow<List<PlannedRoutine>> = dao.plannedBetween(from.toEpochDay(), to.toEpochDay())
+
+    suspend fun plan(date: LocalDate, routineId: Long) = dao.insertPlanned(PlannedWorkout(date = date.toEpochDay(), routineId = routineId))
+
+    suspend fun unplan(plannedId: Long) = dao.deletePlanned(plannedId)
 
     suspend fun find(id: Long): RoutineWithExercises? = dao.find(id)
 

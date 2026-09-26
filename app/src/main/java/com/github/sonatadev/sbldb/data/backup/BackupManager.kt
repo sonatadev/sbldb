@@ -10,6 +10,7 @@ import com.github.sonatadev.sbldb.data.CustomExercises
 import com.github.sonatadev.sbldb.data.entity.BodyEntry
 import com.github.sonatadev.sbldb.data.entity.ExerciseNote
 import com.github.sonatadev.sbldb.data.entity.MuscleTarget
+import com.github.sonatadev.sbldb.data.entity.PlannedWorkout
 import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.SetType
@@ -75,6 +76,13 @@ class BackupManager(
                                 .put("repMin", p.repMin).put("repMax", p.repMax).putOpt("targetRir", p.targetRir).put("restSeconds", p.restSeconds))
                         }
                     }))
+            }
+        })
+        // Planned days refer to routines by their index in the list above (names can repeat)
+        val routineIndex = routinesById.keys.withIndex().associate { (i, id) -> id to i }
+        root.put("planned", JSONArray().apply {
+            db.routineDAO().allPlanned().forEach { p ->
+                routineIndex[p.routineId]?.let { put(JSONObject().put("date", p.date).put("routine", it)) }
             }
         })
         root.put("workouts", JSONArray().apply {
@@ -192,9 +200,11 @@ class BackupManager(
             val ids = dao.exerciseNames().associate { it.name to it.exerciseId }
 
             val routineIds = HashMap<String, Long>()
+            val routinesInOrder = mutableListOf<Long>()
             root.optJSONArray("routines").objects().forEach { r ->
                 val routineId = db.routineDAO().insert(Routine(name = r.getString("name"), position = r.optInt("position"), timesPerWeek = r.optInt("timesPerWeek", 1)))
                 routineIds.putIfAbsent(r.getString("name"), routineId)
+                routinesInOrder += routineId
                 r.optJSONArray("exercises").objects().forEach { x ->
                     db.routineDAO().insertExercise(
                         RoutineExercise(
@@ -204,6 +214,10 @@ class BackupManager(
                         )
                     )
                 }
+            }
+
+            root.optJSONArray("planned").objects().forEach { p ->
+                routinesInOrder.getOrNull(p.getInt("routine"))?.let { db.routineDAO().insertPlanned(PlannedWorkout(date = p.getLong("date"), routineId = it)) }
             }
 
             val workoutDao = db.workoutDAO()

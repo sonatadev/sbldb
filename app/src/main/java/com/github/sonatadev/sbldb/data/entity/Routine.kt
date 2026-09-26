@@ -49,3 +49,20 @@ data class RoutineWithExercises(
     @Relation(entity = RoutineExercise::class, parentColumn = "routineId", entityColumn = "routineId")
     val exercises: List<RoutineExerciseWithExercise>
 )
+
+/** A routine planned for a day. [date] is an epoch day in the device's time zone. */
+@Entity(
+    tableName = "planned_workouts",
+    foreignKeys = [
+        ForeignKey(entity = Routine::class, parentColumns = ["routineId"], childColumns = ["routineId"], onDelete = ForeignKey.CASCADE)
+    ],
+    indices = [Index("date"), Index("routineId")]
+)
+data class PlannedWorkout(
+    @PrimaryKey(autoGenerate = true) val plannedId: Long = 0,
+    val date: Long,
+    val routineId: Long
+)
+
+/** A planned workout with the name of its routine, for the calendar. */
+data class PlannedRoutine(val plannedId: Long, val date: Long, val routineId: Long, val name: String)

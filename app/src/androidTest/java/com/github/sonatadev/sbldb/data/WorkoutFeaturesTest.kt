@@ -81,4 +81,18 @@ class WorkoutFeaturesTest {
         assertEquals(62.5, sets.getValue(b).weightKg!!, 0.0)
         assertEquals(8, sets.getValue(b).reps)
     }
+
+    @Test
+    fun plannedRoutinesShowByDayAndGoWithTheRoutine() = runBlocking {
+        val routines = com.github.sonatadev.sbldb.data.repository.RoutineRepository(db)
+        val routineId = routines.create("Lower")
+        val day = java.time.LocalDate.of(2026, 10, 3)
+        routines.plan(day, routineId)
+        val planned = routines.plannedBetween(day.minusDays(1), day.plusDays(1)).first()
+        assertEquals(listOf("Lower"), planned.map { it.name })
+        assertEquals(day.toEpochDay(), planned.single().date)
+
+        routines.delete(routines.find(routineId)!!.routine)
+        assertTrue(routines.plannedBetween(day, day).first().isEmpty())
+    }
 }

@@ -47,7 +47,13 @@ object FigurePose {
     /** Unit vector [deg] degrees from straight down, turning toward +x. */
     private fun dir(deg: Float) = P(sin(rad(deg)), cos(rad(deg)))
 
-    fun pose(animation: ActionAnimation, value: Float): Figure = when (animation.view) {
+    /** Small joints get a close-up of the limb alone: on the whole body they are a few dots. */
+    private val CLOSE_UP = setOf(Dof.ELBOW_FLEX, Dof.WRIST_FLEX, Dof.FOREARM_ROT, Dof.ANKLE_FLEX)
+
+    fun pose(animation: ActionAnimation, value: Float): Figure =
+        if (animation.dof in CLOSE_UP) closeUp(animation.dof, value) else wholeBody(animation, value)
+
+    private fun wholeBody(animation: ActionAnimation, value: Float): Figure = when (animation.view) {
         FigureView.SIDE -> side(animation.dof, value)
         FigureView.FRONT -> front(animation.dof, value)
         FigureView.TOP -> top(animation.dof, value)
@@ -103,18 +109,7 @@ object FigurePose {
             ),
             head = head,
             headRadius = 0.12f,
-            headMoving = torso,
-            // Small moves get a close-up around the joint
-            zoom = when (dof) {
-                Dof.ANKLE_FLEX -> 2.4f
-                Dof.WRIST_FLEX -> 2.2f
-                else -> 1f
-            },
-            focus = when (dof) {
-                Dof.ANKLE_FLEX -> ankle + P(0.05f, -0.12f)
-                Dof.WRIST_FLEX -> wrist + P(0f, -0.05f)
-                else -> P(0f, 0f)
-            }
+            headMoving = torso
         )
     }
 
@@ -231,5 +226,73 @@ object FigurePose {
             headOccludes = true,
             zoom = 1.5f
         )
+    }
+
+    /** A far-away head: close-ups show no head. */
+    private val NO_HEAD = P(100f, 100f)
+    private const val CLOSE_UP_ZOOM = 1.3f
+
+    private fun closeUp(dof: Dof, v: Float): Figure = when (dof) {
+        Dof.ELBOW_FLEX -> {
+            // Side view of the arm; the trunk is a faint reference behind it
+            val shoulder = P(-0.05f, -0.95f)
+            val elbow = P(-0.05f, 0.02f)
+            val wrist = elbow + dir(v) * 0.7f
+            Figure(
+                bones = listOf(
+                    Bone(P(-0.3f, -1.1f), P(-0.3f, 0.3f), false, ghost = true, width = 0.1f),
+                    Bone(shoulder, elbow, false, width = 0.12f),
+                    Bone(elbow, wrist, true, width = 0.095f),
+                    Bone(wrist, wrist + dir(v) * 0.26f, true, width = 0.07f)
+                ),
+                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
+            )
+        }
+        Dof.WRIST_FLEX -> {
+            // Forearm resting level, palm up; flexion curls the hand up
+            val wrist = P(0f, 0.15f)
+            val hand = dir(90f + v)
+            val knuckles = wrist + hand * 0.36f
+            Figure(
+                bones = listOf(
+                    Bone(P(-1.05f, 0.15f), wrist, false, width = 0.11f),
+                    Bone(wrist, knuckles, true, width = 0.1f),
+                    Bone(knuckles, knuckles + hand * 0.32f, true, width = 0.055f)
+                ),
+                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
+            )
+        }
+        Dof.FOREARM_ROT -> {
+            // Looking down the forearm from the fingers: the palm turns like a clock hand around it
+            val center = P(0f, 0f)
+            val along = P(sin(rad(v)), -cos(rad(v)))
+            val across = P(cos(rad(v)), sin(rad(v)))
+            val top = center + along * 0.55f
+            Figure(
+                bones = listOf(
+                    Bone(P(0f, -0.6f), P(0f, 0.6f), false, ghost = true, width = 0.02f),
+                    Bone(center + along * -0.55f, top, true, width = 0.09f),
+                    Bone(top, top + across * 0.28f, true, width = 0.07f),
+                    Bone(center, center, false, width = 0.2f)
+                ),
+                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
+            )
+        }
+        else -> {
+            // Ankle from the side: shin fixed, foot pivoting; the floor shows where flat is
+            val ankle = P(-0.15f, 0.2f)
+            val footDir = dir(90f - v)
+            val down = dir(-v)
+            val sole = ankle + down * 0.12f
+            Figure(
+                bones = listOf(
+                    Bone(P(-1f, 0.43f), P(1f, 0.43f), false, ghost = true, width = 0.015f),
+                    Bone(P(-0.15f, -1.1f), ankle, false, width = 0.1f),
+                    Bone(ankle, sole, true, width = 0.09f),
+                    Bone(sole + footDir * -0.2f, sole + footDir * 0.62f, true, width = 0.085f)
+                ),
+                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
+            )
+        }
     }
 }

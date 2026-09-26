@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.routines
 
+import com.github.sonatadev.sbldb.ui.isExpert
 import com.github.sonatadev.sbldb.ui.formatSets
 import com.github.sonatadev.sbldb.ui.components.MonoChip
 import androidx.compose.foundation.layout.FlowRow
@@ -56,11 +57,14 @@ import com.github.sonatadev.sbldb.ui.theme.SbldbType
 fun RoutineEditorScreen(
     onBack: () -> Unit,
     onAddExercise: (routineId: Long) -> Unit,
+    onAddMovement: (routineId: Long, replace: Long?, action: Int?) -> Unit,
     onOpenPlan: () -> Unit,
     viewModel: RoutineEditorViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val routine by viewModel.routine.collectAsStateWithLifecycle()
     val plan by viewModel.plan.collectAsStateWithLifecycle()
+    val actions by viewModel.actions.collectAsStateWithLifecycle()
+    val expert = isExpert()
     val colors = SbldbTheme.colors
     var showDelete by remember { mutableStateOf(false) }
     val current = routine ?: return
@@ -129,15 +133,35 @@ fun RoutineEditorScreen(
                 entry = entry,
                 isFirst = index == 0,
                 isLast = index == current.exercises.lastIndex,
-                viewModel = viewModel
+                viewModel = viewModel,
+                movement = entry.routineExercise.jointActionId?.let { actions[it] }?.let { "${it.joint} · ${it.name}" },
+                onChangeExercise = { onAddMovement(viewModel.routineId, entry.routineExercise.routineExerciseId, entry.routineExercise.jointActionId) }
             )
         }
         item {
-            SecondaryButton(
-                "+ " + stringResource(R.string.add_exercise),
-                onClick = { onAddExercise(viewModel.routineId) },
-                modifier = Modifier.fillMaxWidth().height(48.dp)
-            )
+            // Experts build a routine from movements, then choose the exercise for each
+            if (expert) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    SecondaryButton(
+                        "+ " + stringResource(R.string.add_movement),
+                        onClick = { onAddMovement(viewModel.routineId, null, null) },
+                        color = colors.accent,
+                        modifier = Modifier.fillMaxWidth().height(48.dp)
+                    )
+                    Text(
+                        stringResource(R.string.add_exercise_directly),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colors.muted,
+                        modifier = Modifier.clickable { onAddExercise(viewModel.routineId) }.padding(10.dp)
+                    )
+                }
+            } else {
+                SecondaryButton(
+                    "+ " + stringResource(R.string.add_exercise),
+                    onClick = { onAddExercise(viewModel.routineId) },
+                    modifier = Modifier.fillMaxWidth().height(48.dp)
+                )
+            }
         }
         item {
             SecondaryButton(stringResource(R.string.delete_routine), onClick = { showDelete = true }, color = colors.muted, modifier = Modifier.fillMaxWidth())
@@ -161,7 +185,9 @@ private fun PlannedExercise(
     entry: RoutineExerciseWithExercise,
     isFirst: Boolean,
     isLast: Boolean,
-    viewModel: RoutineEditorViewModel
+    viewModel: RoutineEditorViewModel,
+    movement: String?,
+    onChangeExercise: () -> Unit
 ) {
     val colors = SbldbTheme.colors
     val plan = entry.routineExercise
@@ -176,6 +202,15 @@ private fun PlannedExercise(
             }
         }
     ) {
+        movement?.let {
+            // The movement leads; the exercise is how it is trained today, and can be changed
+            Text(
+                it.uppercase() + "  ›",
+                style = SbldbType.mono,
+                color = colors.accent,
+                modifier = Modifier.clickable(onClickLabel = stringResource(R.string.change_exercise), onClick = onChangeExercise)
+            )
+        }
         Text(entry.exercise.name, style = MaterialTheme.typography.titleLarge, color = colors.ink)
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Stepper(stringResource(R.string.sets_label), plan.sets, 1..10) { viewModel.update(plan.copy(sets = it)) }

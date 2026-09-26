@@ -25,8 +25,13 @@ data class Figure(
     /** How much to magnify the figure; the top view is small and gets drawn larger. */
     val zoom: Float = 1f,
     /** Figure-space point to centre on when zoomed in. */
-    val focus: P = P(0f, 0f)
+    val focus: P = P(0f, 0f),
+    /** A word describing the pose right now, for moves that are hard to read from shape alone. */
+    val label: PoseLabel? = null
 )
+
+/** Hand orientation for forearm rotation, shown as text over the figure. */
+enum class PoseLabel { PALM_DOWN, THUMB_UP, PALM_UP }
 
 /**
  * Builds the stick figure for a joint action at one angle. Side view faces right; front view faces
@@ -48,10 +53,14 @@ object FigurePose {
     private fun dir(deg: Float) = P(sin(rad(deg)), cos(rad(deg)))
 
     /** Small joints get a close-up of the limb alone: on the whole body they are a few dots. */
-    private val CLOSE_UP = setOf(Dof.ELBOW_FLEX, Dof.WRIST_FLEX, Dof.FOREARM_ROT, Dof.ANKLE_FLEX)
+    private val CLOSE_UP = setOf(Dof.WRIST_FLEX, Dof.FOREARM_ROT, Dof.ANKLE_FLEX)
 
-    fun pose(animation: ActionAnimation, value: Float): Figure =
-        if (animation.dof in CLOSE_UP) closeUp(animation.dof, value) else wholeBody(animation, value)
+    fun pose(animation: ActionAnimation, value: Float): Figure = when {
+        animation.dof in CLOSE_UP -> closeUp(animation.dof, value)
+        // Hip extension reads best as a hinge (RDL, hip thrust), not a straight leg swinging back
+        animation.dof == Dof.HIP_FLEX && animation.from > animation.to -> hinge(value)
+        else -> wholeBody(animation, value)
+    }
 
     private fun wholeBody(animation: ActionAnimation, value: Float): Figure = when (animation.view) {
         FigureView.SIDE -> side(animation.dof, value)
@@ -78,7 +87,13 @@ object FigurePose {
         val fingers = wrist + dir(handAngle) * HAND
 
         val thighAngle = if (dof == Dof.HIP_FLEX) v else 0f
-        val shinAngle = thighAngle - if (dof == Dof.KNEE_FLEX) v else 0f
+        // Raising the thigh bends the knee too, like marching
+        val kneeBend = when (dof) {
+            Dof.KNEE_FLEX -> v
+            Dof.HIP_FLEX -> (v * 0.9f).coerceAtLeast(0f)
+            else -> 0f
+        }
+        val shinAngle = thighAngle - kneeBend
         val footAngle = shinAngle + 90f - if (dof == Dof.ANKLE_FLEX) v else 0f
         val knee = HIP + dir(thighAngle) * THIGH
         val ankle = knee + dir(shinAngle) * SHIN
@@ -228,54 +243,87 @@ object FigurePose {
         )
     }
 
+    /**
+     * Hip extension as a hinge from the side: legs planted with soft knees, the trunk swinging up
+     * around the hips from [lean] degrees forward, arms hanging with a bar.
+     */
+    private fun hinge(lean: Float): Figure {
+        val angle = lean.coerceAtLeast(0f)
+        val up = P(sin(rad(angle)), -cos(rad(angle)))
+        val neck = HIP + up * TORSO
+        val shoulder = HIP + up * (TORSO - 0.04f)
+        val hands = shoulder + dir(0f) * (UPPER_ARM + FOREARM)
+        val knee = HIP + dir(6f) * THIGH
+        val ankle = knee + dir(-6f) * SHIN
+        return Figure(
+            bones = listOf(
+                Bone(HIP, knee, false, width = 0.065f),
+                Bone(knee, ankle, false, width = 0.048f),
+                Bone(ankle, ankle + dir(90f) * FOOT, false, width = 0.03f),
+                Bone(HIP, neck, true, width = 0.1f),
+                Bone(shoulder, hands, true, width = 0.04f),
+                // The bar, seen end-on
+                Bone(hands + P(0f, 0.03f), hands + P(0f, 0.03f), false, ghost = true, width = 0.09f)
+            ),
+            head = HIP + up * (TORSO + 0.18f),
+            headRadius = 0.12f,
+            headMoving = true
+        )
+    }
+
     /** A far-away head: close-ups show no head. */
     private val NO_HEAD = P(100f, 100f)
     private const val CLOSE_UP_ZOOM = 1.3f
 
     private fun closeUp(dof: Dof, v: Float): Figure = when (dof) {
-        Dof.ELBOW_FLEX -> {
-            // Side view of the arm; the trunk is a faint reference behind it
-            val shoulder = P(-0.05f, -0.95f)
-            val elbow = P(-0.05f, 0.02f)
-            val wrist = elbow + dir(v) * 0.7f
-            Figure(
-                bones = listOf(
-                    Bone(P(-0.3f, -1.1f), P(-0.3f, 0.3f), false, ghost = true, width = 0.1f),
-                    Bone(shoulder, elbow, false, width = 0.12f),
-                    Bone(elbow, wrist, true, width = 0.095f),
-                    Bone(wrist, wrist + dir(v) * 0.26f, true, width = 0.07f)
-                ),
-                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
-            )
-        }
         Dof.WRIST_FLEX -> {
-            // Forearm resting level, palm up; flexion curls the hand up
-            val wrist = P(0f, 0.15f)
+            // Wrist curl from the side: forearm resting on a bench, palm up, hand past the edge
+            val wrist = P(0.05f, 0.1f)
             val hand = dir(90f + v)
-            val knuckles = wrist + hand * 0.36f
+            val knuckles = wrist + hand * 0.3f
+            val fingers = dir(90f + v + 18f)
             Figure(
                 bones = listOf(
-                    Bone(P(-1.05f, 0.15f), wrist, false, width = 0.11f),
-                    Bone(wrist, knuckles, true, width = 0.1f),
-                    Bone(knuckles, knuckles + hand * 0.32f, true, width = 0.055f)
+                    Bone(P(-1.15f, 0.29f), P(0f, 0.29f), false, ghost = true, width = 0.07f),
+                    Bone(P(-1.0f, 0.1f), wrist, false, width = 0.1f),
+                    Bone(wrist, knuckles, true, width = 0.085f),
+                    Bone(knuckles, knuckles + fingers * 0.3f, true, width = 0.045f),
+                    Bone(wrist + hand * 0.08f, wrist + hand * 0.08f + dir(v) * -0.14f, true, width = 0.035f)
                 ),
-                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
+                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM, focus = P(-0.2f, 0f)
             )
         }
         Dof.FOREARM_ROT -> {
-            // Looking down the forearm from the fingers: the palm turns like a clock hand around it
-            val center = P(0f, 0f)
-            val along = P(sin(rad(v)), -cos(rad(v)))
-            val across = P(cos(rad(v)), sin(rad(v)))
-            val top = center + along * 0.55f
+            // Seen from above, forearm pointing away: the hand is wide showing the palm or the back,
+            // narrow on its edge, and the thumb swaps sides (right when palm up, for a right arm)
+            val open = abs(sin(rad(v)))
+            val half = 0.03f + 0.13f * open
+            val wrist = P(0f, 0.12f)
+            val top = wrist + P(0f, -0.34f)
+            val side = if (v >= 0f) 1f else -1f
+            val bones = mutableListOf(
+                Bone(P(0f, 1.05f), wrist, false, width = 0.11f),
+                Bone(wrist, top, true, width = half)
+            )
+            // Four fingers, spread across the visible width of the hand
+            listOf(-0.75f, -0.25f, 0.25f, 0.75f).forEach { f ->
+                val x = f * half
+                bones += Bone(P(x, top.y), P(x, top.y - 0.26f), true, width = 0.02f + 0.018f * open)
+            }
+            bones += if (open < 0.25f) {
+                // Hand on its edge: the thumb points at us, a short stub on top
+                Bone(P(0f, wrist.y - 0.08f), P(0f, wrist.y - 0.16f), true, width = 0.05f)
+            } else {
+                Bone(P(side * half, wrist.y - 0.06f), P(side * (half + 0.17f), wrist.y - 0.22f), true, width = 0.035f)
+            }
             Figure(
-                bones = listOf(
-                    Bone(P(0f, -0.6f), P(0f, 0.6f), false, ghost = true, width = 0.02f),
-                    Bone(center + along * -0.55f, top, true, width = 0.09f),
-                    Bone(top, top + across * 0.28f, true, width = 0.07f),
-                    Bone(center, center, false, width = 0.2f)
-                ),
-                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM
+                bones = bones,
+                head = NO_HEAD, headRadius = 0f, zoom = CLOSE_UP_ZOOM, focus = P(0f, 0.1f),
+                label = when {
+                    v > 30f -> PoseLabel.PALM_UP
+                    v < -30f -> PoseLabel.PALM_DOWN
+                    else -> PoseLabel.THUMB_UP
+                }
             )
         }
         else -> {

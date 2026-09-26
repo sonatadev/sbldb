@@ -108,7 +108,7 @@ fun ActionDetailScreen(
                 animation?.let { anim ->
                     item {
                         Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_movement), trailing = {
-                            MonoCaption(stringResource(viewLabel(anim.view)))
+                            MonoCaption(stringResource(if (anim.dof == Dof.FOREARM_ROT) R.string.view_top else viewLabel(anim.view)))
                         }) {
                             JointFigure(anim, "${action.joint} ${action.name}", Modifier.fillMaxWidth().height(220.dp))
                             MonoCaption(

@@ -64,6 +64,7 @@ class BackupManager(
                     }))
             }
         })
+        val actionsById = db.jointActionDAO().allActions().associateBy { it.jointActionId }
         root.put("routines", JSONArray().apply {
             routinesById.values.forEach { r ->
                 put(JSONObject()
@@ -73,7 +74,8 @@ class BackupManager(
                             val p = entry.routineExercise
                             put(JSONObject()
                                 .put("exercise", entry.exercise.name).put("position", p.position).put("sets", p.sets)
-                                .put("repMin", p.repMin).put("repMax", p.repMax).putOpt("targetRir", p.targetRir).put("restSeconds", p.restSeconds))
+                                .put("repMin", p.repMin).put("repMax", p.repMax).putOpt("targetRir", p.targetRir).put("restSeconds", p.restSeconds)
+                                .putOpt("movement", p.jointActionId?.let { actionsById[it] }?.let { JSONObject().put("joint", it.joint).put("name", it.name) }))
                         }
                     }))
             }
@@ -210,7 +212,8 @@ class BackupManager(
                         RoutineExercise(
                             routineId = routineId, exerciseId = ids.getValue(x.getString("exercise")), position = x.optInt("position"),
                             sets = x.optInt("sets", 3), repMin = x.optInt("repMin", 8), repMax = x.optInt("repMax", 12),
-                            targetRir = x.optIntOrNull("targetRir"), restSeconds = x.optInt("restSeconds", 120)
+                            targetRir = x.optIntOrNull("targetRir"), restSeconds = x.optInt("restSeconds", 120),
+                            jointActionId = x.optJSONObject("movement")?.let { m -> dao.actionId(m.getString("joint"), m.getString("name")) }
                         )
                     )
                 }

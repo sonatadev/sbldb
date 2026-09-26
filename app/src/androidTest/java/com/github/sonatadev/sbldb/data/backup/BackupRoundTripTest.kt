@@ -50,7 +50,7 @@ class BackupRoundTripTest {
                 mapOf(db.userDataDAO().actionId("Shoulder", "Horizontal Adduction")!! to 5))
         )
         val routine = db.routineDAO().insert(Routine(name = "Upper", position = 0, timesPerWeek = 2))
-        db.routineDAO().insertExercise(RoutineExercise(routineId = routine, exerciseId = custom, position = 0, sets = 4, repMin = 6, repMax = 8, restSeconds = 150))
+        db.routineDAO().insertExercise(RoutineExercise(routineId = routine, exerciseId = custom, position = 0, sets = 4, repMin = 6, repMax = 8, restSeconds = 150, jointActionId = db.userDataDAO().actionId("Shoulder", "Horizontal Adduction")))
         val workout = db.workoutDAO().insertWorkout(Workout(name = "Upper", startedAt = 1_000_000L, endedAt = 4_000_000L, routineId = routine))
         val we = db.workoutDAO().insertWorkoutExercise(WorkoutExercise(workoutId = workout, exerciseId = bench, position = 0, note = "felt strong"))
         db.workoutDAO().insertSet(WorkoutSet(workoutExerciseId = we, position = 0, weightKg = 40.0, reps = 10, isWarmup = true, isCompleted = true, setType = SetType.WARMUP))

@@ -1,5 +1,7 @@
 package com.github.sonatadev.sbldb.ui.routines
 
+import com.github.sonatadev.sbldb.data.entity.JointActionSummary
+import com.github.sonatadev.sbldb.data.repository.JointActionRepository
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,8 +23,14 @@ import kotlinx.coroutines.launch
 class RoutineEditorViewModel(
     savedStateHandle: SavedStateHandle,
     private val routines: RoutineRepository,
-    private val exercises: ExerciseRepository
+    private val exercises: ExerciseRepository,
+    jointActions: JointActionRepository
 ) : ViewModel() {
+    /** Joint actions by id, to label slots that were picked by movement. */
+    val actions: StateFlow<Map<Int, JointActionSummary>> = jointActions.summaries
+        .map { list -> list.associateBy { it.jointActionId } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
+
     val routineId: Long = checkNotNull(savedStateHandle["routineId"])
 
     /** null once the routine has been deleted. */

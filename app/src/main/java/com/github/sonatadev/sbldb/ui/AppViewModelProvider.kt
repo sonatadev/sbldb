@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui
 
+import com.github.sonatadev.sbldb.ui.routines.MovementPickerViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -27,12 +28,13 @@ import com.github.sonatadev.sbldb.ui.routines.RoutineEditorViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
+        initializer { MovementPickerViewModel(createSavedStateHandle(), container().jointActionRepository, container().routineRepository) }
         initializer { BodyViewModel(container().bodyRepository, container().settingsRepository) }
         initializer { WeeklyPlanViewModel(container().routineRepository, container().exerciseRepository) }
         initializer { VolumeTargetsViewModel(container().exerciseRepository) }
         initializer { CustomExerciseViewModel(createSavedStateHandle(), container().database) }
         initializer { HomeViewModel(container().workoutRepository, container().routineRepository, container().exerciseRepository) }
-        initializer { RoutineEditorViewModel(createSavedStateHandle(), container().routineRepository, container().exerciseRepository) }
+        initializer { RoutineEditorViewModel(createSavedStateHandle(), container().routineRepository, container().exerciseRepository, container().jointActionRepository) }
         initializer { ActionsViewModel(container().jointActionRepository, container().settingsRepository, container().contentUpdater) }
         initializer { MuscleDetailViewModel(createSavedStateHandle(), container().jointActionRepository) }
         initializer { GlossaryViewModel(createSavedStateHandle(), container().jointActionRepository) }

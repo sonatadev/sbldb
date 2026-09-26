@@ -1,5 +1,11 @@
 package com.github.sonatadev.sbldb.ui.components
 
+import com.github.sonatadev.sbldb.ui.theme.SbldbType
+import com.github.sonatadev.sbldb.domain.PoseLabel
+import com.github.sonatadev.sbldb.R
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.res.stringResource
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -35,6 +41,13 @@ fun JointFigure(animation: ActionAnimation, description: String, modifier: Modif
         animationSpec = infiniteRepeatable(tween(CYCLE_MILLIS, easing = LinearEasing), RepeatMode.Restart),
         label = "cycle"
     )
+    val labels = mapOf(
+        PoseLabel.PALM_DOWN to stringResource(R.string.pose_palm_down),
+        PoseLabel.THUMB_UP to stringResource(R.string.pose_thumb_up),
+        PoseLabel.PALM_UP to stringResource(R.string.pose_palm_up)
+    )
+    val measurer = rememberTextMeasurer()
+    val labelStyle = SbldbType.mono.copy(color = colors.accent)
     Canvas(modifier.semantics { contentDescription = description }) {
         val progress = cycleProgress(clock)
         val value = animation.from + (animation.to - animation.from) * progress
@@ -66,6 +79,11 @@ fun JointFigure(animation: ActionAnimation, description: String, modifier: Modif
                 }
                 drawCircle(color, if (lit == Lit.NONE) dot * 0.55f else dot, Offset(px, py))
             }
+        }
+        figure.label?.let { label ->
+            val text = measurer.measure(labels.getValue(label).uppercase(), labelStyle)
+            drawRect(colors.module, topLeft = Offset(0f, 0f), size = androidx.compose.ui.geometry.Size(text.size.width + step * 2, text.size.height + step))
+            drawText(text, topLeft = Offset(step, step / 2))
         }
     }
 }

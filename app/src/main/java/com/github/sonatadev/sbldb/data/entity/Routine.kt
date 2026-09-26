@@ -35,7 +35,9 @@ data class RoutineExercise(
     val repMin: Int = 8,
     val repMax: Int = 12,
     val targetRir: Int? = 1,
-    @ColumnInfo(defaultValue = "120") val restSeconds: Int = 120
+    @ColumnInfo(defaultValue = "120") val restSeconds: Int = 120,
+    /** The movement this slot trains, when it was chosen by joint action first (expert flow). */
+    val jointActionId: Int? = null
 )
 
 data class RoutineExerciseWithExercise(

@@ -61,8 +61,16 @@ class RoutineRepository(private val db: AppDatabase) {
 
     suspend fun delete(routine: Routine) = dao.delete(routine)
 
-    suspend fun addExercise(routineId: Long, exerciseId: Int) = db.withTransaction {
-        dao.insertExercise(RoutineExercise(routineId = routineId, exerciseId = exerciseId, position = dao.nextExercisePosition(routineId)))
+    suspend fun addExercise(routineId: Long, exerciseId: Int, jointActionId: Int? = null) = db.withTransaction {
+        dao.insertExercise(
+            RoutineExercise(routineId = routineId, exerciseId = exerciseId, position = dao.nextExercisePosition(routineId), jointActionId = jointActionId)
+        )
+    }
+
+    /** Keeps the slot's sets, reps and movement but trains it with another exercise. */
+    suspend fun replaceExercise(routineExerciseId: Long, exerciseId: Int, jointActionId: Int?) {
+        val current = dao.findExercise(routineExerciseId) ?: return
+        dao.updateExercise(current.copy(exerciseId = exerciseId, jointActionId = jointActionId ?: current.jointActionId))
     }
 
     suspend fun updateExercise(exercise: RoutineExercise) = dao.updateExercise(exercise)

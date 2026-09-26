@@ -619,7 +619,7 @@
 
 - joint: Hip
   name: Extension
-  animation: {view: side, dof: hip_flex, from: 100, to: -15}
+  animation: {view: side, dof: hip_flex, from: 90, to: 0}
   what:
     basic: Driving your thigh backward, like standing up from a squat or pushing your hips forward in a hip thrust.
     expert: Sagittal-plane extension at the hip.

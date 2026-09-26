@@ -345,4 +345,15 @@
     <string name="plan_for">Pianifica per %1$s</string>
     <string name="plan_no_routine">Crea prima una routine dalla Home, poi pianificala qui.</string>
     <string name="planned_today">Pianificato per oggi</string>
+    <string name="pose_palm_down">Palmo in giù</string>
+    <string name="pose_thumb_up">Pollice in su</string>
+    <string name="pose_palm_up">Palmo in su</string>
+    <string name="add_movement">Aggiungi movimento</string>
+    <string name="add_exercise_directly">oppure scegli direttamente un esercizio</string>
+    <string name="change_exercise">Cambia esercizio</string>
+    <string name="movement_step_1">Passo 1 di 2 · movimento</string>
+    <string name="movement_step_2">Passo 2 di 2 · esercizio</string>
+    <string name="movement_pick">Scegli un movimento</string>
+    <string name="movement_learn">Info su questo movimento</string>
+    <string name="movement_pick_exercise">Con quale esercizio lo alleni? Migliori prima</string>
 </resources>

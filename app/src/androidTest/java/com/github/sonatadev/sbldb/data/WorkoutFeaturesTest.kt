@@ -95,4 +95,21 @@ class WorkoutFeaturesTest {
         routines.delete(routines.find(routineId)!!.routine)
         assertTrue(routines.plannedBetween(day, day).first().isEmpty())
     }
+
+    @Test
+    fun replacingAnExerciseKeepsTheSlotAndItsMovement() = runBlocking {
+        val routines = com.github.sonatadev.sbldb.data.repository.RoutineRepository(db)
+        val routineId = routines.create("Legs")
+        val knee = db.userDataDAO().actionId("Knee", "Extension")!!
+        routines.addExercise(routineId, db.exerciseDAO().findId("Leg Extension")!!, knee)
+        val slot = routines.find(routineId)!!.exercises.single().routineExercise
+        routines.updateExercise(slot.copy(sets = 4, repMin = 10, repMax = 15))
+
+        routines.replaceExercise(slot.routineExerciseId, db.exerciseDAO().findId("Hack Squat")!!, knee)
+        val after = routines.find(routineId)!!.exercises.single()
+        assertEquals("Hack Squat", after.exercise.name)
+        assertEquals(knee, after.routineExercise.jointActionId)
+        assertEquals(4, after.routineExercise.sets)
+        assertEquals(15, after.routineExercise.repMax)
+    }
 }

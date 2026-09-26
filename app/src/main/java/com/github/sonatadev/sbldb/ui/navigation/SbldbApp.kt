@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.navigation
 
+import com.github.sonatadev.sbldb.ui.routines.MovementPickerScreen
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
@@ -85,6 +86,7 @@ private object Routes {
     const val MUSCLE = "muscle/{group}"
     const val GLOSSARY = "glossary?term={term}"
     const val WEEKLY_PLAN = "weekly_plan"
+    const val PICK_MOVEMENT = "pick_movement/{routineId}?replace={replace}&action={action}"
     const val BODY = "body"
     const val VOLUME_TARGETS = "volume_targets"
     const val CUSTOM_EXERCISE = "custom_exercise?exerciseId={exerciseId}"
@@ -97,6 +99,8 @@ private object Routes {
     fun actionDetail(id: Int) = "action/$id"
     fun routine(id: Long) = "routine/$id"
     fun pickExercise(kind: String, targetId: Long) = "pick_exercise/$kind/$targetId"
+    fun pickMovement(routineId: Long, replace: Long? = null, action: Int? = null) =
+        "pick_movement/$routineId?replace=${replace ?: -1}&action=${action ?: -1}"
     fun customExercise(id: Int? = null) = "custom_exercise?exerciseId=${id ?: -1}"
 }
 
@@ -235,8 +239,19 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 RoutineEditorScreen(
                     onBack = back,
                     onAddExercise = { navController.navigate(Routes.pickExercise("routine", it)) },
+                    onAddMovement = { id, replace, action -> navController.navigate(Routes.pickMovement(id, replace, action)) },
                     onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) }
                 )
+            }
+            composable(
+                Routes.PICK_MOVEMENT,
+                arguments = listOf(
+                    navArgument("routineId") { type = NavType.LongType },
+                    navArgument("replace") { type = NavType.LongType; defaultValue = -1L },
+                    navArgument("action") { type = NavType.IntType; defaultValue = -1 }
+                )
+            ) {
+                MovementPickerScreen(onClose = back, onOpenAction = openAction)
             }
             composable(
                 Routes.PICK_EXERCISE,

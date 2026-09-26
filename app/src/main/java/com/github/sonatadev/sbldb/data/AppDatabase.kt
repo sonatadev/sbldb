@@ -39,7 +39,7 @@ import com.github.sonatadev.sbldb.data.entity.WorkoutSet
         Routine::class, RoutineExercise::class, GlossaryTerm::class,
         ExerciseNote::class, BodyEntry::class, MuscleTarget::class, PlannedWorkout::class
     ],
-    version = 9
+    version = 10
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDAO(): ExerciseDAO
@@ -59,6 +59,13 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         /** Set types, notes, rest times, routine frequency, custom exercises, body entries, volume targets. */
+        /** Routine slots can remember the joint action they were picked for. */
+        val MIGRATION_9_10 = object : Migration(9, 10) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE routine_exercises ADD COLUMN jointActionId INTEGER")
+            }
+        }
+
         /** Routines planned on calendar days. */
         val MIGRATION_8_9 = object : Migration(8, 9) {
             override fun migrate(db: SupportSQLiteDatabase) {
@@ -137,7 +144,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "sbldb_database"
                 )
-                    .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9)
+                    .addMigrations(MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
                     // Versions 1–2 only ever existed on development devices
                     .fallbackToDestructiveMigrationFrom(true, 1, 2)
                     .build()

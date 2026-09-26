@@ -18,6 +18,9 @@ interface RoutineDAO {
     @Insert
     suspend fun insert(routine: Routine): Long
 
+    @Query("SELECT * FROM routine_exercises WHERE routineExerciseId = :id")
+    suspend fun findExercise(id: Long): RoutineExercise?
+
     @Insert
     suspend fun insertPlanned(planned: PlannedWorkout): Long
 

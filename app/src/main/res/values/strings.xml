@@ -360,4 +360,15 @@
     <string name="plan_for">Plan for %1$s</string>
     <string name="plan_no_routine">Build a routine on Home first, then plan it here.</string>
     <string name="planned_today">Planned for today</string>
+    <string name="pose_palm_down">Palm down</string>
+    <string name="pose_thumb_up">Thumb up</string>
+    <string name="pose_palm_up">Palm up</string>
+    <string name="add_movement">Add movement</string>
+    <string name="add_exercise_directly">or pick an exercise directly</string>
+    <string name="change_exercise">Change exercise</string>
+    <string name="movement_step_1">Step 1 of 2 · movement</string>
+    <string name="movement_step_2">Step 2 of 2 · exercise</string>
+    <string name="movement_pick">Pick a movement</string>
+    <string name="movement_learn">About this movement</string>
+    <string name="movement_pick_exercise">Which exercise will train it? Best first</string>
 </resources>

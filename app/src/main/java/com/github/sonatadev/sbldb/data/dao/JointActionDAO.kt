@@ -61,6 +61,9 @@ interface JointActionDAO {
     )
     fun getSummaries(): Flow<List<JointActionSummary>>
 
+    @Query("SELECT * FROM joint_actions")
+    suspend fun allActions(): List<JointAction>
+
     @Query("SELECT * FROM joint_actions WHERE jointActionId = :id")
     fun getAction(id: Int): Flow<JointAction?>
 
@@ -78,7 +81,7 @@ interface JointActionDAO {
         """
         SELECT e.exerciseId, e.name, e.equipment, e.attachment, e.note, eja.rating FROM exercise_joint_actions eja
         JOIN exercises e ON e.exerciseId = eja.exerciseId
-        WHERE eja.jointActionId = :id
+        WHERE eja.jointActionId = :id AND e.isArchived = 0
         ORDER BY eja.rating DESC, e.name
         """
     )

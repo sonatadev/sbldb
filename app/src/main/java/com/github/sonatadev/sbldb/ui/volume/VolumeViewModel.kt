@@ -6,7 +6,9 @@ import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
 import com.github.sonatadev.sbldb.domain.MuscleGroupVolume
 import com.github.sonatadev.sbldb.domain.VolumeCalculator
+import com.github.sonatadev.sbldb.domain.VolumeHistory
 import com.github.sonatadev.sbldb.domain.WeekRange
+import com.github.sonatadev.sbldb.domain.WeeklyVolume
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +20,9 @@ import kotlinx.coroutines.flow.stateIn
 data class VolumeUiState(
     val weeksAgo: Int = 0,
     val week: WeekRange = WeekRange.of(0),
-    val groups: List<MuscleGroupVolume> = emptyList()
+    val groups: List<MuscleGroupVolume> = emptyList(),
+    /** The selected week and the ones before it, for the charts. */
+    val history: WeeklyVolume = WeeklyVolume()
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -30,17 +34,26 @@ class VolumeViewModel(
 
     val uiState: StateFlow<VolumeUiState> = weeksAgo
         .flatMapLatest { ago ->
-            val week = WeekRange.of(ago)
+            val weeks = VolumeHistory.weeksEndingAt(ago)
+            val week = weeks.last()
             combine(
-                workoutRepository.volumeRows(week.startMillis, week.endMillis),
+                workoutRepository.volumeRows(weeks.first().startMillis, week.endMillis),
                 exerciseRepository.muscleGroups,
                 exerciseRepository.volumeTargets
-            ) { rows, groups, targets -> VolumeUiState(ago, week, VolumeCalculator.calculate(rows, groups, targets = targets)) }
+            ) { rows, groups, targets ->
+                val thisWeek = rows.filter { it.startedAt >= week.startMillis }
+                VolumeUiState(ago, week, VolumeCalculator.calculate(thisWeek, groups, targets = targets), VolumeHistory.of(rows, weeks))
+            }
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), VolumeUiState())
 
     fun previousWeek() {
         weeksAgo.value += 1
+    }
+
+    /** Jumps to a week of the chart: [index] counts from the oldest one shown. */
+    fun selectWeek(index: Int) {
+        weeksAgo.value = (weeksAgo.value + VolumeHistory.WEEKS - 1 - index).coerceAtLeast(0)
     }
 
     fun nextWeek() {

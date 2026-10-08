@@ -68,6 +68,7 @@ private val dayFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern(
 fun LogScreen(
     onOpenWorkout: (Long) -> Unit,
     onOpenVolume: () -> Unit,
+    onOpenProgress: () -> Unit,
     onOpenPlan: () -> Unit,
     onOpenBody: () -> Unit,
     onOpenActiveWorkout: () -> Unit,
@@ -178,6 +179,14 @@ fun LogScreen(
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_weekly_volume), onClick = onOpenVolume) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(stringResource(R.string.weekly_volume_cta), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
+                    Text("›", style = SbldbType.monoLarge, color = colors.dim)
+                }
+            }
+        }
+        item {
+            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.progress_title), onClick = onOpenProgress) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.progress_cta), style = MaterialTheme.typography.titleMedium, color = colors.ink, modifier = Modifier.weight(1f))
                     Text("›", style = SbldbType.monoLarge, color = colors.dim)
                 }
             }

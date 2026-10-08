@@ -3,6 +3,7 @@ package com.github.sonatadev.sbldb.data.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.Embedded
 import androidx.room.Query
 import androidx.room.Update
 import com.github.sonatadev.sbldb.data.entity.Exercise
@@ -64,6 +65,19 @@ interface ExerciseDAO {
     )
     fun getSetHistory(exerciseId: Int): Flow<List<SetHistoryRow>>
 
+    /** Completed working sets of every exercise in finished workouts started from [from] on, oldest first. */
+    @Query(
+        """
+        SELECT we.exerciseId, e.name, w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType FROM workout_sets s
+        JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
+        JOIN workouts w ON w.workoutId = we.workoutId
+        JOIN exercises e ON e.exerciseId = we.exerciseId
+        WHERE s.isCompleted = 1 AND s.isWarmup = 0 AND w.endedAt IS NOT NULL AND w.startedAt >= :from
+        ORDER BY w.startedAt, we.position, s.position
+        """
+    )
+    fun getAllSetsSince(from: Long): Flow<List<ExerciseSetRow>>
+
     /** Muscle groups (with role) hit by each of the given exercises. */
     @Query(
         """
@@ -77,6 +91,9 @@ interface ExerciseDAO {
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
 }
+
+/** A [SetHistoryRow] with the exercise it belongs to, for the progress overview. */
+data class ExerciseSetRow(val exerciseId: Int, val name: String, @Embedded val set: SetHistoryRow)
 
 data class ExercisePrimaryGroup(val exerciseId: Int, val muscleGroup: String)
 

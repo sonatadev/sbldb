@@ -356,4 +356,29 @@
     <string name="movement_pick">Scegli un movimento</string>
     <string name="movement_learn">Info su questo movimento</string>
     <string name="movement_pick_exercise">Con quale esercizio lo alleni? Migliori prima</string>
+
+    <!-- Volume over time and load progress -->
+    <string name="module_volume_trend">Serie dure · ultime %1$d settimane</string>
+    <string name="volume_trend_hint">Tocca una settimana per aprirla</string>
+    <string name="muscle_trend">Ultime %1$d settimane · zona %2$s</string>
+    <string name="metric_e1rm">e1RM</string>
+    <string name="metric_heaviest">Max</string>
+    <string name="metric_volume">Volume</string>
+    <string name="module_best_heaviest">01 · Serie più pesante</string>
+    <string name="module_best_volume">01 · Miglior volume in una seduta</string>
+    <string name="heaviest_hint">La serie più pesante di ogni seduta, senza drop set e parziali</string>
+    <string name="load_volume_hint">Peso × ripetizioni, sommato su tutte le serie della seduta</string>
+    <string name="progress_title">Progressi</string>
+    <string name="progress_label">Andamento carichi</string>
+    <string name="progress_cta">Come stanno andando i carichi di ogni esercizio</string>
+    <string name="period_month">1 mese</string>
+    <string name="period_quarter">3 mesi</string>
+    <string name="period_year">1 anno</string>
+    <string name="trend_up">In salita</string>
+    <string name="trend_flat">Stabili</string>
+    <string name="trend_down">In calo</string>
+    <string name="trend_new">Nuovo</string>
+    <string name="module_by_exercise">Per esercizio</string>
+    <string name="progress_empty">Nessun allenamento concluso in questo periodo.</string>
+    <string name="progress_hint" formatted="false">Variazione dalla prima all\'ultima seduta del periodo. Entro ±2,5%, conta come stabile. Le macchine a contrappeso sono escluse.</string>
 </resources>

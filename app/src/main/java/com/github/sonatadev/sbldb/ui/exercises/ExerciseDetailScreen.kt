@@ -27,7 +27,11 @@ import com.github.sonatadev.sbldb.ui.components.NoteDialog
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.github.sonatadev.sbldb.domain.LoadMetric
 import com.github.sonatadev.sbldb.domain.Progression
+import com.github.sonatadev.sbldb.ui.bestLabel
+import com.github.sonatadev.sbldb.ui.hint
+import com.github.sonatadev.sbldb.ui.shortName
 import com.github.sonatadev.sbldb.domain.Records
 import com.github.sonatadev.sbldb.domain.WeightUnit
 import com.github.sonatadev.sbldb.ui.components.TrendChart
@@ -51,6 +55,7 @@ import com.github.sonatadev.sbldb.ui.components.MonoChip
 import com.github.sonatadev.sbldb.ui.components.RatingDots
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SecondaryButton
+import com.github.sonatadev.sbldb.ui.components.SegmentedControl
 import com.github.sonatadev.sbldb.ui.formatDate
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
@@ -72,6 +77,8 @@ fun ExerciseDetailScreen(
     val colors = SbldbTheme.colors
     val exercise = state.exercise ?: return
     var tab by rememberSaveable { mutableIntStateOf(TAB_OVERVIEW) }
+    var metric by rememberSaveable { mutableStateOf(LoadMetric.E1RM) }
+    val metricNames = LoadMetric.entries.associateWith { stringResource(it.shortName) }
     var editNote by remember { mutableStateOf(false) }
     if (editNote) {
         NoteDialog(
@@ -168,8 +175,10 @@ fun ExerciseDetailScreen(
         // Counterweight machines: more load is easier, so e1RM and heaviest would mislead
         val assisted = Progression.isAssisted(exercise.name)
         if (tab == TAB_PROGRESS && !assisted) item {
-            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_best_e1rm)) {
-                val best = state.bestE1rmKg
+            val series = state.loadSeries[metric].orEmpty()
+            val best = if (metric == LoadMetric.E1RM) state.bestE1rmKg else series.maxOfOrNull { it.second }
+            Module(Modifier.fillMaxWidth(), label = stringResource(metric.bestLabel)) {
+                SegmentedControl(LoadMetric.entries, metric, label = { metricNames.getValue(it) }, onSelect = { metric = it })
                 if (best == null) {
                     Text(stringResource(R.string.no_estimate), style = MaterialTheme.typography.bodyLarge, color = colors.muted)
                 } else {
@@ -178,10 +187,10 @@ fun ExerciseDetailScreen(
                         Text(" " + state.unit.label, style = SbldbType.monoLarge, color = colors.muted, modifier = Modifier.padding(bottom = 8.dp))
                     }
                 }
-                if (state.e1rmSeries.size >= 2) {
-                    TrendChart(state.e1rmSeries, state.unit, Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
+                if (series.size >= 2) {
+                    TrendChart(series, state.unit, Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
                 }
-                MonoCaption(stringResource(R.string.e1rm_hint))
+                MonoCaption(stringResource(metric.hint))
             }
         }
         if (tab == TAB_PROGRESS && !state.records.isEmpty) item {

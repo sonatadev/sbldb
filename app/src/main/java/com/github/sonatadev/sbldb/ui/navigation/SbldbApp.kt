@@ -64,6 +64,7 @@ import com.github.sonatadev.sbldb.ui.exercises.CustomExerciseScreen
 import com.github.sonatadev.sbldb.ui.plan.VolumeTargetsScreen
 import com.github.sonatadev.sbldb.ui.body.BodyScreen
 import com.github.sonatadev.sbldb.ui.plan.WeeklyPlanScreen
+import com.github.sonatadev.sbldb.ui.progress.ProgressScreen
 import com.github.sonatadev.sbldb.ui.exercises.ExerciseListScreen
 import com.github.sonatadev.sbldb.ui.settings.SettingsScreen
 import com.github.sonatadev.sbldb.ui.volume.VolumeScreen
@@ -83,6 +84,7 @@ private object Routes {
     const val ROUTINE = "routine/{routineId}"
     const val PICK_EXERCISE = "pick_exercise/{kind}/{targetId}"
     const val VOLUME = "volume"
+    const val PROGRESS = "progress"
     const val MUSCLE = "muscle/{group}"
     const val GLOSSARY = "glossary?term={term}"
     const val WEEKLY_PLAN = "weekly_plan"
@@ -179,6 +181,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 LogScreen(
                     onOpenWorkout = { navController.navigate(Routes.workoutDetail(it)) },
                     onOpenVolume = { navController.navigate(Routes.VOLUME) },
+                    onOpenProgress = { navController.navigate(Routes.PROGRESS) },
                     onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) },
                     onOpenBody = { navController.navigate(Routes.BODY) },
                     onOpenActiveWorkout = { navController.navigate(Routes.ACTIVE_WORKOUT) { launchSingleTop = true } }
@@ -197,6 +200,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 )
             }
             composable(Routes.VOLUME_TARGETS) { VolumeTargetsScreen(onBack = back, onOpenGlossary = openGlossary) }
+            composable(Routes.PROGRESS) { ProgressScreen(onBack = back, onOpenExercise = openExercise) }
             composable(Routes.VOLUME) { VolumeScreen(onBack = back, onOpenMuscle = openMuscle, onOpenGlossary = openGlossary) }
             composable(Routes.MUSCLE, arguments = listOf(navArgument("group") { type = NavType.StringType })) {
                 MuscleDetailScreen(onBack = back, onOpenAction = openAction, onOpenExercise = openExercise)

@@ -6,6 +6,7 @@ import com.github.sonatadev.sbldb.data.dao.ExerciseMuscleGroup
 import com.github.sonatadev.sbldb.data.dao.ExercisePrimaryGroup
 import com.github.sonatadev.sbldb.data.entity.Exercise
 import com.github.sonatadev.sbldb.data.entity.MuscleWithRole
+import com.github.sonatadev.sbldb.data.dao.ExerciseSetRow
 import com.github.sonatadev.sbldb.data.entity.SetHistoryRow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -51,4 +52,6 @@ class ExerciseRepository(db: AppDatabase) {
     suspend fun muscleGroups(exerciseIds: List<Int>): List<ExerciseMuscleGroup> = exerciseDao.getMuscleGroups(exerciseIds)
 
     fun setHistory(exerciseId: Int): Flow<List<SetHistoryRow>> = exerciseDao.getSetHistory(exerciseId)
+
+    fun allSetsSince(from: Long): Flow<List<ExerciseSetRow>> = exerciseDao.getAllSetsSince(from)
 }

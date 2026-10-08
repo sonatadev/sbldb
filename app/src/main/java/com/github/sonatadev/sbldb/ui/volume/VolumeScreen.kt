@@ -35,6 +35,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.sonatadev.sbldb.R
 import com.github.sonatadev.sbldb.domain.MuscleGroupVolume
 import com.github.sonatadev.sbldb.domain.VolumeBand
+import com.github.sonatadev.sbldb.domain.VolumeHistory
+import com.github.sonatadev.sbldb.domain.WeeklyVolume
 import com.github.sonatadev.sbldb.ui.AppViewModelProvider
 import com.github.sonatadev.sbldb.ui.components.BackButton
 import com.github.sonatadev.sbldb.ui.components.DotRow
@@ -44,6 +46,7 @@ import com.github.sonatadev.sbldb.ui.components.ModuleLabel
 import com.github.sonatadev.sbldb.ui.components.MonoCaption
 import com.github.sonatadev.sbldb.ui.components.RoundButton
 import com.github.sonatadev.sbldb.ui.components.StatusDot
+import com.github.sonatadev.sbldb.ui.components.WeeklyBars
 import com.github.sonatadev.sbldb.ui.formatSets
 import com.github.sonatadev.sbldb.ui.formatShortDate
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
@@ -91,6 +94,21 @@ fun VolumeScreen(onBack: () -> Unit, onOpenMuscle: (String) -> Unit, onOpenGloss
             }
         }
         item {
+            val weeks = state.history.weeks
+            Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_volume_trend, VolumeHistory.WEEKS)) {
+                if (weeks.isNotEmpty()) {
+                    WeeklyBars(
+                        values = state.history.totals,
+                        firstLabel = formatShortDate(weeks.first().start),
+                        lastLabel = formatShortDate(weeks.last().start),
+                        modifier = Modifier.fillMaxWidth().height(120.dp),
+                        onSelect = viewModel::selectWeek
+                    )
+                }
+                MonoCaption(stringResource(R.string.volume_trend_hint))
+            }
+        }
+        item {
             Module(
                 Modifier.fillMaxWidth(),
                 label = stringResource(R.string.module_by_muscle),
@@ -98,7 +116,7 @@ fun VolumeScreen(onBack: () -> Unit, onOpenMuscle: (String) -> Unit, onOpenGloss
             ) {
                 Column {
                     state.groups.forEach { group ->
-                        MuscleRow(group, expanded = expanded == group.muscleGroup, onOpenMuscle = { onOpenMuscle(group.muscleGroup) }) {
+                        MuscleRow(group, state.history, expanded = expanded == group.muscleGroup, onOpenMuscle = { onOpenMuscle(group.muscleGroup) }) {
                             expanded = if (expanded == group.muscleGroup) null else group.muscleGroup
                         }
                     }
@@ -119,7 +137,7 @@ private fun SummaryModule(label: String, count: Int, color: Color, modifier: Mod
 }
 
 @Composable
-private fun MuscleRow(group: MuscleGroupVolume, expanded: Boolean, onOpenMuscle: () -> Unit, onClick: () -> Unit) {
+private fun MuscleRow(group: MuscleGroupVolume, history: WeeklyVolume, expanded: Boolean, onOpenMuscle: () -> Unit, onClick: () -> Unit) {
     val colors = SbldbTheme.colors
     val inZone = group.band == VolumeBand.OPTIMAL
     Column(Modifier.fillMaxWidth().clickable(onClick = onClick)) {
@@ -144,6 +162,16 @@ private fun MuscleRow(group: MuscleGroupVolume, expanded: Boolean, onOpenMuscle:
         }
         AnimatedVisibility(expanded) {
             Column(Modifier.padding(bottom = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                if (history.weeks.isNotEmpty()) {
+                    ModuleLabel(stringResource(R.string.muscle_trend, VolumeHistory.WEEKS, group.target.label), color = colors.muted)
+                    WeeklyBars(
+                        values = history.of(group.muscleGroup),
+                        firstLabel = formatShortDate(history.weeks.first().start),
+                        lastLabel = formatShortDate(history.weeks.last().start),
+                        target = group.target,
+                        modifier = Modifier.fillMaxWidth().height(96.dp).padding(bottom = 4.dp)
+                    )
+                }
                 if (group.regions.isEmpty()) {
                     MonoCaption(stringResource(R.string.no_regions))
                 }

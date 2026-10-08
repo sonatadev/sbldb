@@ -371,4 +371,29 @@
     <string name="movement_pick">Pick a movement</string>
     <string name="movement_learn">About this movement</string>
     <string name="movement_pick_exercise">Which exercise will train it? Best first</string>
+
+    <!-- Volume over time and load progress -->
+    <string name="module_volume_trend">Hard sets · last %1$d weeks</string>
+    <string name="volume_trend_hint">Tap a week to open it</string>
+    <string name="muscle_trend">Last %1$d weeks · zone %2$s</string>
+    <string name="metric_e1rm">e1RM</string>
+    <string name="metric_heaviest">Max</string>
+    <string name="metric_volume">Volume</string>
+    <string name="module_best_heaviest">01 · Heaviest set</string>
+    <string name="module_best_volume">01 · Best session volume</string>
+    <string name="heaviest_hint">Heaviest straight set of each session, drop sets and partials left out</string>
+    <string name="load_volume_hint">Weight × reps over every working set of the session</string>
+    <string name="progress_title">Progress</string>
+    <string name="progress_label">Loads over time</string>
+    <string name="progress_cta">How the load of every exercise is moving</string>
+    <string name="period_month">1 month</string>
+    <string name="period_quarter">3 months</string>
+    <string name="period_year">1 year</string>
+    <string name="trend_up">Going up</string>
+    <string name="trend_flat">Steady</string>
+    <string name="trend_down">Going down</string>
+    <string name="trend_new">New</string>
+    <string name="module_by_exercise">By exercise</string>
+    <string name="progress_empty">No finished workouts in this period.</string>
+    <string name="progress_hint" formatted="false">Change from the first to the last session of the period. Within ±2.5%, it counts as steady. Counterweight machines are left out.</string>
 </resources>

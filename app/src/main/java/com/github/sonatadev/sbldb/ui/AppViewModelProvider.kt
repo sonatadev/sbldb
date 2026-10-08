@@ -21,6 +21,7 @@ import com.github.sonatadev.sbldb.ui.plan.VolumeTargetsViewModel
 import com.github.sonatadev.sbldb.ui.actions.ActionDetailViewModel
 import com.github.sonatadev.sbldb.ui.actions.ActionsViewModel
 import com.github.sonatadev.sbldb.ui.log.LogViewModel
+import com.github.sonatadev.sbldb.ui.progress.ProgressViewModel
 import com.github.sonatadev.sbldb.ui.glossary.GlossaryViewModel
 import com.github.sonatadev.sbldb.ui.home.HomeViewModel
 import com.github.sonatadev.sbldb.ui.muscles.MuscleDetailViewModel
@@ -32,6 +33,7 @@ object AppViewModelProvider {
         initializer { BodyViewModel(container().bodyRepository, container().settingsRepository) }
         initializer { WeeklyPlanViewModel(container().routineRepository, container().exerciseRepository) }
         initializer { VolumeTargetsViewModel(container().exerciseRepository) }
+        initializer { ProgressViewModel(container().exerciseRepository, container().settingsRepository) }
         initializer { CustomExerciseViewModel(createSavedStateHandle(), container().database) }
         initializer { HomeViewModel(container().workoutRepository, container().routineRepository, container().exerciseRepository) }
         initializer { RoutineEditorViewModel(createSavedStateHandle(), container().routineRepository, container().exerciseRepository, container().jointActionRepository) }

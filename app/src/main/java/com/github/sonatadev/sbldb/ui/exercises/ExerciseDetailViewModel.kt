@@ -10,6 +10,8 @@ import com.github.sonatadev.sbldb.data.entity.SetHistoryRow
 import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.JointActionRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
+import com.github.sonatadev.sbldb.domain.LoadMetric
+import com.github.sonatadev.sbldb.domain.LoadProgress
 import com.github.sonatadev.sbldb.domain.OneRepMax
 import com.github.sonatadev.sbldb.domain.PastSet
 import com.github.sonatadev.sbldb.domain.PersonalRecords
@@ -31,8 +33,8 @@ data class ExerciseDetailUiState(
     val unit: WeightUnit = WeightUnit.KG,
     val actions: List<RatedJointAction> = emptyList(),
     val records: Records = Records(),
-    /** Best e1RM of each session, oldest first: (startedAt, kg). */
-    val e1rmSeries: List<Pair<Long, Double>> = emptyList(),
+    /** One point per session for each load metric, oldest first: (startedAt, kg). */
+    val loadSeries: Map<LoadMetric, List<Pair<Long, Double>>> = emptyMap(),
     val note: String? = null
 )
 
@@ -59,12 +61,7 @@ class ExerciseDetailViewModel(
                 .map { (id, sets) -> SessionHistory(id, sets.first().startedAt, sets) },
             unit = unit,
             records = PersonalRecords.of(history.filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir) }),
-            e1rmSeries = history
-                .groupBy { it.workoutId }
-                .mapNotNull { (_, sets) ->
-                    sets.mapNotNull { OneRepMax.epley(it.weightKg, it.reps) }.maxOrNull()?.let { sets.first().startedAt to it }
-                }
-                .sortedBy { it.first }
+            loadSeries = LoadMetric.entries.associateWith { LoadProgress.series(history, it) }
         )
     }
 

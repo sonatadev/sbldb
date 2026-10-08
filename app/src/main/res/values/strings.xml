@@ -421,7 +421,6 @@
 
     <!-- Workout summary -->
     <string name="summary_label">Done · %1$s</string>
-    <string name="summary_line">%1$d hard sets · %2$d exercises · %3$s %4$s lifted</string>
     <string name="summary_records">Records · %1$d</string>
     <string name="summary_muscles">Muscles this week</string>
     <string name="summary_today">today</string>
@@ -431,4 +430,13 @@
     <string name="pr_e1rm">e1RM</string>
     <string name="pr_weight">Weight</string>
     <string name="pr_reps">Reps</string>
+    <string name="summary_lifted">%1$s %2$s lifted</string>
+    <plurals name="summary_hard_sets">
+        <item quantity="one">%d hard set</item>
+        <item quantity="other">%d hard sets</item>
+    </plurals>
+    <plurals name="summary_exercises">
+        <item quantity="one">%d exercise</item>
+        <item quantity="other">%d exercises</item>
+    </plurals>
 </resources>

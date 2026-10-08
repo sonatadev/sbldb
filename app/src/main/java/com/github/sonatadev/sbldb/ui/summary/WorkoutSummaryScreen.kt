@@ -15,8 +15,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,7 +69,11 @@ fun WorkoutSummaryScreen(
                 ModuleLabel(stringResource(R.string.summary_label, workout.workout.name), color = colors.muted)
                 HeroText(formatClock((workout.workout.endedAt ?: workout.workout.startedAt) - workout.workout.startedAt), 56, colors.accent)
                 Text(
-                    stringResource(R.string.summary_line, state.hardSets, workout.exercises.size, state.unit.formatRounded(state.tonnageKg), state.unit.label).uppercase(),
+                    listOf(
+                        pluralStringResource(R.plurals.summary_hard_sets, state.hardSets, state.hardSets),
+                        pluralStringResource(R.plurals.summary_exercises, workout.exercises.size, workout.exercises.size),
+                        stringResource(R.string.summary_lifted, state.unit.formatRounded(state.tonnageKg), state.unit.label)
+                    ).joinToString(" · ").uppercase(),
                     style = SbldbType.mono,
                     color = colors.muted
                 )
@@ -79,9 +87,13 @@ fun WorkoutSummaryScreen(
             }
         }
         if (state.muscles.isNotEmpty()) item {
+            // Muscles that got at least a full set; the helpers behind +N, as in the workout
+            var allMuscles by rememberSaveable { mutableStateOf(false) }
+            val main = state.muscles.filter { it.today >= 1 }.ifEmpty { state.muscles }
+            val shown = if (allMuscles) state.muscles else main
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.summary_muscles)) {
                 Column {
-                    state.muscles.forEach { (muscle, today) ->
+                    shown.forEach { (muscle, today) ->
                         ModuleRow {
                             Column(Modifier.weight(1f)) {
                                 Text(muscle.muscleGroup, style = MaterialTheme.typography.bodyLarge, color = colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -91,6 +103,8 @@ fun WorkoutSummaryScreen(
                             Text(formatSets(muscle.sets), style = SbldbType.mono, color = colors.ink, textAlign = TextAlign.End, modifier = Modifier.width(32.dp))
                         }
                     }
+                    val hidden = state.muscles.size - shown.size
+                    if (hidden > 0) MonoChip("+$hidden", modifier = Modifier.padding(top = 8.dp), onClick = { allMuscles = true })
                     MonoCaption(stringResource(R.string.summary_muscles_hint), Modifier.padding(top = 8.dp))
                 }
             }

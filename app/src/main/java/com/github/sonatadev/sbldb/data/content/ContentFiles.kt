@@ -31,7 +31,8 @@ object ContentSource {
     val ALL_FILES = listOf(MANIFEST) + DATA_FILES
 
     /** Highest content format this version of the app understands. */
-    const val SUPPORTED_FORMAT = 1
+    /** 2: cable exercises list their attachments (variants and former names). */
+    const val SUPPORTED_FORMAT = 2
 
     /** The public repository is the source of truth; the APK ships a copy for offline use. */
     const val REMOTE_BASE = "https://raw.githubusercontent.com/sonatadev/sbldb/main/app/src/main/assets/"

@@ -16,7 +16,7 @@ class ContentValidatorTest {
     @Test
     fun `bundled content is valid and declares a supported format`() {
         val files = bundled()
-        assertEquals(1, files.format)
+        assertEquals(2, files.format)
         val result = ContentValidator.check(files)
         assertTrue(result.toString(), result is ContentValidator.Result.Valid)
     }
@@ -46,5 +46,19 @@ class ContentValidatorTest {
     fun `the hash changes with the content`() {
         val edited = File("src/main/assets/glossary.yaml").readText() + "\n"
         assertTrue(bundled().hash != bundled(mapOf("glossary.yaml" to edited)).hash)
+    }
+
+    @Test
+    fun `a variant with an unknown attachment is rejected`() {
+        val broken = File("src/main/assets/exercises.yaml").readText().replaceFirst("    V-Bar:\n", "    Banana Bar:\n")
+        val result = ContentValidator.check(bundled(mapOf("exercises.yaml" to broken)))
+        assertTrue(result.toString(), (result as? ContentValidator.Result.Invalid)?.problems?.any { "Banana Bar" in it } == true)
+    }
+
+    @Test
+    fun `a former name that is still an exercise is rejected`() {
+        val broken = File("src/main/assets/exercises.yaml").readText().replaceFirst("formerly: Close-Grip Lat Pulldown", "formerly: Barbell Bench Press")
+        val result = ContentValidator.check(bundled(mapOf("exercises.yaml" to broken)))
+        assertTrue(result.toString(), (result as? ContentValidator.Result.Invalid)?.problems?.any { "Barbell Bench Press" in it } == true)
     }
 }

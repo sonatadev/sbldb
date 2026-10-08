@@ -34,13 +34,19 @@ object CustomExercises {
             aliases = input.aliases.filter { it.isNotBlank() }.takeIf { it.isNotEmpty() }?.joinToString(" | "),
             isCustom = true
         )
-        val id = if (existingId != null) existingId.also { exerciseDao.updateExercise(row) } else exerciseDao.insertExercise(row).toInt()
+        val previous = existingId?.let { exerciseDao.findById(it) }
+        val id = if (existingId != null) existingId.also { exerciseDao.updateExercise(row.copy(parentId = previous?.parentId)) } else exerciseDao.insertExercise(row).toInt()
+        // Variants carry the exercise's name
+        if (previous != null && previous.name != row.name) {
+            exerciseDao.variantsOf(id).forEach { v -> exerciseDao.updateExercise(v.copy(name = Variants.name(row.name, v.attachment.orEmpty()))) }
+        }
 
         val actionDao = db.jointActionDAO()
         actionDao.deleteExerciseLinks(id)
         input.ratings.forEach { (actionId, rating) -> actionDao.insertExerciseLink(ExerciseJointAction(id, actionId, rating.coerceIn(1, 5))) }
 
         deriveMuscles(db, id, input.ratings)
+        Variants.refreshVariants(db, id)
         id
     }
 
@@ -49,6 +55,7 @@ object CustomExercises {
         db.userDataDAO().customExercises().forEach { exercise ->
             val ratings = db.userDataDAO().exerciseLinks(exercise.exerciseId).associate { it.jointActionId to it.rating }
             deriveMuscles(db, exercise.exerciseId, ratings)
+            Variants.refreshVariants(db, exercise.exerciseId)
         }
     }
 
@@ -62,7 +69,13 @@ object CustomExercises {
     /** Deletes a custom exercise, or archives it when it appears in logged workouts or routines. */
     suspend fun remove(db: AppDatabase, exercise: Exercise) = db.withTransaction {
         require(exercise.isCustom) { "Only custom exercises can be removed" }
-        val used = db.userDataDAO().timesLogged(exercise.exerciseId) > 0 || db.routineDAO().usesExercise(exercise.exerciseId)
-        if (used) db.exerciseDAO().updateExercise(exercise.copy(isArchived = true)) else db.exerciseDAO().deleteExercise(exercise)
+        val family = listOf(exercise) + db.exerciseDAO().variantsOf(exercise.exerciseId)
+        val used = family.filter { db.userDataDAO().timesLogged(it.exerciseId) > 0 || db.routineDAO().usesExercise(it.exerciseId) }
+        if (used.isEmpty()) {
+            family.forEach { db.exerciseDAO().deleteExercise(it) }
+        } else {
+            db.exerciseDAO().updateExercise(exercise.copy(isArchived = true))
+            (family - used.toSet() - exercise).forEach { db.exerciseDAO().deleteExercise(it) }
+        }
     }
 }

@@ -66,10 +66,37 @@ data class ExerciseSeed(
     /** Joint action key → rating 1–5, in file order. */
     val actions: Map<String, Int>,
     /** Explicit muscle roles replacing the derivation, when present. */
-    val muscleOverride: Map<MuscleRef, Role>?
+    val muscleOverride: Map<MuscleRef, Role>?,
+    /** Names this exercise had before: a row still called that way is renamed, keeping its history. */
+    val formerly: List<String> = emptyList(),
+    /** Attachments that need more than the defaults: their own movement, or a merged old exercise. */
+    val variants: List<VariantSeed> = emptyList()
 ) {
     val joinedAliases: String? get() = aliases.takeIf { it.isNotEmpty() }?.joinToString(" | ")
+
+    /** The variant for [attachment] as an exercise seed of its own, inheriting what it doesn't set. */
+    fun variant(variant: VariantSeed) = ExerciseSeed(
+        name = Variants.name(name, variant.attachment),
+        equipment = equipment,
+        attachment = variant.attachment,
+        note = null,
+        aliases = variant.formerly,
+        actions = variant.actions ?: actions,
+        muscleOverride = if (variant.actions != null) variant.muscleOverride else variant.muscleOverride ?: muscleOverride,
+        formerly = variant.formerly
+    )
 }
+
+/**
+ * An attachment of a cable exercise listed in the library. [actions] (and [muscleOverride]) are set
+ * when the attachment changes the movement, e.g. a V-bar turns a wide pulldown into shoulder extension.
+ */
+data class VariantSeed(
+    val attachment: String,
+    val actions: Map<String, Int>? = null,
+    val muscleOverride: Map<MuscleRef, Role>? = null,
+    val formerly: List<String> = emptyList()
+)
 
 data class GlossarySeed(val term: String, val text: Explained)
 
@@ -113,22 +140,30 @@ object SeedParser {
     fun parseExercises(input: InputStream): List<ExerciseSeed> =
         loadList(input).map { entry ->
             val name = entry.requireString("name")
-            val actions = (entry["actions"] as? Map<*, *>).orEmpty()
-                .map { (key, rating) -> key as String to (rating as Number).toInt() }
-                .toMap()
+            val actions = (entry["actions"] as? Map<*, *>).orEmpty().ratings()
             require(actions.isNotEmpty()) { "Exercise '$name' has no joint actions" }
-            val muscles = entry["muscles"] as? Map<*, *>
+            val attachment = entry["attachment"] as String?
+            val variants = (entry["attachments"] as? Map<*, *>).orEmpty().map { (key, raw) ->
+                val variant = raw as? Map<*, *> ?: emptyMap<Any, Any>()
+                VariantSeed(
+                    attachment = key as String,
+                    actions = (variant["actions"] as? Map<*, *>)?.ratings(),
+                    muscleOverride = (variant["muscles"] as? Map<*, *>)?.muscleRoles(),
+                    formerly = variant.stringList("formerly")
+                )
+            }
+            require(variants.isEmpty() || attachment != null) { "Exercise '$name' lists attachments but has no default one" }
+            require(variants.none { it.attachment == attachment }) { "Exercise '$name' repeats its default attachment" }
             ExerciseSeed(
                 name = name,
                 equipment = entry.requireString("equipment"),
-                attachment = entry["attachment"] as String?,
+                attachment = attachment,
                 note = entry["note"] as String?,
-                aliases = (entry["aliases"] as? List<*>).orEmpty().map { it as String },
+                aliases = entry.stringList("aliases"),
                 actions = actions,
-                muscleOverride = muscles?.let {
-                    it.muscleList("primary").associateWith { Role.PRIMARY } +
-                        it.muscleList("secondary").associateWith { Role.SECONDARY }
-                }
+                muscleOverride = (entry["muscles"] as? Map<*, *>)?.muscleRoles(),
+                formerly = entry.stringList("formerly"),
+                variants = variants
             )
         }
 
@@ -152,6 +187,19 @@ object SeedParser {
         val expert = (this["expert"] as String?)?.trim()
         require(!basic.isNullOrEmpty() && !expert.isNullOrEmpty()) { "$owner needs both a basic and an expert text" }
         return Explained(basic, expert)
+    }
+
+    private fun Map<*, *>.ratings(): Map<String, Int> =
+        map { (key, rating) -> key as String to (rating as Number).toInt() }.toMap()
+
+    private fun Map<*, *>.muscleRoles(): Map<MuscleRef, Role> =
+        muscleList("primary").associateWith { Role.PRIMARY } + muscleList("secondary").associateWith { Role.SECONDARY }
+
+    /** A list of strings, also accepting a single string. */
+    private fun Map<*, *>.stringList(key: String): List<String> = when (val value = this[key]) {
+        is String -> listOf(value)
+        is List<*> -> value.map { it as String }
+        else -> emptyList()
     }
 
     private fun Map<*, *>.muscleList(key: String): List<MuscleRef> =
@@ -262,15 +310,24 @@ object SeedData {
 
         val exerciseDao = db.exerciseDAO()
         val actionsByKey = actions.associateBy { it.key }
-        for (seed in exercises) {
+
+        /** Writes one library row (an exercise or a variant) and its movement; returns its id, or null if a custom exercise owns the name. */
+        suspend fun upsert(seed: ExerciseSeed, parentId: Int?, ownActions: Boolean): Int? {
             // A custom exercise with the same name belongs to the user and wins over the library
-            if (exerciseDao.findByName(seed.name)?.isCustom == true) continue
+            if (exerciseDao.findByName(seed.name)?.isCustom == true) return null
+            // Renamed or merged: the old row takes the new name, so its history follows
+            if (exerciseDao.findId(seed.name) == null) {
+                seed.formerly.firstNotNullOfOrNull { exerciseDao.findByName(it)?.takeIf { old -> !old.isCustom } }
+                    ?.let { exerciseDao.updateExercise(it.copy(name = seed.name)) }
+            }
+            val aliases = (seed.aliases + seed.formerly).distinct().takeIf { it.isNotEmpty() }?.joinToString(" | ")
+            val row = Exercise(0, seed.name, seed.equipment, seed.attachment, seed.note, aliases, parentId = parentId, hasOwnActions = ownActions)
             val existing = exerciseDao.findId(seed.name)
             val id = if (existing != null) {
-                exerciseDao.updateExercise(Exercise(existing, seed.name, seed.equipment, seed.attachment, seed.note, seed.joinedAliases))
+                exerciseDao.updateExercise(row.copy(exerciseId = existing))
                 existing
             } else {
-                exerciseDao.insertExercise(Exercise(0, seed.name, seed.equipment, seed.attachment, seed.note, seed.joinedAliases)).toInt()
+                exerciseDao.insertExercise(row).toInt()
             }
             actionDao.deleteExerciseLinks(id)
             seed.actions.forEach { (key, rating) ->
@@ -281,6 +338,14 @@ object SeedData {
             MuscleDerivation.derive(seed, actionsByKey).forEach { (ref, role) ->
                 db.exerciseMuscleDAO().insertExerciseMuscle(ExerciseMuscle(id, muscleId(ref, seed.name), role))
             }
+            return id
+        }
+
+        for (seed in exercises) {
+            val id = upsert(seed, parentId = null, ownActions = false) ?: continue
+            for (variant in seed.variants) upsert(seed.variant(variant), parentId = id, ownActions = variant.actions != null)
+            // Variants made while logging (any other attachment) keep following the exercise
+            Variants.refreshVariants(db, id)
         }
 
         CustomExercises.rederiveAll(db)

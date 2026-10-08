@@ -34,12 +34,12 @@ interface JointActionDAO {
     @Insert
     suspend fun insertExerciseLink(link: ExerciseJointAction)
 
-    /** Every rating of every visible exercise, for swap suggestions. */
+    /** Every rating of every visible exercise (variants only when their attachment changes the movement), for swap suggestions. */
     @Query(
         """
         SELECT eja.* FROM exercise_joint_actions eja
         JOIN exercises e ON e.exerciseId = eja.exerciseId
-        WHERE e.isArchived = 0
+        WHERE e.isArchived = 0 AND (e.parentId IS NULL OR e.hasOwnActions = 1)
         """
     )
     suspend fun allExerciseLinks(): List<ExerciseJointAction>
@@ -81,7 +81,7 @@ interface JointActionDAO {
         """
         SELECT e.exerciseId, e.name, e.equipment, e.attachment, e.note, eja.rating FROM exercise_joint_actions eja
         JOIN exercises e ON e.exerciseId = eja.exerciseId
-        WHERE eja.jointActionId = :id AND e.isArchived = 0
+        WHERE eja.jointActionId = :id AND e.isArchived = 0 AND (e.parentId IS NULL OR e.hasOwnActions = 1)
         ORDER BY eja.rating DESC, e.name
         """
     )
@@ -118,7 +118,7 @@ interface JointActionDAO {
         JOIN joint_action_muscles jam ON jam.jointActionId = eja.jointActionId AND jam.role = 'PRIMARY'
         JOIN muscles m ON m.muscleId = jam.muscleId
         JOIN exercises e ON e.exerciseId = eja.exerciseId
-        WHERE m.muscleGroup = :group
+        WHERE m.muscleGroup = :group AND e.isArchived = 0 AND (e.parentId IS NULL OR e.hasOwnActions = 1)
         GROUP BY e.exerciseId
         ORDER BY rating DESC, e.name
         LIMIT :limit

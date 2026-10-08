@@ -29,7 +29,8 @@ interface UserDataDAO {
     @Query("SELECT * FROM routines ORDER BY position")
     suspend fun allRoutines(): List<RoutineWithExercises>
 
-    @Query("SELECT * FROM exercises WHERE isCustom = 1 ORDER BY name")
+    /** The user's own exercises; their attachment variants come along with them. */
+    @Query("SELECT * FROM exercises WHERE isCustom = 1 AND parentId IS NULL ORDER BY name")
     suspend fun customExercises(): List<Exercise>
 
     @Query(

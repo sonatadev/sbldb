@@ -139,15 +139,15 @@
   equipment: Bodyweight
   actions: {Shoulder / Extension: 4, Elbow / Flexion: 4, Scapula / Depression: 3, Scapula / Downward Rotation: 2}
 - name: Lat Pulldown
-  aliases: [Lat machine, Lat machine presa larga, Wide-grip pulldown]
+  aliases: [Lat machine, Lat machine presa larga, Wide-grip pulldown, Lat machine presa stretta, Close-grip pulldown, Neutral-grip pulldown]
   equipment: Cable
   attachment: Wide Bar
   actions: {Shoulder / Adduction: 4, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3, Scapula / Downward Rotation: 3}
-- name: Close-Grip Lat Pulldown
-  aliases: [Lat machine presa stretta, Neutral-grip pulldown]
-  equipment: Cable
-  attachment: V-Bar
-  actions: {Shoulder / Extension: 4, Elbow / Flexion: 3, Scapula / Depression: 3}
+  attachments:
+    # Elbows come down in front instead of out to the side: shoulder extension takes over
+    V-Bar:
+      formerly: Close-Grip Lat Pulldown
+      actions: {Shoulder / Extension: 4, Elbow / Flexion: 3, Scapula / Depression: 3}
 - name: Straight-Arm Pulldown
   aliases: [Pullover ai cavi, Lat pushdown]
   equipment: Cable
@@ -170,15 +170,15 @@
   equipment: Dumbbell
   actions: {Shoulder / Extension: 5, Scapula / Retraction: 3, Elbow / Flexion: 3}
 - name: Seated Cable Row
-  aliases: [Pulley, Pulley basso, Low row, Seated row]
+  aliases: [Pulley, Pulley basso, Low row, Seated row, Pulley presa larga, Transverse row, Wide row, Upper back row]
   equipment: Cable
   attachment: V-Bar
   actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3}
-- name: Wide-Grip Cable Row
-  aliases: [Transverse row, Pulley presa larga, Wide row, Upper back row]
-  equipment: Cable
-  attachment: Wide Bar
-  actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Extension: 2}
+  attachments:
+    # Elbows flare out wide: horizontal abduction for the upper back and rear delts instead of the lats
+    Wide Bar:
+      formerly: Wide-Grip Cable Row
+      actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Extension: 2}
 - name: Chest-Supported T-Bar Row
   aliases: [T-bar con appoggio]
   equipment: Machine
@@ -224,10 +224,18 @@
   attachment: EZ Bar
   actions: {Elbow / Flexion: 5}
 - name: Cable Curl
-  aliases: [Curl ai cavi]
+  aliases: [Curl ai cavi, Hammer curl ai cavi, Rope hammer curl]
   equipment: Cable
   attachment: Straight Bar
   actions: {Elbow / Flexion: 4}
+  attachments:
+    # Neutral grip shifts the work to the brachialis and brachioradialis
+    Rope:
+      formerly: Cable Rope Hammer Curl
+      actions: {Elbow / Flexion: 4}
+      muscles:
+        primary: [Brachialis, Brachioradialis]
+        secondary: [Biceps]
 - name: Bayesian Cable Curl
   aliases: [Face-away curl, Curl bayesiano]
   equipment: Cable
@@ -249,22 +257,18 @@
   muscles:
     primary: [Brachioradialis, Brachialis]
     secondary: [Biceps, Forearms / Extensors]
-- name: Tricep Pushdown (Rope Attachment)
-  aliases: [Push down corda, Rope pushdown]
+- name: Triceps Pushdown
+  formerly: Tricep Pushdown (Rope Attachment)
+  aliases: [Push down, Push down corda, Rope pushdown, Bar pushdown, Tricep pushdown]
   equipment: Cable
   attachment: Rope
   actions: {Elbow / Extension: 4}
   muscles:
     primary: [Triceps / Lateral Head, Triceps / Medial Head]
     secondary: [Triceps / Long Head]
-- name: Tricep Pushdown (Straight Bar)
-  aliases: [Push down, Bar pushdown]
-  equipment: Cable
-  attachment: Straight Bar
-  actions: {Elbow / Extension: 4}
-  muscles:
-    primary: [Triceps / Lateral Head, Triceps / Medial Head]
-    secondary: [Triceps / Long Head]
+  attachments:
+    Straight Bar:
+      formerly: Tricep Pushdown (Straight Bar)
 - name: Overhead Cable Triceps Extension
   aliases: [French press ai cavi, Estensioni sopra la testa]
   equipment: Cable
@@ -588,14 +592,6 @@
   equipment: Machine
   note: A good machine keeps tension in the stretched bottom range where the biceps grow most.
   actions: {Elbow / Flexion: 5}
-- name: Cable Rope Hammer Curl
-  equipment: Cable
-  attachment: Rope
-  note: Neutral grip shifts work to the brachialis and brachioradialis with constant cable tension.
-  actions: {Elbow / Flexion: 4}
-  muscles:
-    primary: [Brachialis, Brachioradialis]
-    secondary: [Biceps]
 - name: Cross-Body Cable Triceps Extension
   equipment: Cable
   note: Single-arm extension across the body, comfortable on the elbow and easy to push to failure.

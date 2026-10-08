@@ -7,6 +7,7 @@ import androidx.room.withTransaction
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.CustomExerciseInput
 import com.github.sonatadev.sbldb.data.CustomExercises
+import com.github.sonatadev.sbldb.data.Variants
 import com.github.sonatadev.sbldb.data.entity.BodyEntry
 import com.github.sonatadev.sbldb.data.entity.ExerciseNote
 import com.github.sonatadev.sbldb.data.entity.MuscleTarget
@@ -154,12 +155,13 @@ class BackupManager(
         val version = root.optInt("backupVersion", -1)
         if (version !in 1..VERSION) throw BackupException("Backup version $version is not supported by this app version")
 
-        val library = dao.exerciseNames().map { it.name }.toSet() - dao.customExercises().map { it.name }.toSet()
+        // Library names include former ones (kept as aliases), and "Exercise · Attachment" variants are made on restore
+        val library = db.exerciseDAO().allExercises().filter { !it.isCustom }.flatMap { listOf(it.name) + it.aliasList }.toSet()
         val custom = root.optJSONArray("customExercises").objects().map { it.getString("name") }.toSet()
-        val known = library + custom
+        fun known(name: String): Boolean = name in library || name in custom || Variants.split(name)?.let { known(it.first) } == true
         val referenced = root.optJSONArray("workouts").objects().flatMap { w -> w.optJSONArray("exercises").objects().map { it.getString("exercise") } } +
             root.optJSONArray("routines").objects().flatMap { r -> r.optJSONArray("exercises").objects().map { it.getString("exercise") } }
-        val unknown = referenced.filter { it !in known }.distinct()
+        val unknown = referenced.filter { !known(it) }.distinct()
         if (unknown.isNotEmpty()) throw BackupException("Unknown exercises in backup: ${unknown.take(3).joinToString()}")
         root.optJSONArray("customExercises").objects().forEach { e ->
             e.optJSONArray("actions").objects().forEach { a ->
@@ -199,7 +201,10 @@ class BackupManager(
                 if (e.optBoolean("archived")) db.exerciseDAO().findByName(e.getString("name"))?.let { db.exerciseDAO().updateExercise(it.copy(isArchived = true)) }
                 check(id > 0)
             }
-            val ids = dao.exerciseNames().associate { it.name to it.exerciseId }
+            // Names from the backup: current ones, former ones (merged into attachment variants), or new variants
+            val resolved = HashMap<String, Int?>()
+            suspend fun exerciseId(name: String): Int? = resolved.getOrPut(name) { Variants.resolve(db, name) }
+            suspend fun requireExercise(name: String): Int = requireNotNull(exerciseId(name)) { "Unknown exercise '$name'" }
 
             val routineIds = HashMap<String, Long>()
             val routinesInOrder = mutableListOf<Long>()
@@ -210,7 +215,7 @@ class BackupManager(
                 r.optJSONArray("exercises").objects().forEach { x ->
                     db.routineDAO().insertExercise(
                         RoutineExercise(
-                            routineId = routineId, exerciseId = ids.getValue(x.getString("exercise")), position = x.optInt("position"),
+                            routineId = routineId, exerciseId = requireExercise(x.getString("exercise")), position = x.optInt("position"),
                             sets = x.optInt("sets", 3), repMin = x.optInt("repMin", 8), repMax = x.optInt("repMax", 12),
                             targetRir = x.optIntOrNull("targetRir"), restSeconds = x.optInt("restSeconds", 120),
                             jointActionId = x.optJSONObject("movement")?.let { m -> dao.actionId(m.getString("joint"), m.getString("name")) }
@@ -233,7 +238,7 @@ class BackupManager(
                 )
                 w.optJSONArray("exercises").objects().forEach { x ->
                     val weId = workoutDao.insertWorkoutExercise(
-                        WorkoutExercise(workoutId = workoutId, exerciseId = ids.getValue(x.getString("exercise")), position = x.optInt("position"), note = x.optStringOrNull("note"))
+                        WorkoutExercise(workoutId = workoutId, exerciseId = requireExercise(x.getString("exercise")), position = x.optInt("position"), note = x.optStringOrNull("note"))
                     )
                     x.optJSONArray("sets").objects().forEach { s ->
                         val type = runCatching { SetType.valueOf(s.optString("type", "NORMAL")) }.getOrDefault(SetType.NORMAL)
@@ -248,7 +253,7 @@ class BackupManager(
                 }
             }
             root.optJSONArray("exerciseNotes").objects().forEach { n ->
-                ids[n.getString("exercise")]?.let { dao.upsertExerciseNote(ExerciseNote(it, n.getString("text"))) }
+                exerciseId(n.getString("exercise"))?.let { dao.upsertExerciseNote(ExerciseNote(it, n.getString("text"))) }
             }
             root.optJSONArray("body").objects().forEach { b ->
                 dao.insertBodyEntry(

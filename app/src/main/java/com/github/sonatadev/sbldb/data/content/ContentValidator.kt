@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.content
 
+import com.github.sonatadev.sbldb.data.Variants
 import com.github.sonatadev.sbldb.data.ExerciseSeed
 import com.github.sonatadev.sbldb.data.GlossarySeed
 import com.github.sonatadev.sbldb.data.JointActionSeed
@@ -48,7 +49,12 @@ object ContentValidator {
 
         if (content.muscles.isEmpty() || content.actions.isEmpty() || content.exercises.isEmpty()) problems += "Content is empty"
         if (actions.size != content.actions.size) problems += "Duplicate joint actions"
-        if (content.exercises.map { it.name }.toSet().size != content.exercises.size) problems += "Duplicate exercise names"
+        // Attachment variants become rows of their own, so they share the exercise checks below
+        val rows = content.exercises.flatMap { e -> listOf(e) + e.variants.map { e.variant(it) } }
+        if (rows.map { it.name }.toSet().size != rows.size) problems += "Duplicate exercise names"
+        val formerly = rows.flatMap { it.formerly }
+        if (formerly.toSet().size != formerly.size) problems += "A former name is claimed twice"
+        formerly.filter { old -> rows.any { it.name == old } }.forEach { problems += "Former name $it is still an exercise" }
         if (content.glossary.map { it.term.lowercase() }.toSet().size != content.glossary.size) problems += "Duplicate glossary terms"
 
         content.actions.forEach { a ->
@@ -56,7 +62,11 @@ object ContentValidator {
             a.animation?.problem()?.let { problems += "${a.key}: $it" }
             (a.primary + a.secondary).filter { it !in known }.forEach { problems += "${a.key}: unknown muscle $it" }
         }
-        content.exercises.forEach { e ->
+        content.exercises.filter { it.variants.isNotEmpty() }.forEach { e ->
+            if (!e.equipment.equals("Cable", ignoreCase = true)) problems += "${e.name}: attachments on a non-cable exercise"
+            e.variants.filter { it.attachment !in Variants.ATTACHMENTS }.forEach { problems += "${e.name}: unknown attachment ${it.attachment}" }
+        }
+        rows.forEach { e ->
             e.actions.forEach { (key, rating) ->
                 if (key !in actions) problems += "${e.name}: unknown action $key"
                 if (rating !in 1..5) problems += "${e.name}: rating $rating for $key"

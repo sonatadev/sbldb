@@ -102,13 +102,13 @@ class SeedParserTest {
 
     @Test
     fun `chest-supported rows have an unsupported counterpart`() {
-        val names = exercises.map { it.name }.toSet()
+        val names = exercises.flatMap { e -> listOf(e.name) + e.variants.map { Variants.name(e.name, it.attachment) } }.toSet()
         val pairs = mapOf(
             "Seal Row" to "Barbell Row",
             "Chest-Supported Dumbbell Row" to "Bent-Over Dumbbell Row",
             "Chest-Supported T-Bar Row" to "T-Bar Row",
             "Chest-Supported Machine Row" to "Seated Cable Row",
-            "Chest-Supported Wide-Grip Machine Row" to "Wide-Grip Cable Row",
+            "Chest-Supported Wide-Grip Machine Row" to "Seated Cable Row · Wide Bar",
             "Chest-Supported Rear Delt Row" to "Bent-Over Rear Delt Row",
             "Chest-Supported Reverse Fly" to "Bent-Over Dumbbell Reverse Fly",
             "Kelso Shrug" to "Bent-Over Kelso Shrug",
@@ -116,6 +116,32 @@ class SeedParserTest {
         )
         val missing = pairs.flatMap { (a, b) -> listOf(a, b) }.filter { it !in names }
         assertTrue("Missing: $missing", missing.isEmpty())
+    }
+
+    @Test
+    fun `an attachment that changes the movement brings its own actions`() {
+        val pulldown = exercises.single { it.name == "Lat Pulldown" }
+        val vBar = pulldown.variant(pulldown.variants.single { it.attachment == "V-Bar" })
+        assertEquals("Lat Pulldown · V-Bar", vBar.name)
+        assertEquals(listOf("Close-Grip Lat Pulldown"), vBar.formerly)
+        assertEquals(4, vBar.actions["Shoulder / Extension"])
+        assertEquals(null, vBar.actions["Shoulder / Adduction"])
+    }
+
+    @Test
+    fun `an attachment that doesn't change the movement inherits it`() {
+        val pushdown = exercises.single { it.name == "Triceps Pushdown" }
+        val bar = pushdown.variant(pushdown.variants.single { it.attachment == "Straight Bar" })
+        assertEquals(pushdown.actions, bar.actions)
+        assertEquals(pushdown.muscleOverride, bar.muscleOverride)
+        assertEquals(listOf("Tricep Pushdown (Rope Attachment)"), pushdown.formerly)
+    }
+
+    @Test
+    fun `every listed attachment is one the app offers`() {
+        val unknown = exercises.flatMap { e -> e.variants.map { it.attachment } + listOfNotNull(e.attachment.takeIf { e.equipment == "Cable" }) }
+            .filter { it !in Variants.ATTACHMENTS }
+        assertTrue("Unknown attachments: $unknown", unknown.isEmpty())
     }
 
     @Test

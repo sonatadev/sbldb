@@ -26,8 +26,25 @@ interface ExerciseDAO {
     @Update
     suspend fun updateExercise(exercise: Exercise)
 
-    @Query("SELECT * FROM exercises WHERE isArchived = 0 ORDER BY name")
+    /** The library list: attachment variants are reached through their exercise. */
+    @Query("SELECT * FROM exercises WHERE isArchived = 0 AND parentId IS NULL ORDER BY name")
     fun getAllExercises(): Flow<List<Exercise>>
+
+    @Query("SELECT * FROM exercises WHERE exerciseId = :exerciseId")
+    suspend fun findById(exerciseId: Int): Exercise?
+
+    @Query("SELECT * FROM exercises WHERE parentId = :parentId AND attachment = :attachment")
+    suspend fun findVariant(parentId: Int, attachment: String): Exercise?
+
+    @Query("SELECT * FROM exercises WHERE parentId = :parentId")
+    suspend fun variantsOf(parentId: Int): List<Exercise>
+
+    /** An exercise and its attachment variants, the exercise first. */
+    @Query("SELECT * FROM exercises WHERE exerciseId = :familyId OR parentId = :familyId ORDER BY parentId IS NOT NULL, attachment")
+    fun getFamily(familyId: Int): Flow<List<Exercise>>
+
+    @Query("SELECT * FROM exercises")
+    suspend fun allExercises(): List<Exercise>
 
     @Query("SELECT * FROM exercises WHERE exerciseId = :exerciseId")
     fun getExercise(exerciseId: Int): Flow<Exercise?>

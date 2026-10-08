@@ -3,16 +3,13 @@ package com.github.sonatadev.sbldb.ui
 import android.Manifest
 import android.graphics.Bitmap
 import android.os.Build
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
-import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
-import androidx.compose.ui.test.captureToImage
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -93,7 +90,8 @@ class ScreenshotTour {
     private fun shot(name: String) {
         compose.waitForIdle()
         Thread.sleep(400)
-        val bitmap = compose.onRoot().captureToImage().asAndroidBitmap()
+        // The whole screen, dialogs included (they live in a window of their own)
+        val bitmap = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
         File(out, "$name.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
 

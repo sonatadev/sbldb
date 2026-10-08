@@ -417,5 +417,5 @@
     <string name="attachment_yours">Yours</string>
     <string name="add">Add</string>
     <string name="remove_attachment_title">Remove %1$s?</string>
-    <string name="remove_attachment_message">It won't be offered any more. Workouts already logged with it keep it.</string>
+    <string name="remove_attachment_message">It won\'t be offered any more. Workouts already logged with it keep it.</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.formatSet
 import com.github.sonatadev.sbldb.ui.sideLetter
 import com.github.sonatadev.sbldb.data.entity.SetType
 import androidx.annotation.StringRes

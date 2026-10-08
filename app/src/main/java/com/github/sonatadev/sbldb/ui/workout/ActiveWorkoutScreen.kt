@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.formatSet
 import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.ui.components.AttachmentChip
 import com.github.sonatadev.sbldb.ui.components.HeroText

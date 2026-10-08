@@ -33,5 +33,8 @@ data class Exercise(
     /** The exercise a variant belongs to, or this one. */
     val familyId: Int get() = parentId ?: exerciseId
 
+    /** The name without the attachment: "Lat Pulldown" for "Lat Pulldown · V-Bar". */
+    val baseName: String get() = if (isVariant) name.substringBeforeLast(" · ") else name
+
     val aliasList: List<String> get() = aliases?.split(" | ")?.filter { it.isNotBlank() }.orEmpty()
 }

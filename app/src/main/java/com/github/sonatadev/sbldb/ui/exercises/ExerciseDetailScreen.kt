@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.exercises
 
+import com.github.sonatadev.sbldb.ui.components.attachmentLabel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -71,6 +72,7 @@ fun ExerciseDetailScreen(
     onOpenAction: (Int) -> Unit,
     onOpenMuscle: (String) -> Unit,
     onEdit: (Int) -> Unit,
+    onOpenExercise: (Int) -> Unit,
     viewModel: ExerciseDetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -101,11 +103,23 @@ fun ExerciseDetailScreen(
                 title = exercise.name,
                 navigation = { BackButton(onBack) },
                 actions = {
-                    if (exercise.isCustom) {
+                    if (exercise.isCustom && !exercise.isVariant) {
                         SecondaryButton(stringResource(R.string.edit), onClick = { onEdit(exercise.exerciseId) }, color = colors.accent)
                     }
                 }
             )
+        }
+        // Attachments this exercise has been used with: each keeps its own records and progression
+        if (state.family.size > 1) item {
+            FlowRow(Modifier.padding(horizontal = 6.dp), horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                state.family.forEach { member ->
+                    MonoChip(
+                        member.attachment?.let { attachmentLabel(it) } ?: member.baseName,
+                        filled = member.exerciseId == exercise.exerciseId,
+                        onClick = if (member.exerciseId == exercise.exerciseId) null else ({ onOpenExercise(member.exerciseId) })
+                    )
+                }
+            }
         }
         if (exercise.isCustom) {
             item { MonoChip(stringResource(R.string.custom_chip), filled = true, modifier = Modifier.padding(horizontal = 6.dp)) }

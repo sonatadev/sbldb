@@ -2,6 +2,7 @@ package com.github.sonatadev.sbldb.data.repository
 
 import com.github.sonatadev.sbldb.data.entity.ExerciseNote
 import com.github.sonatadev.sbldb.data.AppDatabase
+import com.github.sonatadev.sbldb.data.Variants
 import com.github.sonatadev.sbldb.data.dao.ExerciseMuscleGroup
 import com.github.sonatadev.sbldb.data.dao.ExercisePrimaryGroup
 import com.github.sonatadev.sbldb.data.entity.Exercise
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.map
 import com.github.sonatadev.sbldb.data.entity.MuscleTarget
 import com.github.sonatadev.sbldb.domain.VolumeTarget
 
-class ExerciseRepository(db: AppDatabase) {
+class ExerciseRepository(private val db: AppDatabase) {
     private val exerciseDao = db.exerciseDAO()
     private val muscleDao = db.muscleDAO()
 
@@ -53,5 +54,22 @@ class ExerciseRepository(db: AppDatabase) {
 
     fun setHistory(exerciseId: Int): Flow<List<SetHistoryRow>> = exerciseDao.getSetHistory(exerciseId)
 
+    /** The exercise to log for [exerciseId]'s family with [attachment]; see [Variants]. */
+    suspend fun withAttachment(exerciseId: Int, attachment: String): Int = Variants.idFor(db, exerciseId, attachment)
+
+    /** An exercise and its attachment variants, the exercise first. */
+    fun family(familyId: Int): Flow<List<Exercise>> = exerciseDao.getFamily(familyId)
+
+    /** Attachments to offer for [exercise]: its default first, then the ones that change the movement, then the rest. */
+    suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> {
+        val parent = exerciseDao.findById(exercise.familyId) ?: exercise
+        val own = exerciseDao.variantsOf(parent.exerciseId).filter { it.hasOwnActions }.mapNotNull { it.attachment }.toSet()
+        val all = (listOfNotNull(parent.attachment) + own + Variants.ATTACHMENTS).distinct()
+        return all.map { AttachmentOption(it, isDefault = it == parent.attachment, changesMovement = it in own) }
+    }
+
     fun allSetsSince(from: Long): Flow<List<ExerciseSetRow>> = exerciseDao.getAllSetsSince(from)
 }
+
+/** An attachment as offered in the picker. */
+data class AttachmentOption(val attachment: String, val isDefault: Boolean, val changesMovement: Boolean)

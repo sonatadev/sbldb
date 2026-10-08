@@ -1,5 +1,7 @@
 package com.github.sonatadev.sbldb.ui.routines
 
+import com.github.sonatadev.sbldb.data.entity.Exercise
+import com.github.sonatadev.sbldb.data.repository.AttachmentOption
 import com.github.sonatadev.sbldb.data.entity.JointActionSummary
 import com.github.sonatadev.sbldb.data.repository.JointActionRepository
 import androidx.lifecycle.SavedStateHandle
@@ -51,6 +53,12 @@ class RoutineEditorViewModel(
     fun update(exercise: RoutineExercise) = launch { routines.updateExercise(exercise) }
 
     fun remove(exercise: RoutineExercise) = launch { routines.removeExercise(exercise) }
+
+    suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exercises.attachmentOptions(exercise)
+
+    fun setAttachment(exercise: RoutineExercise, attachment: String) = launch {
+        routines.updateExercise(exercise.copy(exerciseId = exercises.withAttachment(exercise.exerciseId, attachment)))
+    }
 
     fun move(exercise: RoutineExercise, offset: Int) = launch {
         routine.value?.let { r -> routines.move(r.exercises.map { it.routineExercise }, exercise, offset) }

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.components.AttachmentChip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -240,11 +241,12 @@ private fun EditableExercise(
         }
     ) {
         Text(
-            exercise.exercise.name,
+            exercise.exercise.baseName,
             style = MaterialTheme.typography.titleLarge,
             color = colors.ink,
             modifier = Modifier.clickable(onClick = onOpenExercise)
         )
+        AttachmentChip(exercise.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
         Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ModuleLabel(stringResource(R.string.col_set), Modifier.width(SetColumn))
             ModuleLabel(stringResource(R.string.col_load, unit.label), Modifier.weight(1f))

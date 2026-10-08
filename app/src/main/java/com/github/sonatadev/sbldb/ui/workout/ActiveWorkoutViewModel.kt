@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.data.repository.AttachmentOption
 import com.github.sonatadev.sbldb.domain.Warmup
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -131,6 +132,13 @@ class ActiveWorkoutViewModel(
     suspend fun swapCandidates(exerciseId: Int): List<Exercise> = repository.swapCandidates(exerciseId)
 
     fun swap(exercise: WorkoutExercise, exerciseId: Int) = launch { repository.swapExercise(exercise, exerciseId) }
+
+    suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exerciseRepository.attachmentOptions(exercise)
+
+    /** Same exercise, another attachment: the sets stay, records and progression follow the attachment. */
+    fun setAttachment(exercise: WorkoutExercise, attachment: String) = launch {
+        repository.swapExercise(exercise, exerciseRepository.withAttachment(exercise.exerciseId, attachment))
+    }
 
     override fun updateWeight(set: WorkoutSet, weightKg: Double?) = launch { repository.updateWeight(set.setId, weightKg) }
 

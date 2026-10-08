@@ -396,4 +396,19 @@
     <string name="module_by_exercise">By exercise</string>
     <string name="progress_empty">No finished workouts in this period.</string>
     <string name="progress_hint" formatted="false">Change from the first to the last session of the period. Within ±2.5%, it counts as steady. Counterweight machines are left out.</string>
+
+    <!-- Cable attachments -->
+    <string name="pick_attachment">Attachment</string>
+    <string name="attachment_hint">%1$s: records and progression are kept per attachment</string>
+    <string name="attachment_changes_movement">Changes the movement</string>
+    <string name="attachment_default">Most common</string>
+    <string name="att_d_handle">D-handle</string>
+    <string name="att_rope">Rope</string>
+    <string name="att_straight_bar">Straight bar</string>
+    <string name="att_ez_bar">EZ bar</string>
+    <string name="att_v_bar">V-bar</string>
+    <string name="att_wide_bar">Wide bar</string>
+    <string name="att_neutral_wide_bar">Wide neutral-grip bar</string>
+    <string name="att_ankle_strap">Ankle strap</string>
+    <string name="att_forearm_strap">Forearm strap</string>
 </resources>

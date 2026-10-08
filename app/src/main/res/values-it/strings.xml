@@ -381,4 +381,19 @@
     <string name="module_by_exercise">Per esercizio</string>
     <string name="progress_empty">Nessun allenamento concluso in questo periodo.</string>
     <string name="progress_hint" formatted="false">Variazione dalla prima all\'ultima seduta del periodo. Entro ±2,5%, conta come stabile. Le macchine a contrappeso sono escluse.</string>
+
+    <!-- Cable attachments -->
+    <string name="pick_attachment">Attacco</string>
+    <string name="attachment_hint">%1$s: record e progressione sono tenuti per attacco</string>
+    <string name="attachment_changes_movement">Cambia il movimento</string>
+    <string name="attachment_default">Il più comune</string>
+    <string name="att_d_handle">Maniglia</string>
+    <string name="att_rope">Corda</string>
+    <string name="att_straight_bar">Barra dritta</string>
+    <string name="att_ez_bar">Barra EZ</string>
+    <string name="att_v_bar">Triangolo</string>
+    <string name="att_wide_bar">Barra larga</string>
+    <string name="att_neutral_wide_bar">Barra larga presa neutra</string>
+    <string name="att_ankle_strap">Cavigliera</string>
+    <string name="att_forearm_strap">Fascia avambraccio</string>
 </resources>

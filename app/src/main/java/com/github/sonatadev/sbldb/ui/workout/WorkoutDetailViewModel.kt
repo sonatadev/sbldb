@@ -1,5 +1,8 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.data.entity.Exercise
+import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
+import com.github.sonatadev.sbldb.data.repository.AttachmentOption
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,7 +31,8 @@ class WorkoutDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: WorkoutRepository,
     settings: SettingsRepository,
-    private val routines: RoutineRepository
+    private val routines: RoutineRepository,
+    private val exercises: ExerciseRepository
 ) : ViewModel(), SetActions {
     val workoutId: Long = checkNotNull(savedStateHandle["workoutId"])
 
@@ -66,6 +70,12 @@ class WorkoutDetailViewModel(
     }
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }
+
+    suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exercises.attachmentOptions(exercise)
+
+    fun setAttachment(exercise: WorkoutExercise, attachment: String) = launch {
+        repository.swapExercise(exercise, exercises.withAttachment(exercise.exerciseId, attachment))
+    }
 
     override fun updateWeight(set: WorkoutSet, weightKg: Double?) = launch { repository.updateWeight(set.setId, weightKg) }
 

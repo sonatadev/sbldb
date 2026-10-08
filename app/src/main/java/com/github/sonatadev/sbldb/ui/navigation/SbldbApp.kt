@@ -233,7 +233,8 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onBack = back,
                     onOpenAction = openAction,
                     onOpenMuscle = openMuscle,
-                    onEdit = { navController.navigate(Routes.customExercise(it)) }
+                    onEdit = { navController.navigate(Routes.customExercise(it)) },
+                    onOpenExercise = { navController.navigate(Routes.exerciseDetail(it)) { popUpTo(Routes.EXERCISE_DETAIL) { inclusive = true } } }
                 )
             }
             composable(Routes.ACTION_DETAIL, arguments = listOf(navArgument("actionId") { type = NavType.IntType })) {

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.routines
 
+import com.github.sonatadev.sbldb.ui.components.AttachmentChip
 import com.github.sonatadev.sbldb.ui.isExpert
 import com.github.sonatadev.sbldb.ui.formatSets
 import com.github.sonatadev.sbldb.ui.components.MonoChip
@@ -211,7 +212,8 @@ private fun PlannedExercise(
                 modifier = Modifier.clickable(onClickLabel = stringResource(R.string.change_exercise), onClick = onChangeExercise)
             )
         }
-        Text(entry.exercise.name, style = MaterialTheme.typography.titleLarge, color = colors.ink)
+        Text(entry.exercise.baseName, style = MaterialTheme.typography.titleLarge, color = colors.ink)
+        AttachmentChip(entry.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(plan, it) })
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Stepper(stringResource(R.string.sets_label), plan.sets, 1..10) { viewModel.update(plan.copy(sets = it)) }
             Stepper(stringResource(R.string.reps_min), plan.repMin, 1..plan.repMax) { viewModel.update(plan.copy(repMin = it)) }

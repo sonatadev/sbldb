@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.components.AttachmentChip
 import com.github.sonatadev.sbldb.ui.components.HeroText
 import com.github.sonatadev.sbldb.data.entity.Exercise
 import androidx.compose.foundation.layout.heightIn
@@ -369,11 +370,12 @@ private fun FocusedExercise(
         }
     ) {
         Text(
-            exercise.exercise.name,
+            exercise.exercise.baseName,
             style = MaterialTheme.typography.headlineSmall,
             color = colors.ink,
             modifier = Modifier.clickable(onClick = onOpenExercise)
         )
+        AttachmentChip(exercise.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
         ExerciseNotes(note, exercise.workoutExercise.note, onEditNote = { editNote = true }, onEditToday = { editTodayNote = true })
         if (info.muscles.isNotEmpty()) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {

@@ -1,5 +1,8 @@
 package com.github.sonatadev.sbldb.ui.exercises
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.filterNotNull
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -35,9 +38,12 @@ data class ExerciseDetailUiState(
     val records: Records = Records(),
     /** One point per session for each load metric, oldest first: (startedAt, kg). */
     val loadSeries: Map<LoadMetric, List<Pair<Long, Double>>> = emptyMap(),
-    val note: String? = null
+    val note: String? = null,
+    /** The exercise and its attachment variants, when it has any. */
+    val family: List<Exercise> = emptyList()
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class ExerciseDetailViewModel(
     savedStateHandle: SavedStateHandle,
     private val repository: ExerciseRepository,
@@ -66,8 +72,13 @@ class ExerciseDetailViewModel(
     }
 
     val uiState: StateFlow<ExerciseDetailUiState> =
-        combine(base, jointActions.actionsForExercise(exerciseId), repository.note(exerciseId)) { state, actions, note ->
-            state.copy(actions = actions, note = note)
+        combine(
+            base,
+            jointActions.actionsForExercise(exerciseId),
+            repository.note(exerciseId),
+            repository.exercise(exerciseId).filterNotNull().flatMapLatest { repository.family(it.familyId) }
+        ) { state, actions, note, family ->
+            state.copy(actions = actions, note = note, family = family)
         }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ExerciseDetailUiState())
 

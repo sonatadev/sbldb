@@ -166,7 +166,8 @@ class ScreenshotTour {
 
         suspend fun routine(name: String, position: Int, exercises: List<Pair<String, Double>>): Long {
             val routineId = db.routineDAO().insert(Routine(name = name, position = position, timesPerWeek = 2))
-            exercises.forEachIndexed { i, (ex, _) -> db.routineDAO().insertExercise(RoutineExercise(routineId = routineId, exerciseId = id(ex), position = i)) }
+            // Through the repository, so holds get their 30-60 s range as in the app
+            exercises.forEach { (ex, _) -> container.routineRepository.addExercise(routineId, id(ex)) }
             return routineId
         }
         val upperId = routine("Upper A", 0, upper)

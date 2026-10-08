@@ -184,7 +184,8 @@ private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, version: Int, action
             decimal = true,
             modifier = Modifier.weight(1.3f)
         )
-        Text("×", color = colors.dim, fontFamily = Geist, fontSize = 16.sp)
+        // A hold is load and time, not load times reps
+        Text(if (timed) "·" else "×", color = colors.dim, fontFamily = Geist, fontSize = 16.sp)
         CompactNumberField(
             value = reps,
             onValueChange = {
@@ -194,6 +195,7 @@ private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, version: Int, action
             placeholder = if (timed) stringResource(R.string.seconds_short) else stringResource(R.string.col_reps).lowercase(),
             modifier = Modifier.weight(1f)
         )
+        if (timed) Text("s", color = colors.dim, fontFamily = Geist, fontSize = 16.sp)
     }
 }
 

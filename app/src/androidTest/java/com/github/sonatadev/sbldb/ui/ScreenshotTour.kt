@@ -100,8 +100,11 @@ class ScreenshotTour {
             compose.waitForIdle()
             compose.onAllNodesWithText("Start Lower A").onFirst().performClick()
             compose.waitForIdle()
+            // Last time, target and records load right after the workout opens
+            Thread.sleep(1500)
             shot("13-one-sided")
-            compose.onAllNodesWithText("Plank").onFirst().performClick()
+            scrollTo("Plank")
+            compose.onAllNodesWithText("Plank", useUnmergedTree = true).onFirst().performClick()
             compose.waitForIdle()
             scrollTo("Log set", ignoreCase = true)
             shot("14-timed")

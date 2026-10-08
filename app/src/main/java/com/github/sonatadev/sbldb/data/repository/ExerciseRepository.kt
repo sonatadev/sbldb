@@ -64,12 +64,13 @@ class ExerciseRepository(private val db: AppDatabase) {
     suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> {
         val parent = exerciseDao.findById(exercise.familyId) ?: exercise
         val own = exerciseDao.variantsOf(parent.exerciseId).filter { it.hasOwnActions }.mapNotNull { it.attachment }.toSet()
-        val all = (listOfNotNull(parent.attachment) + own + Variants.ATTACHMENTS).distinct()
-        return all.map { AttachmentOption(it, isDefault = it == parent.attachment, changesMovement = it in own) }
+        val custom = exerciseDao.cableAttachments().filter { it !in Variants.ATTACHMENTS }
+        val all = (listOfNotNull(parent.attachment) + own + Variants.ATTACHMENTS + custom).distinct()
+        return all.map { AttachmentOption(it, isDefault = it == parent.attachment, changesMovement = it in own, isCustom = it in custom) }
     }
 
     fun allSetsSince(from: Long): Flow<List<ExerciseSetRow>> = exerciseDao.getAllSetsSince(from)
 }
 
 /** An attachment as offered in the picker. */
-data class AttachmentOption(val attachment: String, val isDefault: Boolean, val changesMovement: Boolean)
+data class AttachmentOption(val attachment: String, val isDefault: Boolean, val changesMovement: Boolean, val isCustom: Boolean = false)

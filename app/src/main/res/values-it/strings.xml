@@ -396,4 +396,9 @@
     <string name="att_neutral_wide_bar">Barra larga presa neutra</string>
     <string name="att_ankle_strap">Cavigliera</string>
     <string name="att_forearm_strap">Fascia avambraccio</string>
+    <string name="new_attachment">Aggiungi attacco</string>
+    <string name="new_attachment_hint">es. Presa MAG, Barra singola</string>
+    <string name="new_attachment_caption">Sarà disponibile su tutti gli esercizi ai cavi, con i suoi record</string>
+    <string name="attachment_yours">Tuo</string>
+    <string name="add">Aggiungi</string>
 </resources>

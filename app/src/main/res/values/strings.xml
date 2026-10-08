@@ -411,4 +411,9 @@
     <string name="att_neutral_wide_bar">Wide neutral-grip bar</string>
     <string name="att_ankle_strap">Ankle strap</string>
     <string name="att_forearm_strap">Forearm strap</string>
+    <string name="new_attachment">Add attachment</string>
+    <string name="new_attachment_hint">e.g. MAG grip, Single-arm bar</string>
+    <string name="new_attachment_caption">It becomes available on every cable exercise, with its own records</string>
+    <string name="attachment_yours">Yours</string>
+    <string name="add">Add</string>
 </resources>

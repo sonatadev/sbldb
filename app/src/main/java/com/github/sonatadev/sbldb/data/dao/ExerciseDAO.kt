@@ -46,6 +46,10 @@ interface ExerciseDAO {
     @Query("SELECT * FROM exercises")
     suspend fun allExercises(): List<Exercise>
 
+    /** Every attachment used on a cable exercise, the user's own included. */
+    @Query("SELECT DISTINCT attachment FROM exercises WHERE attachment IS NOT NULL AND LOWER(equipment) = 'cable' ORDER BY attachment")
+    suspend fun cableAttachments(): List<String>
+
     @Query("SELECT * FROM exercises WHERE exerciseId = :exerciseId")
     fun getExercise(exerciseId: Int): Flow<Exercise?>
 

@@ -142,14 +142,6 @@ private fun AttachmentDialog(
                                 if (selected) Text("●", style = SbldbType.mono, color = colors.accent)
                             }
                         }
-                        item {
-                            Text(
-                                "+ " + stringResource(R.string.new_attachment).uppercase(),
-                                style = SbldbType.mono,
-                                color = colors.accent,
-                                modifier = Modifier.fillMaxWidth().clickable { newName = "" }.padding(vertical = 14.dp)
-                            )
-                        }
                     }
                 }
             }
@@ -162,6 +154,11 @@ private fun AttachmentDialog(
                 val existing = options.orEmpty().firstOrNull { it.attachment.equals(typing, ignoreCase = true) || attachmentLabel(it.attachment).equals(typing, ignoreCase = true) }
                 TextButton(onClick = { pick(existing?.attachment ?: typing) }, enabled = typing.isNotEmpty()) {
                     Text(stringResource(R.string.add), color = if (typing.isNotEmpty()) colors.accent else colors.dim)
+                }
+            } else {
+                // Always in view, whatever the length of the list
+                TextButton(onClick = { newName = "" }) {
+                    Text("+ " + stringResource(R.string.new_attachment), color = colors.accent)
                 }
             }
         },

@@ -37,7 +37,11 @@ object Variants {
         val current = requireNotNull(dao.findById(exerciseId)) { "No exercise $exerciseId" }
         val parent = if (current.parentId != null) requireNotNull(dao.findById(current.parentId)) else current
         if (parent.attachment == attachment) return@withTransaction parent.exerciseId
-        dao.findVariant(parent.exerciseId, attachment)?.let { return@withTransaction it.exerciseId }
+        dao.findVariant(parent.exerciseId, attachment)?.let {
+            // Picked again after being removed from the list: it comes back
+            if (it.isArchived) dao.updateExercise(it.copy(isArchived = false))
+            return@withTransaction it.exerciseId
+        }
         val id = dao.insertExercise(
             Exercise(
                 exerciseId = 0,
@@ -65,6 +69,18 @@ object Variants {
     /** After an exercise's movement changed: its variants without a movement of their own follow it. */
     suspend fun refreshVariants(db: AppDatabase, parentId: Int) {
         db.exerciseDAO().variantsOf(parentId).filter { !it.hasOwnActions }.forEach { copyMovement(db, parentId, it.exerciseId) }
+    }
+
+    /**
+     * Takes an attachment the user added off the list. Variants already logged or in a routine are
+     * only hidden, so their history stays; the others are deleted. The library's attachments stay.
+     */
+    suspend fun removeCustom(db: AppDatabase, attachment: String) = db.withTransaction {
+        if (attachment in ATTACHMENTS) return@withTransaction
+        db.exerciseDAO().variantsWith(attachment).forEach { variant ->
+            val used = db.userDataDAO().timesLogged(variant.exerciseId) > 0 || db.routineDAO().usesExercise(variant.exerciseId)
+            if (used) db.exerciseDAO().updateExercise(variant.copy(isArchived = true)) else db.exerciseDAO().deleteExercise(variant)
+        }
     }
 
     /**

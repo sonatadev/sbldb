@@ -56,6 +56,8 @@ class RoutineEditorViewModel(
 
     suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exercises.attachmentOptions(exercise)
 
+    suspend fun removeAttachment(attachment: String) = exercises.removeAttachment(attachment)
+
     fun setAttachment(exercise: RoutineExercise, attachment: String) = launch {
         routines.updateExercise(exercise.copy(exerciseId = exercises.withAttachment(exercise.exerciseId, attachment)))
     }

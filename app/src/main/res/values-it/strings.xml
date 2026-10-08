@@ -401,4 +401,6 @@
     <string name="new_attachment_caption">Sarà disponibile su tutti gli esercizi ai cavi, con i suoi record</string>
     <string name="attachment_yours">Tuo</string>
     <string name="add">Aggiungi</string>
+    <string name="remove_attachment_title">Eliminare %1$s?</string>
+    <string name="remove_attachment_message">Non comparirà più nella lista. Gli allenamenti già fatti con questo attacco lo tengono.</string>
 </resources>

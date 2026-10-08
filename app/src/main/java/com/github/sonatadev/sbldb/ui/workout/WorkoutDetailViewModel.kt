@@ -73,6 +73,8 @@ class WorkoutDetailViewModel(
 
     suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exercises.attachmentOptions(exercise)
 
+    suspend fun removeAttachment(attachment: String) = exercises.removeAttachment(attachment)
+
     fun setAttachment(exercise: WorkoutExercise, attachment: String) = launch {
         repository.swapExercise(exercise, exercises.withAttachment(exercise.exerciseId, attachment))
     }

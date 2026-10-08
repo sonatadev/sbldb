@@ -135,6 +135,8 @@ class ActiveWorkoutViewModel(
 
     suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exerciseRepository.attachmentOptions(exercise)
 
+    suspend fun removeAttachment(attachment: String) = exerciseRepository.removeAttachment(attachment)
+
     /** Same exercise, another attachment: the sets stay, records and progression follow the attachment. */
     fun setAttachment(exercise: WorkoutExercise, attachment: String) = launch {
         repository.swapExercise(exercise, exerciseRepository.withAttachment(exercise.exerciseId, attachment))

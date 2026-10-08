@@ -102,4 +102,27 @@ class VariantsTest {
         assertEquals(id("Triceps Pushdown"), Variants.resolve(db, "Tricep Pushdown (Rope Attachment)"))
         assertNull(Variants.resolve(db, "Not An Exercise"))
     }
+
+    @Test
+    fun removingAnAttachmentKeepsItsHistory() = runBlocking {
+        val pushdown = id("Triceps Pushdown")
+        val logged = Variants.idFor(db, pushdown, "Banded Bar")
+        val unused = Variants.idFor(db, id("Cable Curl"), "Banded Bar")
+        val workout = db.workoutDAO().insertWorkout(Workout(name = "Arms", startedAt = 1000, endedAt = 2000))
+        db.workoutDAO().insertWorkoutExercise(WorkoutExercise(workoutId = workout, exerciseId = logged, position = 0))
+        assertTrue("Banded Bar" in db.exerciseDAO().cableAttachments())
+
+        Variants.removeCustom(db, "Banded Bar")
+
+        assertFalse("Banded Bar" in db.exerciseDAO().cableAttachments())
+        assertTrue(db.exerciseDAO().findById(logged)!!.isArchived)
+        assertNull(db.exerciseDAO().findById(unused))
+        // Picked again, it comes back with its history
+        assertEquals(logged, Variants.idFor(db, pushdown, "Banded Bar"))
+        assertFalse(db.exerciseDAO().findById(logged)!!.isArchived)
+
+        // The library's attachments can't be removed
+        Variants.removeCustom(db, "Rope")
+        assertTrue("Rope" in db.exerciseDAO().cableAttachments())
+    }
 }

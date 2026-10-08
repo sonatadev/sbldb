@@ -39,6 +39,9 @@ interface ExerciseDAO {
     @Query("SELECT * FROM exercises WHERE parentId = :parentId")
     suspend fun variantsOf(parentId: Int): List<Exercise>
 
+    @Query("SELECT * FROM exercises WHERE parentId IS NOT NULL AND attachment = :attachment")
+    suspend fun variantsWith(attachment: String): List<Exercise>
+
     /** An exercise and its attachment variants, the exercise first. */
     @Query("SELECT * FROM exercises WHERE exerciseId = :familyId OR parentId = :familyId ORDER BY parentId IS NOT NULL, attachment")
     fun getFamily(familyId: Int): Flow<List<Exercise>>
@@ -47,7 +50,7 @@ interface ExerciseDAO {
     suspend fun allExercises(): List<Exercise>
 
     /** Every attachment used on a cable exercise, the user's own included. */
-    @Query("SELECT DISTINCT attachment FROM exercises WHERE attachment IS NOT NULL AND LOWER(equipment) = 'cable' ORDER BY attachment")
+    @Query("SELECT DISTINCT attachment FROM exercises WHERE attachment IS NOT NULL AND isArchived = 0 AND LOWER(equipment) = 'cable' ORDER BY attachment")
     suspend fun cableAttachments(): List<String>
 
     @Query("SELECT * FROM exercises WHERE exerciseId = :exerciseId")

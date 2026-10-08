@@ -18,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -34,6 +36,7 @@ import com.github.sonatadev.sbldb.data.entity.Exercise
 import com.github.sonatadev.sbldb.data.repository.AttachmentOption
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
+import kotlinx.coroutines.launch
 
 private val ChipShape = RoundedCornerShape(percent = 50)
 
@@ -57,7 +60,13 @@ fun attachmentLabel(attachment: String): String = when (attachment) {
  * list of attachments. Shows nothing for exercises that don't take one.
  */
 @Composable
-fun AttachmentChip(exercise: Exercise, loadOptions: suspend (Exercise) -> List<AttachmentOption>, onPick: (String) -> Unit, modifier: Modifier = Modifier) {
+fun AttachmentChip(
+    exercise: Exercise,
+    loadOptions: suspend (Exercise) -> List<AttachmentOption>,
+    removeCustom: suspend (String) -> Unit,
+    onPick: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     if (!Variants.takesAttachments(exercise)) return
     val colors = SbldbTheme.colors
     var open by remember { mutableStateOf(false) }
@@ -78,7 +87,7 @@ fun AttachmentChip(exercise: Exercise, loadOptions: suspend (Exercise) -> List<A
             color = colors.ink
         )
     }
-    if (open) AttachmentDialog(exercise, current, loadOptions, onPick = { if (it != current) onPick(it) }, onDismiss = { open = false })
+    if (open) AttachmentDialog(exercise, current, loadOptions, removeCustom, onPick = { if (it != current) onPick(it) }, onDismiss = { open = false })
 }
 
 @Composable
@@ -86,11 +95,25 @@ private fun AttachmentDialog(
     exercise: Exercise,
     current: String?,
     loadOptions: suspend (Exercise) -> List<AttachmentOption>,
+    removeCustom: suspend (String) -> Unit,
     onPick: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
     val colors = SbldbTheme.colors
-    val options by produceState<List<AttachmentOption>?>(null, exercise.exerciseId) { value = loadOptions(exercise) }
+    // Bumped after a removal so the list reloads
+    var version by remember { mutableIntStateOf(0) }
+    val options by produceState<List<AttachmentOption>?>(null, exercise.exerciseId, version) { value = loadOptions(exercise) }
+    var removing by remember { mutableStateOf<String?>(null) }
+    val scope = rememberCoroutineScope()
+    removing?.let { name ->
+        ConfirmDialog(
+            title = stringResource(R.string.remove_attachment_title, name),
+            message = stringResource(R.string.remove_attachment_message),
+            confirmLabel = stringResource(R.string.remove),
+            onConfirm = { scope.launch { removeCustom(name); version++ } },
+            onDismiss = { removing = null }
+        )
+    }
     // Typing a new attachment: null while the list is shown
     var newName by remember { mutableStateOf<String?>(null) }
     fun pick(attachment: String) {
@@ -139,7 +162,19 @@ private fun AttachmentDialog(
                                         option.isCustom -> MonoCaption(stringResource(R.string.attachment_yours))
                                     }
                                 }
-                                if (selected) Text("●", style = SbldbType.mono, color = colors.accent)
+                                if (selected) {
+                                    Text("●", style = SbldbType.mono, color = colors.accent)
+                                } else if (option.isCustom) {
+                                    Text(
+                                        "✕",
+                                        style = SbldbType.mono,
+                                        color = colors.muted,
+                                        modifier = Modifier
+                                            .clip(ChipShape)
+                                            .clickable(role = Role.Button, onClickLabel = stringResource(R.string.remove)) { removing = option.attachment }
+                                            .padding(horizontal = 10.dp, vertical = 6.dp)
+                                    )
+                                }
                             }
                         }
                     }

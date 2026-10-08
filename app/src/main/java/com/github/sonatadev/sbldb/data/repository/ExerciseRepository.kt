@@ -57,6 +57,9 @@ class ExerciseRepository(private val db: AppDatabase) {
     /** The exercise to log for [exerciseId]'s family with [attachment]; see [Variants]. */
     suspend fun withAttachment(exerciseId: Int, attachment: String): Int = Variants.idFor(db, exerciseId, attachment)
 
+    /** Takes an attachment the user added off the list; see [Variants.removeCustom]. */
+    suspend fun removeAttachment(attachment: String) = Variants.removeCustom(db, attachment)
+
     /** An exercise and its attachment variants, the exercise first. */
     fun family(familyId: Int): Flow<List<Exercise>> = exerciseDao.getFamily(familyId)
 

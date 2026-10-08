@@ -246,7 +246,7 @@ private fun EditableExercise(
             color = colors.ink,
             modifier = Modifier.clickable(onClick = onOpenExercise)
         )
-        AttachmentChip(exercise.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
+        AttachmentChip(exercise.exercise, viewModel::attachmentOptions, viewModel::removeAttachment, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
         Row(Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             ModuleLabel(stringResource(R.string.col_set), Modifier.width(SetColumn))
             ModuleLabel(stringResource(R.string.col_load, unit.label), Modifier.weight(1f))

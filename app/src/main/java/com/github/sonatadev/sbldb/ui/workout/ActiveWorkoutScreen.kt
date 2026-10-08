@@ -373,7 +373,7 @@ private fun FocusedExercise(
             color = colors.ink,
             modifier = Modifier.clickable(onClick = onOpenExercise)
         )
-        AttachmentChip(exercise.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
+        AttachmentChip(exercise.exercise, viewModel::attachmentOptions, viewModel::removeAttachment, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
         ExerciseNotes(note, exercise.workoutExercise.note, onEditNote = { editNote = true }, onEditToday = { editTodayNote = true })
         if (info.muscles.isNotEmpty()) {
             // The muscles that count a full set; the helpers are one tap away

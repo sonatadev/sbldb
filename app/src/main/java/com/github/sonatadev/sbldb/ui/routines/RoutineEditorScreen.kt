@@ -213,7 +213,7 @@ private fun PlannedExercise(
             )
         }
         Text(entry.exercise.baseName, style = MaterialTheme.typography.titleLarge, color = colors.ink)
-        AttachmentChip(entry.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(plan, it) })
+        AttachmentChip(entry.exercise, viewModel::attachmentOptions, viewModel::removeAttachment, onPick = { viewModel.setAttachment(plan, it) })
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Stepper(stringResource(R.string.sets_label), plan.sets, 1..10) { viewModel.update(plan.copy(sets = it)) }
             Stepper(stringResource(R.string.reps_min), plan.repMin, 1..plan.repMax) { viewModel.update(plan.copy(repMin = it)) }

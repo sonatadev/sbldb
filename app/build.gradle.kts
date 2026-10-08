@@ -14,10 +14,24 @@ android {
         applicationId = "com.github.sonatadev.sbldb"
         minSdk = 24
         targetSdk = 37
-        versionCode = 17
-        versionName = "0.16.0"
+        versionCode = 18
+        versionName = "0.17.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // The release key lives off the repo (GitHub secrets on CI, ~/sbldb-private on the VM).
+    // Without it, release builds fall back to the debug key so they still build locally.
+    val releaseKeystore = System.getenv("SBLDB_KEYSTORE")?.let(::file)?.takeIf { it.exists() }
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = System.getenv("SBLDB_KEYSTORE_PASSWORD")
+                keyAlias = "sbldb"
+                keyPassword = System.getenv("SBLDB_KEYSTORE_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -25,8 +39,7 @@ android {
             optimization {
                 enable = true
             }
-            // Signed with the debug key for now, so release builds install over debug ones
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
     compileOptions {

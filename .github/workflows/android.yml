@@ -1,0 +1,69 @@
+# Builds sbl.db on GitHub's machines (this repo's VM is ARM and can't run Android's build tools).
+# Every push to main: unit tests + a release build, so a broken build shows up right away.
+# A tag vX.Y.Z: the same, signed with the release key, published as a GitHub release whose notes
+# come from docs/releases/X.Y.Z.md.
+# The key is kept off the repo: secrets SBLDB_KEYSTORE_B64 and SBLDB_KEYSTORE_PASSWORD
+# (set by scripts/setup-signing.sh; the original is in ~/sbldb-private on the VM).
+name: Android
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Release key
+        env:
+          KEYSTORE_B64: ${{ secrets.SBLDB_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/sbldb-release.jks"
+            echo "SBLDB_KEYSTORE=$RUNNER_TEMP/sbldb-release.jks" >> "$GITHUB_ENV"
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            echo "::error::No release key in the repo secrets: run scripts/setup-signing.sh"; exit 1
+          fi
+
+      - name: Unit tests
+        run: ./gradlew --no-daemon testDebugUnitTest
+
+      - name: Build
+        env:
+          SBLDB_KEYSTORE_PASSWORD: ${{ secrets.SBLDB_KEYSTORE_PASSWORD }}
+        run: ./gradlew --no-daemon assembleRelease
+
+      - name: Name the APK after the version
+        id: apk
+        run: |
+          version=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
+          cp app/build/outputs/apk/release/app-release.apk "sbldb-$version.apk"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbldb-apk
+          path: sbldb-*.apk
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.apk.outputs.version }}
+        run: |
+          if [ "${GITHUB_REF_NAME}" != "v$VERSION" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match versionName $VERSION"; exit 1
+          fi
+          notes="docs/releases/$VERSION.md"
+          [ -f "$notes" ] || { echo "::error::Missing $notes"; exit 1; }
+          gh release create "v$VERSION" "sbldb-$VERSION.apk" --title "sbl.db $VERSION" --notes-file "$notes"

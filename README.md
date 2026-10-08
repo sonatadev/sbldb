@@ -65,7 +65,9 @@ warm-ups excluded). That's how the weekly volume numbers are worked out.
 - Weekly volume per muscle as a row of dots against your target zone
 - A weekly plan that adds up all your routines by how often you run them
 - Per-muscle targets if 10–20 sets isn't right for you
-- Calendar, monthly stats, e1RM chart per exercise
+- Calendar, monthly stats, and a chart per exercise: e1RM, heaviest set or session volume
+- Volume over the last 12 weeks, in total and per muscle against its zone
+- A progress page with every exercise's trend over 1, 3 or 12 months
 - Body weight with a 7-day average and your weekly rate of change
 - Edit any past workout, down to the start time
 - Your own exercises, rated on joint actions like the built-in ones

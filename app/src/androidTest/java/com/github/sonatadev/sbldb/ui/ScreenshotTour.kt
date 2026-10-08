@@ -20,6 +20,7 @@ import com.github.sonatadev.sbldb.SbldbApplication
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.data.entity.Workout
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
@@ -93,6 +94,17 @@ class ScreenshotTour {
             compose.onAllNodesWithText("Finish").onLast().performClick()
             compose.waitUntil(5_000) { compose.onAllNodesWithText("Done ·", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
             shot("12-summary")
+
+            // The next routine opens on a one-sided exercise, then a hold
+            compose.onAllNodesWithText("Done").onFirst().performClick()
+            compose.waitForIdle()
+            compose.onAllNodesWithText("Start Lower A").onFirst().performClick()
+            compose.waitForIdle()
+            shot("13-one-sided")
+            compose.onAllNodesWithText("Plank").onFirst().performClick()
+            compose.waitForIdle()
+            scrollTo("Log set", ignoreCase = true)
+            shot("14-timed")
         }
     }
 
@@ -146,7 +158,8 @@ class ScreenshotTour {
 
         suspend fun id(name: String) = requireNotNull(db.exerciseDAO().findId(name)) { "No exercise $name" }
         val upper = listOf("Lat Pulldown" to 55.0, "Barbell Bench Press" to 70.0, "Seated Cable Row" to 60.0, "Incline Dumbbell Press" to 26.0, "Cable Lateral Raise" to 8.0, "Triceps Pushdown" to 25.0)
-        val lower = listOf("Barbell Back Squat" to 90.0, "Romanian Deadlift" to 80.0, "Leg Extension" to 50.0, "Lying Leg Curl" to 40.0)
+        // One-sided and held exercises first, so the Lower workout opens on them
+        val lower = listOf("Bulgarian Split Squat" to 16.0, "Plank" to 0.0, "Barbell Back Squat" to 90.0, "Romanian Deadlift" to 80.0, "Leg Extension" to 50.0)
 
         suspend fun routine(name: String, position: Int, exercises: List<Pair<String, Double>>): Long {
             val routineId = db.routineDAO().insert(Routine(name = name, position = position, timesPerWeek = 2))
@@ -168,12 +181,23 @@ class ScreenshotTour {
                     Workout(name = if (plan.first == upperId) "Upper A" else "Lower A", startedAt = start, endedAt = start + 62 * 60_000L, routineId = plan.first)
                 )
                 plan.second.forEachIndexed { i, (ex, base) ->
-                    val weId = db.workoutDAO().insertWorkoutExercise(WorkoutExercise(workoutId = workoutId, exerciseId = id(ex), position = i))
+                    val exercise = db.exerciseDAO().findById(id(ex))!!
+                    val weId = db.workoutDAO().insertWorkoutExercise(WorkoutExercise(workoutId = workoutId, exerciseId = exercise.exerciseId, position = i))
                     val load = base * (1 + 0.012 * (8 - week))
+                    val sides = if (exercise.isUnilateral) listOf(Side.LEFT, Side.RIGHT) else listOf(null)
+                    var position = 0
                     repeat(3) { s ->
-                        db.workoutDAO().insertSet(
-                            WorkoutSet(workoutExerciseId = weId, position = s, weightKg = Math.round(load * 2) / 2.0, reps = 10 - s, rir = 2 - minOf(s, 1), isCompleted = true)
-                        )
+                        sides.forEach { side ->
+                            db.workoutDAO().insertSet(
+                                WorkoutSet(
+                                    workoutExerciseId = weId, position = position++,
+                                    weightKg = if (load > 0) Math.round(load * 2) / 2.0 else null,
+                                    // Holds grow by 5 s a week; reps go 10, 9, 8
+                                    reps = if (exercise.isTimed) 30 + 5 * (8 - week) - 5 * s else 10 - s,
+                                    rir = 2 - minOf(s, 1), isCompleted = true, side = side
+                                )
+                            )
+                        }
                     }
                 }
             }

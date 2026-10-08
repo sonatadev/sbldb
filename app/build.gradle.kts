@@ -14,8 +14,8 @@ android {
         applicationId = "com.github.sonatadev.sbldb"
         minSdk = 24
         targetSdk = 37
-        versionCode = 19
-        versionName = "0.18.0"
+        versionCode = 20
+        versionName = "0.19.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

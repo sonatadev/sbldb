@@ -118,7 +118,12 @@ fun WorkoutDetailScreen(
         items(exercises, key = { it.workoutExercise.workoutExerciseId }) { exercise ->
             val number = exercises.indexOf(exercise) + 1
             if (editing) {
-                EditableExercise(number, exercise, state.unit, viewModel, onOpenExercise = { onOpenExercise(exercise.exercise.exerciseId) })
+                EditableExercise(
+                    number, exercise, state.unit, viewModel,
+                    canMoveUp = exercises.first() != exercise,
+                    canMoveDown = exercises.last() != exercise,
+                    onOpenExercise = { onOpenExercise(exercise.exercise.exerciseId) }
+                )
             } else {
                 ReadOnlyExercise(number, exercise, state.unit, onOpenExercise = { onOpenExercise(exercise.exercise.exerciseId) })
             }
@@ -210,6 +215,8 @@ private fun EditableExercise(
     exercise: WorkoutExerciseWithSets,
     unit: WeightUnit,
     viewModel: WorkoutDetailViewModel,
+    canMoveUp: Boolean,
+    canMoveDown: Boolean,
     onOpenExercise: () -> Unit
 ) {
     val colors = SbldbTheme.colors
@@ -229,6 +236,20 @@ private fun EditableExercise(
                         .padding(horizontal = 8.dp, vertical = 4.dp)
                 )
                 DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }, containerColor = colors.module) {
+                    if (canMoveUp) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.move_up), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            viewModel.moveExercise(exercise.workoutExercise, -1)
+                        }
+                    )
+                    if (canMoveDown) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.move_down), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            viewModel.moveExercise(exercise.workoutExercise, 1)
+                        }
+                    )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.remove_exercise), color = colors.ink) },
                         onClick = {

@@ -10,6 +10,9 @@ import java.time.temporal.TemporalAdjusters
 data class WeekRange(val start: LocalDate, val startMillis: Long, val endMillis: Long) {
     companion object {
         /** The week [weeksAgo] weeks before the one containing [now]. */
+        /** The week that contains [millis]. */
+        fun containing(millis: Long, zone: ZoneId = ZoneId.systemDefault()): WeekRange = of(0, zone, Instant.ofEpochMilli(millis))
+
         fun of(weeksAgo: Int, zone: ZoneId = ZoneId.systemDefault(), now: Instant = Instant.now()): WeekRange {
             val monday = now.atZone(zone).toLocalDate()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))

@@ -403,4 +403,17 @@
     <string name="add">Aggiungi</string>
     <string name="remove_attachment_title">Eliminare %1$s?</string>
     <string name="remove_attachment_message">Non comparirà più nella lista. Gli allenamenti già fatti con questo attacco lo tengono.</string>
+
+    <!-- Workout summary -->
+    <string name="summary_label">Finito · %1$s</string>
+    <string name="summary_line">%1$d serie dure · %2$d esercizi · %3$s %4$s sollevati</string>
+    <string name="summary_records">Record · %1$d</string>
+    <string name="summary_muscles">Muscoli della settimana</string>
+    <string name="summary_today">oggi</string>
+    <string name="summary_muscles_hint">I punti sono la settimana finora, questo allenamento compreso, rispetto alla zona di ogni muscolo</string>
+    <string name="summary_done">Fatto</string>
+    <string name="summary_details">Vedi l\'allenamento</string>
+    <string name="pr_e1rm">e1RM</string>
+    <string name="pr_weight">Peso</string>
+    <string name="pr_reps">Ripetizioni</string>
 </resources>

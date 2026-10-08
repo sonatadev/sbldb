@@ -65,6 +65,7 @@ import com.github.sonatadev.sbldb.ui.plan.VolumeTargetsScreen
 import com.github.sonatadev.sbldb.ui.body.BodyScreen
 import com.github.sonatadev.sbldb.ui.plan.WeeklyPlanScreen
 import com.github.sonatadev.sbldb.ui.progress.ProgressScreen
+import com.github.sonatadev.sbldb.ui.summary.WorkoutSummaryScreen
 import com.github.sonatadev.sbldb.ui.exercises.ExerciseListScreen
 import com.github.sonatadev.sbldb.ui.settings.SettingsScreen
 import com.github.sonatadev.sbldb.ui.volume.VolumeScreen
@@ -85,6 +86,7 @@ private object Routes {
     const val PICK_EXERCISE = "pick_exercise/{kind}/{targetId}"
     const val VOLUME = "volume"
     const val PROGRESS = "progress"
+    const val SUMMARY = "summary/{workoutId}"
     const val MUSCLE = "muscle/{group}"
     const val GLOSSARY = "glossary?term={term}"
     const val WEEKLY_PLAN = "weekly_plan"
@@ -97,6 +99,7 @@ private object Routes {
     fun glossary(term: String? = null) = "glossary?term=${Uri.encode(term.orEmpty())}"
 
     fun workoutDetail(id: Long) = "workout/$id"
+    fun summary(id: Long) = "summary/$id"
     fun exerciseDetail(id: Int) = "exercise/$id"
     fun actionDetail(id: Int) = "action/$id"
     fun routine(id: Long) = "routine/$id"
@@ -217,7 +220,16 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onAddExercise = { navController.navigate(Routes.pickExercise("workout", it)) },
                     onOpenExercise = openExercise,
                     onOpenGlossary = openGlossary,
-                    onClose = { navController.popBackStack(Routes.ACTIVE_WORKOUT, inclusive = true) }
+                    onClose = { navController.popBackStack(Routes.ACTIVE_WORKOUT, inclusive = true) },
+                    onFinished = { id ->
+                        navController.navigate(Routes.summary(id)) { popUpTo(Routes.ACTIVE_WORKOUT) { inclusive = true } }
+                    }
+                )
+            }
+            composable(Routes.SUMMARY, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
+                WorkoutSummaryScreen(
+                    onDone = { navController.popBackStack() },
+                    onOpenWorkout = { id -> navController.navigate(Routes.workoutDetail(id)) { popUpTo(Routes.SUMMARY) { inclusive = true } } }
                 )
             }
             composable(Routes.WORKOUT_DETAIL, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {

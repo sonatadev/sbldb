@@ -41,6 +41,8 @@ class WorkoutDetailViewModel(
             WorkoutDetailUiState(isLoading = false, workout = workout, unit = unit)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WorkoutDetailUiState())
 
+    private fun current(): WorkoutWithExercises? = uiState.value.workout
+
     private fun launch(block: suspend () -> Unit) {
         viewModelScope.launch { block() }
     }
@@ -70,6 +72,10 @@ class WorkoutDetailViewModel(
     }
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }
+
+    fun moveExercise(exercise: WorkoutExercise, offset: Int) = launch {
+        current()?.let { w -> repository.moveExercise(w.exercises.map { it.workoutExercise }.sortedBy { it.position }, exercise, offset) }
+    }
 
     suspend fun attachmentOptions(exercise: Exercise): List<AttachmentOption> = exercises.attachmentOptions(exercise)
 

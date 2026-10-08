@@ -112,4 +112,25 @@ class WorkoutFeaturesTest {
         assertEquals(4, after.routineExercise.sets)
         assertEquals(15, after.routineExercise.repMax)
     }
+
+    @Test
+    fun exercisesMoveWithinAWorkout() = runBlocking {
+        val workout = db.workoutDAO().insertWorkout(Workout(name = "W", startedAt = 1L))
+        listOf("Barbell Row", "Lat Pulldown", "Barbell Bench Press").forEachIndexed { i, name ->
+            // Equal positions, as after older edits: moving still works
+            db.workoutDAO().insertWorkoutExercise(WorkoutExercise(workoutId = workout, exerciseId = db.exerciseDAO().findId(name)!!, position = if (i == 2) 1 else i))
+        }
+        suspend fun order() = repo.workout(workout).first()!!.exercises.sortedBy { it.workoutExercise.position }.map { it.exercise.name }
+        suspend fun ordered() = repo.workout(workout).first()!!.exercises.map { it.workoutExercise }.sortedBy { it.position }
+
+        val first = ordered().first()
+        repo.moveExercise(ordered(), first, 1)
+        assertEquals("Barbell Row", order()[1])
+        repo.moveExercise(ordered(), ordered().last(), -1)
+        assertEquals(3, order().toSet().size)
+        // Past either end nothing happens
+        val before = order()
+        repo.moveExercise(ordered(), ordered().first(), -1)
+        assertEquals(before, order())
+    }
 }

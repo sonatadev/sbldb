@@ -120,6 +120,10 @@ class ActiveWorkoutViewModel(
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }
 
+    fun moveExercise(exercise: WorkoutExercise, offset: Int) = launch {
+        current()?.let { w -> repository.moveExercise(w.exercises.map { it.workoutExercise }.sortedBy { it.position }, exercise, offset) }
+    }
+
     fun setExerciseNote(exerciseId: Int, text: String) = launch { exerciseRepository.setNote(exerciseId, text) }
 
     fun setWorkoutNote(exercise: WorkoutExercise, text: String) = launch { repository.setWorkoutNote(exercise, text) }
@@ -186,11 +190,22 @@ class ActiveWorkoutViewModel(
 
     override fun deleteSet(set: WorkoutSet) = launch { repository.deleteSet(set) }
 
+    /** Set once Finish is done: the workout's id when it was kept (for its summary), -1 when nothing was left. */
+    private val finishedId = MutableStateFlow<Long?>(null)
+    val finished: StateFlow<Long?> = finishedId.asStateFlow()
+
+    /** True from the moment Finish is pressed, so the screen waits for the summary instead of just closing. */
+    private val finishingNow = MutableStateFlow(false)
+    val finishing: StateFlow<Boolean> = finishingNow.asStateFlow()
+
     fun finish() = launch {
+        finishingNow.value = true
         session.skipRest()
-        current()?.let { repository.finish(it.workout) }
+        val workout = current()
+        val kept = workout?.let { repository.finish(it.workout) } ?: false
         // Keeps the backup folder current; silently skipped when none is set
         backupManager.autoBackup()
+        finishedId.value = if (kept) workout!!.workout.workoutId else -1
     }
 
     fun discard() = launch {

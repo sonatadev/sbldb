@@ -418,4 +418,17 @@
     <string name="add">Add</string>
     <string name="remove_attachment_title">Remove %1$s?</string>
     <string name="remove_attachment_message">It won\'t be offered any more. Workouts already logged with it keep it.</string>
+
+    <!-- Workout summary -->
+    <string name="summary_label">Done · %1$s</string>
+    <string name="summary_line">%1$d hard sets · %2$d exercises · %3$s %4$s lifted</string>
+    <string name="summary_records">Records · %1$d</string>
+    <string name="summary_muscles">Muscles this week</string>
+    <string name="summary_today">today</string>
+    <string name="summary_muscles_hint">Dots: the week so far, this workout included, against each muscle\'s zone</string>
+    <string name="summary_done">Done</string>
+    <string name="summary_details">See the workout</string>
+    <string name="pr_e1rm">e1RM</string>
+    <string name="pr_weight">Weight</string>
+    <string name="pr_reps">Reps</string>
 </resources>

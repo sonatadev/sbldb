@@ -76,14 +76,16 @@ class WorkoutRepository(
 
     suspend fun rename(workout: Workout, name: String) = dao.updateWorkout(workout.copy(name = name))
 
-    /** Drops unfinished sets and empty exercises; deletes the workout if nothing is left. */
-    suspend fun finish(workout: Workout) = db.withTransaction {
+    /** Drops unfinished sets and empty exercises; deletes the workout if nothing is left. Returns whether it was kept. */
+    suspend fun finish(workout: Workout): Boolean = db.withTransaction {
         dao.deleteUncompletedSets(workout.workoutId)
         dao.deleteEmptyExercises(workout.workoutId)
         if (dao.nextExercisePosition(workout.workoutId) == 0) {
             dao.deleteWorkout(workout)
+            false
         } else {
             dao.updateWorkout(workout.copy(endedAt = System.currentTimeMillis()))
+            true
         }
     }
 
@@ -108,6 +110,15 @@ class WorkoutRepository(
         dao.updateWorkout(workout.copy(startedAt = startedAt, endedAt = startedAt + durationMillis.coerceAtLeast(0)))
 
     suspend fun removeExercise(workoutExercise: WorkoutExercise) = dao.deleteWorkoutExercise(workoutExercise)
+
+    /** Swaps [workoutExercise] with its neighbour [offset] places away in [ordered] (the workout's exercises in order). */
+    suspend fun moveExercise(ordered: List<WorkoutExercise>, workoutExercise: WorkoutExercise, offset: Int) = db.withTransaction {
+        val index = ordered.indexOfFirst { it.workoutExerciseId == workoutExercise.workoutExerciseId }
+        if (index < 0 || ordered.getOrNull(index + offset) == null) return@withTransaction
+        // Positions may repeat after edits: renumber, then swap the two
+        val positions = ordered.indices.toMutableList().also { it[index] = index + offset; it[index + offset] = index }
+        ordered.forEachIndexed { i, we -> if (we.position != positions[i]) dao.updateWorkoutExercise(we.copy(position = positions[i])) }
+    }
 
     suspend fun setWorkoutNote(workoutExercise: WorkoutExercise, text: String) =
         dao.updateWorkoutExercise(workoutExercise.copy(note = text.trim().ifEmpty { null }))

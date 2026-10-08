@@ -107,15 +107,22 @@ fun ActiveWorkoutScreen(
     onOpenExercise: (exerciseId: Int) -> Unit,
     onOpenGlossary: (String?) -> Unit,
     onClose: () -> Unit,
+    onFinished: (workoutId: Long) -> Unit,
     viewModel: ActiveWorkoutViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val finishing by viewModel.finishing.collectAsStateWithLifecycle()
+    val finished by viewModel.finished.collectAsStateWithLifecycle()
     val workout = state.workout
     val colors = SbldbTheme.colors
 
-    // Finished or discarded (or never started): leave the screen
-    LaunchedEffect(state.isLoading, workout == null) {
-        if (!state.isLoading && workout == null) onClose()
+    // Finished: on to its summary (or away, if nothing was kept)
+    LaunchedEffect(finished) {
+        finished?.let { if (it > 0) onFinished(it) else onClose() }
+    }
+    // Discarded (or never started): leave the screen
+    LaunchedEffect(state.isLoading, workout == null, finishing) {
+        if (!state.isLoading && workout == null && !finishing) onClose()
     }
     if (workout == null) return
 
@@ -211,6 +218,8 @@ fun ActiveWorkoutScreen(
                     note = state.notes[exercise.exercise.exerciseId],
                     unit = state.unit,
                     viewModel = viewModel,
+                    canMoveUp = exercises.first() != exercise,
+                    canMoveDown = exercises.last() != exercise,
                     onOpenExercise = { onOpenExercise(exercise.exercise.exerciseId) },
                     onLogged = { expandedId = null }
                 )
@@ -273,6 +282,8 @@ private fun FocusedExercise(
     note: String?,
     unit: WeightUnit,
     viewModel: ActiveWorkoutViewModel,
+    canMoveUp: Boolean,
+    canMoveDown: Boolean,
     onOpenExercise: () -> Unit,
     onLogged: () -> Unit
 ) {
@@ -347,6 +358,20 @@ private fun FocusedExercise(
                         onClick = {
                             menuOpen = false
                             editTodayNote = true
+                        }
+                    )
+                    if (canMoveUp) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.move_up), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            viewModel.moveExercise(exercise.workoutExercise, -1)
+                        }
+                    )
+                    if (canMoveDown) DropdownMenuItem(
+                        text = { Text(stringResource(R.string.move_down), color = colors.ink) },
+                        onClick = {
+                            menuOpen = false
+                            viewModel.moveExercise(exercise.workoutExercise, 1)
                         }
                     )
                     DropdownMenuItem(

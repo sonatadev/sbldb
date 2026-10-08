@@ -8,6 +8,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
+import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.core.app.ActivityScenario
@@ -82,6 +83,16 @@ class ScreenshotTour {
             compose.onAllNodesWithText("Wide bar", substring = true, ignoreCase = true).onFirst().performClick()
             compose.waitForIdle()
             shot("11-attachment-picker")
+            back()
+
+            // One set done, then Finish: the summary
+            compose.onAllNodesWithText("Log set", substring = true).onFirst().performClick()
+            compose.waitForIdle()
+            compose.onAllNodesWithText("Finish", ignoreCase = true).onFirst().performClick()
+            compose.waitForIdle()
+            compose.onAllNodesWithText("Finish").onLast().performClick()
+            compose.waitUntil(5_000) { compose.onAllNodesWithText("Done ·", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
+            shot("12-summary")
         }
     }
 

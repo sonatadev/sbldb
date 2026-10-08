@@ -18,9 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
@@ -59,24 +56,15 @@ fun Module(
 
 private val numberedLabel = Regex("""^(#?\d+)( · .*)?$""")
 
-/** Mono caps label; a leading number such as "03" in "03 · NOW" is drawn in the accent. */
+/**
+ * Mono caps label. A running number such as "03" in "03 · NOW" is left out: modules aren't steps,
+ * and the numbers only added noise.
+ */
 @Composable
 fun ModuleLabel(text: String, modifier: Modifier = Modifier, color: Color = SbldbTheme.colors.dim) {
     val upper = text.uppercase()
-    val match = numberedLabel.matchEntire(upper)
-    if (match == null) {
-        Text(upper, style = SbldbType.label, color = color, modifier = modifier)
-    } else {
-        val accent = SbldbTheme.colors.accent
-        Text(
-            buildAnnotatedString {
-                withStyle(SpanStyle(color = accent)) { append(match.groupValues[1]) }
-                withStyle(SpanStyle(color = color)) { append(match.groupValues[2]) }
-            },
-            style = SbldbType.label,
-            modifier = modifier
-        )
-    }
+    val shown = numberedLabel.matchEntire(upper)?.groupValues?.get(2)?.removePrefix(" · ")?.takeIf { it.isNotEmpty() } ?: upper
+    Text(shown, style = SbldbType.label, color = color, modifier = modifier)
 }
 
 /** A small mono caption, e.g. "LAST 75 × 6". */

@@ -2,10 +2,8 @@ package com.github.sonatadev.sbldb.ui.progress
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,10 +18,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +39,7 @@ import com.github.sonatadev.sbldb.ui.components.Module
 import com.github.sonatadev.sbldb.ui.components.ModuleRow
 import com.github.sonatadev.sbldb.ui.components.MonoCaption
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
+import com.github.sonatadev.sbldb.ui.components.SectionTabs
 import com.github.sonatadev.sbldb.ui.components.SegmentedControl
 import com.github.sonatadev.sbldb.ui.components.Sparkline
 import com.github.sonatadev.sbldb.ui.shortName
@@ -71,17 +72,27 @@ fun ProgressScreen(onBack: () -> Unit, onOpenExercise: (Int) -> Unit, viewModel:
             )
         }
         item {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SegmentedControl(ProgressPeriod.entries, state.period, label = { periodNames.getValue(it) }, onSelect = viewModel::setPeriod)
-                SegmentedControl(LoadMetric.entries, state.metric, label = { metricNames.getValue(it) }, onSelect = viewModel::setMetric)
-            }
+            SegmentedControl(ProgressPeriod.entries, state.period, label = { periodNames.getValue(it) }, onSelect = viewModel::setPeriod)
         }
         item {
-            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                TrendCount(stringResource(R.string.trend_up), state.exercises.count { it.trend == Trend.UP }, colors.accent, Modifier.weight(1f))
-                TrendCount(stringResource(R.string.trend_flat), state.exercises.count { it.trend == Trend.FLAT }, colors.ink, Modifier.weight(1f))
-                TrendCount(stringResource(R.string.trend_down), state.exercises.count { it.trend == Trend.DOWN }, colors.ink, Modifier.weight(1f))
-            }
+            SectionTabs(
+                tabs = LoadMetric.entries.map { metricNames.getValue(it) },
+                selected = state.metric.ordinal,
+                onSelect = { viewModel.setMetric(LoadMetric.entries[it]) }
+            )
+        }
+        // One line instead of three tiles: how many are going up, steady, down
+        item {
+            Text(
+                buildAnnotatedString {
+                    withStyle(SpanStyle(color = colors.accent)) { append("${state.exercises.count { it.trend == Trend.UP }} ${stringResource(R.string.trend_up).uppercase()}") }
+                    append("  ·  ${state.exercises.count { it.trend == Trend.FLAT }} ${stringResource(R.string.trend_flat).uppercase()}")
+                    append("  ·  ${state.exercises.count { it.trend == Trend.DOWN }} ${stringResource(R.string.trend_down).uppercase()}")
+                },
+                style = SbldbType.mono,
+                color = colors.muted,
+                modifier = Modifier.padding(horizontal = 6.dp)
+            )
         }
         item {
             Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_by_exercise)) {
@@ -98,13 +109,6 @@ fun ProgressScreen(onBack: () -> Unit, onOpenExercise: (Int) -> Unit, viewModel:
         item {
             MonoCaption(stringResource(R.string.progress_hint), Modifier.padding(horizontal = 6.dp))
         }
-    }
-}
-
-@Composable
-private fun TrendCount(label: String, count: Int, color: Color, modifier: Modifier) {
-    Module(modifier.fillMaxHeight(), label = label) {
-        Text("$count", style = SbldbType.hero(38), color = if (count == 0) SbldbTheme.colors.dim else color)
     }
 }
 

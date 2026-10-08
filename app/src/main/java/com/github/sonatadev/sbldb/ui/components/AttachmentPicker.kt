@@ -56,7 +56,6 @@ fun AttachmentChip(exercise: Exercise, loadOptions: suspend (Exercise) -> List<A
     MonoChip(
         (current?.let { attachmentLabel(it) } ?: stringResource(R.string.pick_attachment)) + "  ▾",
         modifier = modifier,
-        filled = true,
         onClick = { open = true }
     )
     if (open) AttachmentDialog(exercise, current, loadOptions, onPick = { if (it != current) onPick(it) }, onDismiss = { open = false })

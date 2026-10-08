@@ -64,8 +64,11 @@ fun VolumeScreen(onBack: () -> Unit, onOpenMuscle: (String) -> Unit, onOpenGloss
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
+            // Back on its own line, so it isn't mistaken for "previous week"
+            Box(Modifier.padding(horizontal = 6.dp)) { BackButton(onBack) }
+        }
+        item {
             Row(Modifier.fillMaxWidth().padding(horizontal = 6.dp), verticalAlignment = Alignment.Bottom) {
-                Box(Modifier.padding(end = 10.dp, bottom = 8.dp)) { BackButton(onBack) }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     ModuleLabel(
                         stringResource(

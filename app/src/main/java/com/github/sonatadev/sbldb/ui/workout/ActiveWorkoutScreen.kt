@@ -173,20 +173,18 @@ fun ActiveWorkoutScreen(
             }
         }
 
+        // Time and progress as one quiet line: the exercise below is what matters
         item {
-            Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                Module(Modifier.weight(1.25f).fillMaxHeight(), label = stringResource(R.string.module_time)) {
-                    HeroText(formatClock(now - workout.workout.startedAt), 48, colors.accent)
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                        StatusDot(colors.accent)
-                        MonoCaption(stringResource(R.string.live_since, formatTime(workout.workout.startedAt)))
-                    }
-                }
-                Module(Modifier.weight(1f).fillMaxHeight(), label = stringResource(R.string.module_hard_sets)) {
-                    val done = workingSets.count { it.isCompleted }
-                    DotMatrix(total = workingSets.size.coerceAtMost(20), done = done.coerceAtMost(20))
-                    MonoCaption(stringResource(R.string.sets_done_of, done, workingSets.size))
-                }
+            val done = workingSets.count { it.isCompleted }
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                HeroText(formatClock(now - workout.workout.startedAt), 30, colors.accent)
+                StatusDot(colors.accent)
+                Box(Modifier.weight(1f))
+                Text(stringResource(R.string.sets_done_of, done, workingSets.size).uppercase(), style = SbldbType.mono, color = colors.muted)
             }
         }
 
@@ -378,10 +376,15 @@ private fun FocusedExercise(
         AttachmentChip(exercise.exercise, viewModel::attachmentOptions, onPick = { viewModel.setAttachment(exercise.workoutExercise, it) })
         ExerciseNotes(note, exercise.workoutExercise.note, onEditNote = { editNote = true }, onEditToday = { editTodayNote = true })
         if (info.muscles.isNotEmpty()) {
+            // The muscles that count a full set; the helpers are one tap away
+            var allMuscles by remember { mutableStateOf(false) }
+            val shown = if (allMuscles) info.muscles else info.muscles.filter { it.isPrimary }.ifEmpty { info.muscles }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                info.muscles.forEach { chip ->
+                shown.forEach { chip ->
                     MonoChip("${chip.group} ${formatSets(chip.weight).let { if ('.' in it) it else "$it.0" }}", filled = chip.isPrimary)
                 }
+                val hidden = info.muscles.size - shown.size
+                if (hidden > 0) MonoChip("+$hidden", onClick = { allMuscles = true })
             }
         }
 

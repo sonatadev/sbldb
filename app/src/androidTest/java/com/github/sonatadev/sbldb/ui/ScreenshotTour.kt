@@ -60,7 +60,7 @@ class ScreenshotTour {
             shot("03-log")
             open("Sets per muscle, week by week")
             shot("04-volume")
-            scrollTo("02 · By muscle", ignoreCase = true)
+            scrollTo("By muscle", ignoreCase = true)
             shot("05-volume-muscles")
             back()
 
@@ -82,7 +82,7 @@ class ScreenshotTour {
             compose.onAllNodesWithText("Start Upper A").onFirst().performClick()
             compose.waitForIdle()
             shot("10-workout")
-            compose.onAllNodesWithText("Wide bar", substring = true).onFirst().performClick()
+            compose.onAllNodesWithText("Wide bar", substring = true, ignoreCase = true).onFirst().performClick()
             compose.waitForIdle()
             shot("11-attachment-picker")
         }

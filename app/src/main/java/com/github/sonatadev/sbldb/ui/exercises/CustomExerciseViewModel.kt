@@ -25,7 +25,9 @@ data class CustomExerciseForm(
     val note: String = "",
     val aliases: String = "",
     /** Joint action id → rating 1–5, in the order the user added them. */
-    val ratings: Map<Int, Int> = linkedMapOf()
+    val ratings: Map<Int, Int> = linkedMapOf(),
+    val isTimed: Boolean = false,
+    val isUnilateral: Boolean = false
 )
 
 /** A muscle the exercise would count toward, as derived from the chosen joint actions. */
@@ -64,7 +66,9 @@ class CustomExerciseViewModel(
                     attachment = exercise.attachment.orEmpty(),
                     note = exercise.note.orEmpty(),
                     aliases = exercise.aliasList.joinToString(", "),
-                    ratings = ratings.associateTo(linkedMapOf()) { it.jointActionId to it.rating }
+                    ratings = ratings.associateTo(linkedMapOf()) { it.jointActionId to it.rating },
+                    isTimed = exercise.isTimed,
+                    isUnilateral = exercise.isUnilateral
                 )
             } ?: CustomExerciseForm()
             _uiState.update { it.copy(loaded = true, form = form) }
@@ -102,7 +106,9 @@ class CustomExerciseViewModel(
                 attachment = form.attachment,
                 note = form.note,
                 aliases = form.aliases.split(',').map { it.trim() },
-                ratings = form.ratings
+                ratings = form.ratings,
+                isTimed = form.isTimed,
+                isUnilateral = form.isUnilateral
             )
             runCatching { CustomExercises.save(db, input, exerciseId) }
                 .onSuccess { id -> _uiState.update { it.copy(finishedWith = id) } }

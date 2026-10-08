@@ -426,4 +426,18 @@
         <item quantity="many">%d esercizi</item>
         <item quantity="other">%d esercizi</item>
     </plurals>
+
+    <!-- Timed and one-sided exercises -->
+    <string name="side_left_short">S</string>
+    <string name="side_right_short">D</string>
+    <string name="seconds_short">sec</string>
+    <string name="seconds_min">Sec min</string>
+    <string name="seconds_max">Sec max</string>
+    <string name="unilateral_hint">Le serie sono per lato: una sinistra e una destra contano come una</string>
+    <string name="field_how">Come si fa</string>
+    <string name="option_timed">A tempo</string>
+    <string name="option_unilateral">Un lato alla volta</string>
+    <string name="metric_duration">Tempo</string>
+    <string name="module_best_duration">01 · Tenuta più lunga</string>
+    <string name="duration_hint">La tenuta più lunga di ogni seduta</string>
 </resources>

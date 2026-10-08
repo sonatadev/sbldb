@@ -15,6 +15,7 @@ import com.github.sonatadev.sbldb.data.entity.PlannedWorkout
 import com.github.sonatadev.sbldb.data.entity.Routine
 import com.github.sonatadev.sbldb.data.entity.RoutineExercise
 import com.github.sonatadev.sbldb.data.entity.SetType
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.data.entity.Workout
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
@@ -60,6 +61,7 @@ class BackupManager(
                 put(JSONObject()
                     .put("name", e.name).put("equipment", e.equipment).putOpt("attachment", e.attachment)
                     .putOpt("note", e.note).put("aliases", JSONArray(e.aliasList)).put("archived", e.isArchived)
+                    .put("timed", e.isTimed).put("unilateral", e.isUnilateral)
                     .put("actions", JSONArray().apply {
                         dao.actionRatings(e.exerciseId).forEach { put(JSONObject().put("joint", it.joint).put("name", it.name).put("rating", it.rating)) }
                     }))
@@ -101,7 +103,7 @@ class BackupManager(
                                     ex.sets.sortedBy { it.position }.forEach { s ->
                                         put(JSONObject()
                                             .put("position", s.position).putOpt("weightKg", s.weightKg).putOpt("reps", s.reps).putOpt("rir", s.rir)
-                                            .put("type", s.setType.name).put("completed", s.isCompleted))
+                                            .put("type", s.setType.name).put("completed", s.isCompleted).putOpt("side", s.side?.name))
                                     }
                                 }))
                         }
@@ -195,7 +197,8 @@ class BackupManager(
                     db,
                     CustomExerciseInput(
                         e.getString("name"), e.optString("equipment", "Other"), e.optStringOrNull("attachment"),
-                        e.optStringOrNull("note"), e.optJSONArray("aliases").strings(), ratings
+                        e.optStringOrNull("note"), e.optJSONArray("aliases").strings(), ratings,
+                        isTimed = e.optBoolean("timed"), isUnilateral = e.optBoolean("unilateral")
                     )
                 )
                 if (e.optBoolean("archived")) db.exerciseDAO().findByName(e.getString("name"))?.let { db.exerciseDAO().updateExercise(it.copy(isArchived = true)) }
@@ -246,7 +249,8 @@ class BackupManager(
                             WorkoutSet(
                                 workoutExerciseId = weId, position = s.optInt("position"), weightKg = s.optDoubleOrNull("weightKg"),
                                 reps = s.optIntOrNull("reps"), rir = s.optIntOrNull("rir"), isWarmup = type == SetType.WARMUP,
-                                isCompleted = s.optBoolean("completed"), setType = type
+                                isCompleted = s.optBoolean("completed"), setType = type,
+                                side = s.optStringOrNull("side")?.let { runCatching { Side.valueOf(it) }.getOrNull() }
                             )
                         )
                     }

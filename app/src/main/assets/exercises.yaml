@@ -4,6 +4,7 @@
 #   3 = trains it meaningfully as part of a compound lift
 #   2 = involves it
 #   1 = minor or stabilising role
+# `measure: time` marks holds logged in seconds; `unilateral: true` exercises done one side at a time.
 # Muscles for volume are derived from the actions: PRIMARY when the muscle is a prime mover of an
 # action rated 4 or 5, otherwise SECONDARY. An optional `muscles` block replaces the derivation.
 
@@ -166,6 +167,7 @@
   equipment: Dumbbell
   actions: {Shoulder / Extension: 4, Scapula / Retraction: 4, Elbow / Flexion: 3, Shoulder / Horizontal Abduction: 2}
 - name: One-Arm Dumbbell Row
+  unilateral: true
   aliases: [Rematore con manubrio, Single-arm row]
   equipment: Dumbbell
   actions: {Shoulder / Extension: 5, Scapula / Retraction: 3, Elbow / Flexion: 3}
@@ -237,6 +239,7 @@
         primary: [Brachialis, Brachioradialis]
         secondary: [Biceps]
 - name: Bayesian Cable Curl
+  unilateral: true
   aliases: [Face-away curl, Curl bayesiano]
   equipment: Cable
   attachment: D-Handle
@@ -307,6 +310,7 @@
     primary: [Forearms / Supinator]
     secondary: [Biceps]
 - name: Farmer's Carry
+  measure: time
   equipment: Dumbbell
   actions: {Wrist / Flexion: 3, Scapula / Elevation: 3, Spine / Lateral Flexion: 3}
 
@@ -339,6 +343,7 @@
     primary: [Quadriceps / Vastus Lateralis, Quadriceps / Vastus Medialis, Quadriceps / Vastus Intermedius]
     secondary: [Quadriceps / Rectus Femoris, Glutes / Gluteus Maximus, Adductors / Adductor Magnus]
 - name: Bulgarian Split Squat
+  unilateral: true
   aliases: [Affondi bulgari, Split squat bulgaro]
   equipment: Dumbbell
   actions: {Knee / Extension: 4, Hip / Extension: 4, Hip / Abduction: 2}
@@ -376,6 +381,8 @@
   equipment: Machine
   actions: {Hip / Adduction: 5}
 - name: Copenhagen Plank
+  measure: time
+  unilateral: true
   equipment: Bodyweight
   actions: {Hip / Adduction: 4, Spine / Lateral Flexion: 3}
 - name: Seated Cable Hip Internal Rotation
@@ -470,13 +477,16 @@
   equipment: Bodyweight
   actions: {Spine / Flexion: 4, Shoulder / Extension: 2}
 - name: Plank
+  measure: time
   equipment: Bodyweight
   actions: {Spine / Flexion: 2}
 - name: Cable Woodchop
+  unilateral: true
   equipment: Cable
   attachment: D-Handle
   actions: {Spine / Rotation: 4}
 - name: Pallof Press
+  unilateral: true
   equipment: Cable
   attachment: D-Handle
   actions: {Spine / Rotation: 3}
@@ -536,12 +546,14 @@
   note: Elbows flared at 90° on an incline bench bias the rear delts and mid traps over the lats.
   actions: {Shoulder / Horizontal Abduction: 4, Scapula / Retraction: 4, Elbow / Flexion: 2}
 - name: Kneeling Single-Arm Lat Pulldown
+  unilateral: true
   aliases: [Lat machine a un braccio]
   equipment: Cable
   attachment: D-Handle
   note: One arm at a time lets the lat reach a full overhead stretch and pull straight down in line with its fibers.
   actions: {Shoulder / Adduction: 5, Shoulder / Extension: 3, Elbow / Flexion: 3, Scapula / Depression: 3}
 - name: Single-Arm Cable Row (Lat Focus)
+  unilateral: true
   equipment: Cable
   attachment: D-Handle
   note: Pull toward the hip with a forward reach at the start to stretch and load the lat.
@@ -597,6 +609,7 @@
   note: Single-arm extension across the body, comfortable on the elbow and easy to push to failure.
   actions: {Elbow / Extension: 5}
 - name: Single-Arm Overhead Cable Extension
+  unilateral: true
   equipment: Cable
   attachment: D-Handle
   note: Overhead single-arm version for a deep long-head stretch without the elbows flaring.
@@ -639,6 +652,7 @@
   note: Hips stay extended while the knees bend, putting the rectus femoris under a big stretch.
   actions: {Knee / Extension: 5}
 - name: Deficit Reverse Lunge
+  unilateral: true
   equipment: Dumbbell
   note: Stepping back from a raised platform deepens hip flexion for more glute and adductor stretch.
   actions: {Hip / Extension: 5, Knee / Extension: 3, Hip / Abduction: 2}
@@ -662,6 +676,7 @@
     primary: [Glutes / Gluteus Maximus]
     secondary: [Hamstrings, Adductors / Adductor Magnus, Erector Spinae]
 - name: Cable Glute Kickback
+  unilateral: true
   equipment: Cable
   attachment: Ankle Strap
   note: Lean forward so the glute starts from a stretch with the hip flexed.
@@ -670,6 +685,7 @@
     primary: [Glutes / Gluteus Maximus]
     secondary: [Hamstrings]
 - name: Standing Single-Leg Curl
+  unilateral: true
   equipment: Machine
   note: One leg at a time, with a slight forward lean to lengthen the hamstrings.
   actions: {Knee / Flexion: 4}

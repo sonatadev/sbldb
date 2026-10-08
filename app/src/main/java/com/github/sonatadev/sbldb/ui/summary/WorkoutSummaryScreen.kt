@@ -124,7 +124,7 @@ private fun RecordRow(hit: RecordHit, unit: WeightUnit) {
     ModuleRow {
         Column(Modifier.weight(1f)) {
             Text(hit.name, style = MaterialTheme.typography.bodyLarge, color = colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            MonoCaption(formatSet(hit.weightKg, hit.reps, null, unit))
+            MonoCaption(formatSet(hit.weightKg, hit.reps, null, unit, timed = hit.isTimed))
         }
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
             PrKind.entries.filter { it in hit.kinds }.forEach { kind ->

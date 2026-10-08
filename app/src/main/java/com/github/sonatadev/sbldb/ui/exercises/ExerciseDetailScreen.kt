@@ -57,7 +57,11 @@ import com.github.sonatadev.sbldb.ui.components.RatingDots
 import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SecondaryButton
 import com.github.sonatadev.sbldb.ui.components.SegmentedControl
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.ui.formatDate
+import com.github.sonatadev.sbldb.ui.formatSeconds
+import com.github.sonatadev.sbldb.ui.formatSet
+import com.github.sonatadev.sbldb.ui.sideLetter
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
 
@@ -188,27 +192,33 @@ fun ExerciseDetailScreen(
         }
         // Counterweight machines: more load is easier, so e1RM and heaviest would mislead
         val assisted = Progression.isAssisted(exercise.name)
+        // Holds are followed in seconds only; everything else by load
+        val metrics = LoadMetric.forExercise(exercise.isTimed)
+        val shown = if (metric in metrics) metric else metrics.first()
         if (tab == TAB_PROGRESS && !assisted) item {
-            val series = state.loadSeries[metric].orEmpty()
-            val best = if (metric == LoadMetric.E1RM) state.bestE1rmKg else series.maxOfOrNull { it.second }
-            Module(Modifier.fillMaxWidth(), label = stringResource(metric.bestLabel)) {
-                SegmentedControl(LoadMetric.entries, metric, label = { metricNames.getValue(it) }, onSelect = { metric = it })
+            val series = state.loadSeries[shown].orEmpty()
+            val best = if (shown == LoadMetric.E1RM) state.bestE1rmKg else series.maxOfOrNull { it.second }
+            val timed = shown == LoadMetric.DURATION
+            Module(Modifier.fillMaxWidth(), label = stringResource(shown.bestLabel)) {
+                if (metrics.size > 1) SegmentedControl(metrics, shown, label = { metricNames.getValue(it) }, onSelect = { metric = it })
                 if (best == null) {
                     Text(stringResource(R.string.no_estimate), style = MaterialTheme.typography.bodyLarge, color = colors.muted)
                 } else {
                     Row(verticalAlignment = Alignment.Bottom) {
-                        Text(state.unit.formatRounded(best), style = SbldbType.hero(52), color = colors.accent)
-                        Text(" " + state.unit.label, style = SbldbType.monoLarge, color = colors.muted, modifier = Modifier.padding(bottom = 8.dp))
+                        Text(if (timed) formatSeconds(best.toInt()) else state.unit.formatRounded(best), style = SbldbType.hero(52), color = colors.accent)
+                        if (!timed) Text(" " + state.unit.label, style = SbldbType.monoLarge, color = colors.muted, modifier = Modifier.padding(bottom = 8.dp))
                     }
                 }
                 if (series.size >= 2) {
-                    TrendChart(series, state.unit, Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp))
+                    val chart = Modifier.fillMaxWidth().height(150.dp).padding(top = 8.dp)
+                    if (timed) TrendChart(series, chart, format = { formatSeconds(it.toInt()) }, unitLabel = "s")
+                    else TrendChart(series, state.unit, chart)
                 }
-                MonoCaption(stringResource(metric.hint))
+                MonoCaption(stringResource(shown.hint))
             }
         }
         if (tab == TAB_PROGRESS && !state.records.isEmpty) item {
-            RecordsModule(state.records, state.unit, assisted)
+            RecordsModule(state.records, state.unit, assisted, exercise.isTimed)
         }
         if (tab != TAB_OVERVIEW && state.sessions.isEmpty()) {
             item { MonoCaption(stringResource(R.string.no_history), Modifier.width(300.dp)) }
@@ -216,15 +226,20 @@ fun ExerciseDetailScreen(
         if (tab == TAB_HISTORY) items(state.sessions, key = { it.workoutId }) { session ->
             Module(Modifier.fillMaxWidth(), label = formatDate(session.startedAt)) {
                 Column {
+                    var number = 0
                     session.sets.forEachIndexed { i, set ->
+                        // A left and a right set share a number
+                        if (set.side != Side.RIGHT) number++
                         if (i > 0) Box(Modifier.fillMaxWidth().height(1.dp).background(colors.line))
                         Row(Modifier.fillMaxWidth().height(38.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Text("%02d".format(i + 1), style = SbldbType.mono, color = colors.dim, modifier = Modifier.width(34.dp))
                             Text(
-                                buildString {
-                                    if (set.weightKg != null) append("${state.unit.format(set.weightKg)} ${state.unit.label} ")
-                                    append("× ${set.reps ?: "–"}")
-                                },
+                                "%02d".format(number) + (set.side?.let { " " + sideLetter(it) } ?: ""),
+                                style = SbldbType.mono,
+                                color = colors.dim,
+                                modifier = Modifier.width(52.dp)
+                            )
+                            Text(
+                                formatSet(set.weightKg, set.reps, null, state.unit, timed = exercise.isTimed),
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = colors.ink,
                                 modifier = Modifier.weight(1f)
@@ -253,7 +268,7 @@ private fun MuscleLine(label: String, weight: String, muscles: List<MuscleWithRo
 }
 
 @Composable
-private fun RecordsModule(records: Records, unit: WeightUnit, assisted: Boolean) {
+private fun RecordsModule(records: Records, unit: WeightUnit, assisted: Boolean, timed: Boolean) {
     val colors = SbldbTheme.colors
     Module(Modifier.fillMaxWidth(), label = stringResource(R.string.module_records)) {
         if (!assisted) records.heaviest?.let {
@@ -263,7 +278,7 @@ private fun RecordsModule(records: Records, unit: WeightUnit, assisted: Boolean)
         records.repsAtWeight.entries.sortedByDescending { it.key }.take(5).forEach { (kg, reps) ->
             RecordLine(
                 if (kg > 0) "${unit.format(kg)} ${unit.label}" else stringResource(R.string.bodyweight),
-                stringResource(R.string.record_reps, reps)
+                if (timed) formatSeconds(reps) else stringResource(R.string.record_reps, reps)
             )
         }
         MonoCaption(stringResource(R.string.records_hint), color = colors.muted)

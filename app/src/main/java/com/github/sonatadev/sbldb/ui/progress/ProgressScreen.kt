@@ -42,6 +42,7 @@ import com.github.sonatadev.sbldb.ui.components.ScreenHeader
 import com.github.sonatadev.sbldb.ui.components.SectionTabs
 import com.github.sonatadev.sbldb.ui.components.SegmentedControl
 import com.github.sonatadev.sbldb.ui.components.Sparkline
+import com.github.sonatadev.sbldb.ui.formatSeconds
 import com.github.sonatadev.sbldb.ui.shortName
 import com.github.sonatadev.sbldb.ui.theme.SbldbTheme
 import com.github.sonatadev.sbldb.ui.theme.SbldbType
@@ -57,7 +58,8 @@ fun ProgressScreen(onBack: () -> Unit, onOpenExercise: (Int) -> Unit, viewModel:
         ProgressPeriod.QUARTER to stringResource(R.string.period_quarter),
         ProgressPeriod.YEAR to stringResource(R.string.period_year)
     )
-    val metricNames = LoadMetric.entries.associateWith { stringResource(it.shortName) }
+    val metrics = LoadMetric.forExercise(timed = false)
+    val metricNames = metrics.associateWith { stringResource(it.shortName) }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize().statusBarsPadding(),
@@ -76,9 +78,9 @@ fun ProgressScreen(onBack: () -> Unit, onOpenExercise: (Int) -> Unit, viewModel:
         }
         item {
             SectionTabs(
-                tabs = LoadMetric.entries.map { metricNames.getValue(it) },
-                selected = state.metric.ordinal,
-                onSelect = { viewModel.setMetric(LoadMetric.entries[it]) }
+                tabs = metrics.map { metricNames.getValue(it) },
+                selected = metrics.indexOf(state.metric),
+                onSelect = { viewModel.setMetric(metrics[it]) }
             )
         }
         // One line instead of three tiles: how many are going up, steady, down
@@ -120,7 +122,7 @@ private fun ExerciseTrendRow(exercise: ExerciseProgress, unit: WeightUnit, onCli
             Text(exercise.name, style = MaterialTheme.typography.bodyLarge, color = colors.ink, maxLines = 1, overflow = TextOverflow.Ellipsis)
             MonoCaption(
                 pluralStringResource(R.plurals.session_count, exercise.series.size, exercise.series.size) +
-                    " · " + unit.formatRounded(exercise.series.last().second) + " " + unit.label,
+                    " · " + if (exercise.isTimed) formatSeconds(exercise.series.last().second.toInt()) else unit.formatRounded(exercise.series.last().second) + " " + unit.label,
                 color = colors.dim
             )
         }

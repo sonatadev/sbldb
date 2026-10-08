@@ -62,6 +62,9 @@ object VolumeCalculator {
 
     fun weight(role: Role): Double = if (role == Role.PRIMARY) PRIMARY_WEIGHT else SECONDARY_WEIGHT
 
+    /** A one-sided set is half of a set: the left and the right together make one. */
+    private fun sideFactor(row: VolumeRow): Double = if (row.side != null) 0.5 else 1.0
+
     /**
      * @param allGroups groups to always include, so untrained muscles show up with 0 sets.
      * @return one entry per group, sorted by descending volume and then by name.
@@ -76,14 +79,14 @@ object VolumeCalculator {
 
         val groupSets = hard
             .groupBy { it.setId to it.muscleGroup }
-            .map { (key, hits) -> key.second to hits.maxOf { weight(it.role) } }
+            .map { (key, hits) -> key.second to hits.maxOf { weight(it.role) } * sideFactor(hits.first()) }
             .groupBy({ it.first }, { it.second })
             .mapValues { it.value.sum() }
 
         val regionSets = hard
             .filter { it.muscleRegion != null }
             .groupBy { Triple(it.setId, it.muscleGroup, it.muscleRegion!!) }
-            .map { (key, hits) -> (key.second to key.third) to hits.maxOf { weight(it.role) } }
+            .map { (key, hits) -> (key.second to key.third) to hits.maxOf { weight(it.role) } * sideFactor(hits.first()) }
             .groupBy({ it.first }, { it.second })
             .mapValues { it.value.sum() }
 

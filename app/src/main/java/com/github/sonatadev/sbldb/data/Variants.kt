@@ -49,7 +49,9 @@ object Variants {
                 equipment = parent.equipment,
                 attachment = attachment,
                 isCustom = parent.isCustom,
-                parentId = parent.exerciseId
+                parentId = parent.exerciseId,
+                isTimed = parent.isTimed,
+                isUnilateral = parent.isUnilateral
             )
         ).toInt()
         copyMovement(db, from = parent.exerciseId, to = id)
@@ -68,7 +70,14 @@ object Variants {
 
     /** After an exercise's movement changed: its variants without a movement of their own follow it. */
     suspend fun refreshVariants(db: AppDatabase, parentId: Int) {
-        db.exerciseDAO().variantsOf(parentId).filter { !it.hasOwnActions }.forEach { copyMovement(db, parentId, it.exerciseId) }
+        val dao = db.exerciseDAO()
+        val parent = dao.findById(parentId) ?: return
+        dao.variantsOf(parentId).forEach { variant ->
+            if (variant.isTimed != parent.isTimed || variant.isUnilateral != parent.isUnilateral) {
+                dao.updateExercise(variant.copy(isTimed = parent.isTimed, isUnilateral = parent.isUnilateral))
+            }
+            if (!variant.hasOwnActions) copyMovement(db, parentId, variant.exerciseId)
+        }
     }
 
     /**

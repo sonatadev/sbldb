@@ -1,5 +1,8 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.sideLetter
+import com.github.sonatadev.sbldb.ui.formatSet
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.ui.components.AttachmentChip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -184,17 +187,16 @@ private fun ReadOnlyExercise(number: Int, exercise: WorkoutExerciseWithSets, uni
             exercise.sets.sortedBy { it.position }.forEach { set ->
                 Box(Modifier.fillMaxWidth().height(1.dp).background(colors.line))
                 Row(Modifier.fillMaxWidth().height(40.dp), verticalAlignment = Alignment.CenterVertically) {
+                    if (!set.isWarmup && set.side != Side.RIGHT) workingIndex++
                     Text(
-                        if (set.isWarmup) stringResource(R.string.warmup_short) else "%02d".format(++workingIndex),
+                        if (set.isWarmup) stringResource(R.string.warmup_short)
+                        else "%02d".format(workingIndex) + (set.side?.let { " " + sideLetter(it) } ?: ""),
                         style = SbldbType.mono,
                         color = colors.dim,
-                        modifier = Modifier.width(34.dp)
+                        modifier = Modifier.width(52.dp)
                     )
                     Text(
-                        buildString {
-                            if (set.weightKg != null) append("${unit.format(set.weightKg)} ${unit.label} ")
-                            append("× ${set.reps ?: "–"}")
-                        },
+                        formatSet(set.weightKg, set.reps, null, unit, exercise.exercise.isTimed),
                         style = MaterialTheme.typography.bodyLarge,
                         color = colors.ink,
                         modifier = Modifier.weight(1f)
@@ -277,8 +279,11 @@ private fun EditableExercise(
         Column {
             var workingIndex = 0
             exercise.sets.sortedBy { it.position }.forEach { set ->
-                val label = if (set.isWarmup) null else ++workingIndex
-                SetRow(set = set, label = label, isCurrent = false, unit = unit, targetRir = null, actions = viewModel, alwaysEditable = true)
+                val label = if (set.isWarmup) null else if (set.side == Side.RIGHT) workingIndex.coerceAtLeast(1) else ++workingIndex
+                SetRow(
+                    set = set, label = label, isCurrent = false, unit = unit, targetRir = null, actions = viewModel,
+                    alwaysEditable = true, timed = exercise.exercise.isTimed
+                )
             }
         }
         Text(

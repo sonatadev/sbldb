@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.ui.sideLetter
 import com.github.sonatadev.sbldb.data.entity.SetType
 import androidx.annotation.StringRes
 import android.Manifest
@@ -113,7 +114,9 @@ internal fun SetRow(
     /** Records this completed set broke. */
     isRecord: Boolean = false,
     /** Changes when values were filled from outside the fields (progression suggestion). */
-    version: Int = 0
+    version: Int = 0,
+    /** A hold: the reps field is seconds. */
+    timed: Boolean = false
 ) {
     val showAsDone = set.isCompleted && !alwaysEditable
     val colors = SbldbTheme.colors
@@ -131,10 +134,7 @@ internal fun SetRow(
             if (showAsDone) {
                 Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        buildString {
-                            if (set.weightKg != null) append("${unit.format(set.weightKg)} ${unit.label} ")
-                            append("× ${set.reps ?: "–"}")
-                        },
+                        formatSet(set.weightKg, set.reps, null, unit, timed),
                         style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
                         color = colors.ink
                     )
@@ -152,7 +152,7 @@ internal fun SetRow(
                     contentAlignment = Alignment.Center
                 ) { StatusDot(colors.accent, size = 8.dp) }
             } else {
-                EditableLoad(set, unit, version, actions, Modifier.weight(1f))
+                EditableLoad(set, unit, version, actions, Modifier.weight(1f), timed)
                 EditableEffort(set, targetRir, version, actions, Modifier.width(EffortColumn))
                 Box(
                     Modifier
@@ -167,7 +167,7 @@ internal fun SetRow(
 }
 
 @Composable
-private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, version: Int, actions: SetActions, modifier: Modifier) {
+private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, version: Int, actions: SetActions, modifier: Modifier, timed: Boolean = false) {
     val colors = SbldbTheme.colors
     // Local text state keyed on the set: DB re-emissions while typing must not reset the cursor
     var weight by rememberSaveable(set.setId, unit, version) { mutableStateOf(set.weightKg?.let(unit::format).orEmpty()) }
@@ -190,7 +190,7 @@ private fun EditableLoad(set: WorkoutSet, unit: WeightUnit, version: Int, action
                 reps = it
                 actions.updateReps(set, it.toIntOrNull())
             },
-            placeholder = stringResource(R.string.col_reps).lowercase(),
+            placeholder = if (timed) stringResource(R.string.seconds_short) else stringResource(R.string.col_reps).lowercase(),
             modifier = Modifier.weight(1f)
         )
     }
@@ -256,7 +256,9 @@ private fun SetLabel(set: WorkoutSet, label: Int?, isCurrent: Boolean, onSelect:
                     else -> colors.dim
                 }
             )
-            if (!set.isWarmup) set.setType.code?.let { Text(it, style = SbldbType.label, color = colors.accent) }
+            // Side of a one-sided set and the set type's code, under the number
+            val marks = listOfNotNull(set.side?.let { sideLetter(it) }, set.setType.code.takeIf { !set.isWarmup })
+            if (marks.isNotEmpty()) Text(marks.joinToString(" "), style = SbldbType.label, color = colors.accent)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }, containerColor = colors.module) {
             SetType.entries.forEach { type ->

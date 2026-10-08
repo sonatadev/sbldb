@@ -68,7 +68,7 @@ class WorkoutDetailViewModel(
     }
 
     fun addSet(exercise: WorkoutExerciseWithSets) = launch {
-        repository.addSet(exercise.workoutExercise.workoutExerciseId, exercise.sets.maxByOrNull { it.position }, completed = true)
+        repository.addSet(exercise, completed = true)
     }
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }

@@ -107,7 +107,8 @@ class ActiveWorkoutViewModel(
                 .groupBy { it.muscleGroup }
                 .map { (group, rows) -> MuscleChip(group, rows.maxOf { VolumeCalculator.weight(it.role) }) }
                 .sortedWith(compareByDescending<MuscleChip> { it.weight }.thenBy { it.group })
-            val history = exerciseRepository.setHistory(id).first().filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir) }
+            val timed = exerciseRepository.exercise(id).first()?.isTimed == true
+            val history = exerciseRepository.setHistory(id).first().filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir, timed) }
             ExerciseInfo(previous = repository.lastPerformance(id), muscles = chips, target = targets[id], records = PersonalRecords.of(history))
         }
     }
@@ -115,7 +116,7 @@ class ActiveWorkoutViewModel(
     fun rename(name: String) = launch { current()?.let { repository.rename(it.workout, name.trim()) } }
 
     fun addSet(exercise: WorkoutExerciseWithSets) = launch {
-        repository.addSet(exercise.workoutExercise.workoutExerciseId, exercise.sets.maxByOrNull { it.position })
+        repository.addSet(exercise)
     }
 
     fun removeExercise(exercise: WorkoutExercise) = launch { repository.removeExercise(exercise) }

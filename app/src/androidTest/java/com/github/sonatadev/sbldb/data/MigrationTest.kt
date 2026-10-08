@@ -19,7 +19,7 @@ class MigrationTest {
     val helper = MigrationTestHelper(InstrumentationRegistry.getInstrumentation(), AppDatabase::class.java)
 
     @Test
-    fun migrate3To11KeepsWorkouts() {
+    fun migrate3To12KeepsWorkouts() {
         helper.createDatabase(dbName, 3).apply {
             execSQL("INSERT INTO exercises (exerciseId, name, equipment, attachment) VALUES (1, 'Barbell Row', 'Barbell', NULL)")
             execSQL("INSERT INTO workouts (workoutId, name, startedAt, endedAt, notes, routineId) VALUES (1, 'Upper', 1000, 2000, NULL, NULL)")
@@ -30,11 +30,20 @@ class MigrationTest {
         }
 
         val db = helper.runMigrationsAndValidate(
-            dbName, 11, true,
+            dbName, 12, true,
             AppDatabase.MIGRATION_3_4, AppDatabase.MIGRATION_4_5, AppDatabase.MIGRATION_5_6, AppDatabase.MIGRATION_6_7,
-            AppDatabase.MIGRATION_7_8, AppDatabase.MIGRATION_8_9, AppDatabase.MIGRATION_9_10, AppDatabase.MIGRATION_10_11
+            AppDatabase.MIGRATION_7_8, AppDatabase.MIGRATION_8_9, AppDatabase.MIGRATION_9_10, AppDatabase.MIGRATION_10_11, AppDatabase.MIGRATION_11_12
         )
 
+        db.query("SELECT isTimed, isUnilateral FROM exercises WHERE exerciseId = 1").use { c ->
+            c.moveToFirst()
+            assertEquals(0, c.getInt(0))
+            assertEquals(0, c.getInt(1))
+        }
+        db.query("SELECT COUNT(side) FROM workout_sets").use { c ->
+            c.moveToFirst()
+            assertEquals(0, c.getInt(0))
+        }
         db.query("SELECT parentId, hasOwnActions FROM exercises WHERE exerciseId = 1").use { c ->
             c.moveToFirst()
             assertTrue(c.isNull(0))

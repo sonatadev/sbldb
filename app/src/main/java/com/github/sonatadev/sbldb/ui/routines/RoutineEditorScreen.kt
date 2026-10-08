@@ -214,10 +214,17 @@ private fun PlannedExercise(
         }
         Text(entry.exercise.baseName, style = MaterialTheme.typography.titleLarge, color = colors.ink)
         AttachmentChip(entry.exercise, viewModel::attachmentOptions, viewModel::removeAttachment, onPick = { viewModel.setAttachment(plan, it) })
+        if (entry.exercise.isUnilateral) MonoCaption(stringResource(R.string.unilateral_hint))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Stepper(stringResource(R.string.sets_label), plan.sets, 1..10) { viewModel.update(plan.copy(sets = it)) }
-            Stepper(stringResource(R.string.reps_min), plan.repMin, 1..plan.repMax) { viewModel.update(plan.copy(repMin = it)) }
-            Stepper(stringResource(R.string.reps_max), plan.repMax, plan.repMin..50) { viewModel.update(plan.copy(repMax = it)) }
+            // Holds plan a range of seconds, in steps of 5
+            if (entry.exercise.isTimed) {
+                Stepper(stringResource(R.string.seconds_min), plan.repMin, 5..plan.repMax, step = 5) { viewModel.update(plan.copy(repMin = it)) }
+                Stepper(stringResource(R.string.seconds_max), plan.repMax, plan.repMin..600, step = 5) { viewModel.update(plan.copy(repMax = it)) }
+            } else {
+                Stepper(stringResource(R.string.reps_min), plan.repMin, 1..plan.repMax) { viewModel.update(plan.copy(repMin = it)) }
+                Stepper(stringResource(R.string.reps_max), plan.repMax, plan.repMin..50) { viewModel.update(plan.copy(repMax = it)) }
+            }
             Stepper(stringResource(R.string.col_rir), plan.targetRir ?: 0, 0..5) { viewModel.update(plan.copy(targetRir = it)) }
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -235,14 +242,14 @@ private fun PlannedExercise(
 
 /** Label above "−  value  +". */
 @Composable
-private fun Stepper(label: String, value: Int, range: IntRange, onChange: (Int) -> Unit) {
+private fun Stepper(label: String, value: Int, range: IntRange, step: Int = 1, onChange: (Int) -> Unit) {
     val colors = SbldbTheme.colors
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         if (label.isNotEmpty()) ModuleLabel(label, color = colors.muted)
         Row(verticalAlignment = Alignment.CenterVertically) {
-            GlyphButton("−", "$label −", enabled = value > range.first) { onChange(value - 1) }
-            Text("$value", style = SbldbType.monoLarge, color = colors.ink, modifier = Modifier.width(26.dp), textAlign = TextAlign.Center)
-            GlyphButton("+", "$label +", enabled = value < range.last) { onChange(value + 1) }
+            GlyphButton("−", "$label −", enabled = value > range.first) { onChange((value - step).coerceAtLeast(range.first)) }
+            Text("$value", style = SbldbType.monoLarge, color = colors.ink, modifier = Modifier.width(if (value >= 100) 36.dp else 26.dp), textAlign = TextAlign.Center)
+            GlyphButton("+", "$label +", enabled = value < range.last) { onChange((value + step).coerceAtMost(range.last)) }
         }
     }
 }

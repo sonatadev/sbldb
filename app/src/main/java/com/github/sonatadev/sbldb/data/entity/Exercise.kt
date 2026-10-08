@@ -26,7 +26,11 @@ data class Exercise(
      */
     @ColumnInfo(index = true) val parentId: Int? = null,
     /** A variant whose attachment changes the movement, with its own joint actions from the library. */
-    @ColumnInfo(defaultValue = "0") val hasOwnActions: Boolean = false
+    @ColumnInfo(defaultValue = "0") val hasOwnActions: Boolean = false,
+    /** Held for time (plank, dead hang): a set's reps are seconds, and there is no e1RM. */
+    @ColumnInfo(defaultValue = "0") val isTimed: Boolean = false,
+    /** Done one side at a time: each set is a left and a right set. */
+    @ColumnInfo(defaultValue = "0") val isUnilateral: Boolean = false
 ) {
     val isVariant: Boolean get() = parentId != null
 

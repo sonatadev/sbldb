@@ -1,5 +1,9 @@
 package com.github.sonatadev.sbldb.ui
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.github.sonatadev.sbldb.R
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.domain.WeightUnit
 import java.math.BigDecimal
 import java.math.RoundingMode
@@ -47,13 +51,25 @@ fun formatTime(millis: Long): String =
 fun formatSets(sets: Double): String =
     BigDecimal(sets).setScale(1, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString()
 
-/** "80 kg × 8", "80 kg × 8 @2", "× 12" for bodyweight sets. */
-fun formatSet(weightKg: Double?, reps: Int?, rir: Int?, unit: WeightUnit): String = buildString {
-    if (weightKg != null) append("${unit.format(weightKg)} ${unit.label} ")
-    append("× ${reps ?: "–"}")
+/** "80 kg × 8", "80 kg × 8 @2", "× 12" for bodyweight sets; "45 s" or "20 kg · 45 s" when [timed] (reps are seconds). */
+fun formatSet(weightKg: Double?, reps: Int?, rir: Int?, unit: WeightUnit, timed: Boolean = false): String = buildString {
+    if (timed) {
+        if (weightKg != null && weightKg > 0) append("${unit.format(weightKg)} ${unit.label} · ")
+        append(reps?.let { formatSeconds(it) } ?: "– s")
+    } else {
+        if (weightKg != null) append("${unit.format(weightKg)} ${unit.label} ")
+        append("× ${reps ?: "–"}")
+    }
     if (rir != null) append(" @$rir")
 }
+
+/** A hold: "45 s", "1:30" from a minute up. */
+fun formatSeconds(seconds: Int): String = if (seconds < 60) "$seconds s" else "%d:%02d".format(seconds / 60, seconds % 60)
 
 /** Monday-first one-letter weekday names in the app's language (M T W… or L M M…). */
 fun weekdayLetters(): List<String> =
     java.time.DayOfWeek.entries.map { it.getDisplayName(java.time.format.TextStyle.NARROW, Locale.getDefault()).uppercase() }
+
+/** "L" / "R" (or the app language's letters) for a one-sided set. */
+@Composable
+fun sideLetter(side: Side): String = stringResource(if (side == Side.LEFT) R.string.side_left_short else R.string.side_right_short)

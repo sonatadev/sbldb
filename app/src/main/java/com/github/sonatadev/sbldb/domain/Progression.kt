@@ -2,8 +2,8 @@ package com.github.sonatadev.sbldb.domain
 
 import kotlin.math.roundToLong
 
-/** One working set from the last session. */
-data class PastSet(val weightKg: Double?, val reps: Int?, val rir: Int?)
+/** One working set. On a [timed] exercise [reps] are seconds held, and there is no e1RM. */
+data class PastSet(val weightKg: Double?, val reps: Int?, val rir: Int?, val timed: Boolean = false)
 
 /** What to aim for today, in kg. [weightKg] is null for sets without external load. */
 data class Suggestion(val kind: Kind, val weightKg: Double?, val reps: Int) {

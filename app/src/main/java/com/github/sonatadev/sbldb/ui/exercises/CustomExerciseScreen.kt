@@ -109,6 +109,11 @@ fun CustomExerciseScreen(
                     }
                 }
                 TextInput(stringResource(R.string.field_attachment), form.attachment, { v -> viewModel.edit { it.copy(attachment = v) } }, placeholder = stringResource(R.string.placeholder_attachment))
+                MonoCaption(stringResource(R.string.field_how))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    MonoChip(stringResource(R.string.option_timed), filled = form.isTimed, onClick = { viewModel.edit { it.copy(isTimed = !it.isTimed) } })
+                    MonoChip(stringResource(R.string.option_unilateral), filled = form.isUnilateral, onClick = { viewModel.edit { it.copy(isUnilateral = !it.isUnilateral) } })
+                }
                 TextInput(stringResource(R.string.field_note), form.note, { v -> viewModel.edit { it.copy(note = v) } }, singleLine = false)
                 TextInput(stringResource(R.string.field_aliases), form.aliases, { v -> viewModel.edit { it.copy(aliases = v) } }, placeholder = stringResource(R.string.aliases_hint))
             }

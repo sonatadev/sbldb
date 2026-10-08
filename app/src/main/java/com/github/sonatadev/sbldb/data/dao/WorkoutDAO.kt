@@ -110,7 +110,7 @@ interface WorkoutDAO {
     /** Completed working sets of the most recent finished workout that included the exercise. */
     @Query(
         """
-        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType FROM workout_sets s
+        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType, s.side FROM workout_sets s
         JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
         JOIN workouts w ON w.workoutId = we.workoutId
         WHERE we.exerciseId = :exerciseId AND s.isCompleted = 1 AND s.isWarmup = 0
@@ -135,7 +135,7 @@ interface WorkoutDAO {
     /** One row per (completed working set × muscle hit by the exercise), within [from, to). */
     @Query(
         """
-        SELECT s.setId, w.workoutId, w.startedAt, we.exerciseId, m.muscleGroup, m.muscleRegion, em.role, s.rir
+        SELECT s.setId, w.workoutId, w.startedAt, we.exerciseId, m.muscleGroup, m.muscleRegion, em.role, s.rir, s.side
         FROM workout_sets s
         JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
         JOIN workouts w ON w.workoutId = we.workoutId

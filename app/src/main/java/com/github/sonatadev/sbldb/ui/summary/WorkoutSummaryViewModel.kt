@@ -55,9 +55,16 @@ class WorkoutSummaryViewModel(
             state.value = WorkoutSummaryUiState(
                 loaded = true,
                 workout = workout,
-                hardSets = working.count { VolumeCalculator.isHardSet(it.rir) },
-                tonnageKg = WorkoutSummary.tonnage(working.map { it.weightKg to it.reps }),
-                records = WorkoutSummary.records(history, workoutId, workout.workout.startedAt),
+                // A left and a right set make one
+                hardSets = working.filter { VolumeCalculator.isHardSet(it.rir) }.sumOf { if (it.side != null) 0.5 else 1.0 }.toInt(),
+                // Seconds held aren't reps: holds stay out of the load lifted
+                tonnageKg = WorkoutSummary.tonnage(
+                    workout.exercises.filter { !it.exercise.isTimed }.flatMap { it.sets }.filter { it.isCompleted && !it.isWarmup }.map { it.weightKg to it.reps }
+                ),
+                records = WorkoutSummary.records(
+                    history, workoutId, workout.workout.startedAt,
+                    timed = workout.exercises.filter { it.exercise.isTimed }.map { it.exercise.exerciseId }.toSet()
+                ),
                 muscles = WorkoutSummary.muscles(
                     workouts.volumeRows(week.startMillis, week.endMillis).first(),
                     workoutId,

@@ -145,6 +145,15 @@ class SeedParserTest {
     }
 
     @Test
+    fun `holds and one-sided exercises are marked`() {
+        val byName = exercises.associateBy { it.name }
+        assertTrue(byName.getValue("Plank").isTimed)
+        assertTrue(byName.getValue("Bulgarian Split Squat").isUnilateral)
+        assertTrue(byName.getValue("Copenhagen Plank").let { it.isTimed && it.isUnilateral })
+        assertTrue(!byName.getValue("Barbell Back Squat").isUnilateral)
+    }
+
+    @Test
     fun `names are unique`() {
         assertTrue(exercises.map { it.name }.let { it.size == it.toSet().size })
         assertTrue(actions.map { it.key }.let { it.size == it.toSet().size })

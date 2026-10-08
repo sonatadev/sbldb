@@ -9,7 +9,8 @@ data class RecordHit(
     val name: String,
     val kinds: Set<PrKind>,
     val weightKg: Double?,
-    val reps: Int?
+    val reps: Int?,
+    val isTimed: Boolean = false
 )
 
 /** A muscle trained in the session: its sets today and where its week stands after them. */
@@ -21,19 +22,26 @@ object WorkoutSummary {
      * full set history (any order within a workout is by position). Only straight sets count, and
      * counterweight machines only for reps, as in the workout screen.
      */
-    fun records(history: Map<Pair<Int, String>, List<SetHistoryRow>>, workoutId: Long, startedAt: Long): List<RecordHit> =
+    fun records(
+        history: Map<Pair<Int, String>, List<SetHistoryRow>>,
+        workoutId: Long,
+        startedAt: Long,
+        /** Exercises held for time: their "reps" are seconds. */
+        timed: Set<Int> = emptySet()
+    ): List<RecordHit> =
         history.mapNotNull { (exercise, sets) ->
+            val isTimed = exercise.first in timed
             val straight = sets.filter { it.isStraight }
             val before = PersonalRecords.of(
-                straight.filter { it.workoutId != workoutId && it.startedAt < startedAt }.map { PastSet(it.weightKg, it.reps, it.rir) }
+                straight.filter { it.workoutId != workoutId && it.startedAt < startedAt }.map { PastSet(it.weightKg, it.reps, it.rir, isTimed) }
             )
             val session = straight.filter { it.workoutId == workoutId }
-            val beaten = PersonalRecords.beatenInSession(before, session.map { PastSet(it.weightKg, it.reps, it.rir) })
+            val beaten = PersonalRecords.beatenInSession(before, session.map { PastSet(it.weightKg, it.reps, it.rir, isTimed) })
                 .let { kinds -> if (Progression.isAssisted(exercise.second)) kinds.map { it.intersect(setOf(PrKind.REPS)) } else kinds }
             val hits = session.zip(beaten).filter { it.second.isNotEmpty() }
             if (hits.isEmpty()) return@mapNotNull null
-            val best = hits.maxBy { (set, _) -> OneRepMax.epley(set.weightKg, set.reps) ?: set.weightKg ?: 0.0 }.first
-            RecordHit(exercise.first, exercise.second, hits.flatMap { it.second }.toSet(), best.weightKg, best.reps)
+            val best = hits.maxBy { (set, _) -> if (isTimed) (set.reps ?: 0).toDouble() else OneRepMax.epley(set.weightKg, set.reps) ?: set.weightKg ?: 0.0 }.first
+            RecordHit(exercise.first, exercise.second, hits.flatMap { it.second }.toSet(), best.weightKg, best.reps, isTimed)
         }
 
     /**

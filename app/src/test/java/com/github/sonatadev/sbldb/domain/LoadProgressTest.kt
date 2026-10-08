@@ -4,6 +4,7 @@ import com.github.sonatadev.sbldb.data.entity.SetHistoryRow
 import com.github.sonatadev.sbldb.data.entity.SetType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class LoadProgressTest {
@@ -55,5 +56,15 @@ class LoadProgressTest {
             bench to set(1, 80.0, 5), row to set(3, 60.0, 8), pullUp to set(2, 30.0, 8), bench to set(2, 82.5, 5)
         )
         assertEquals(listOf("Seal Row", "Bench Press"), LoadProgress.of(rows, LoadMetric.E1RM).map { it.name })
+    }
+
+    @Test
+    fun `holds are followed in seconds whatever the metric`() {
+        val plank = ExerciseRef(9, "Plank", isTimed = true)
+        val rows = listOf(plank to set(1, null, 40), plank to set(2, null, 55), plank to set(2, null, 50))
+        val progress = LoadProgress.of(rows, LoadMetric.E1RM).single()
+        assertEquals(listOf(40.0, 55.0), progress.series.map { it.second })
+        assertTrue(progress.isTimed)
+        assertEquals(listOf(LoadMetric.DURATION), LoadMetric.forExercise(timed = true))
     }
 }

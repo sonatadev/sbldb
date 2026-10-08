@@ -47,4 +47,13 @@ class PersonalRecordsTest {
         val bw = PersonalRecords.of(listOf(PastSet(null, 12, 1)))
         assertEquals(setOf(PrKind.REPS), PersonalRecords.beaten(PastSet(null, 14, 1), bw))
     }
+
+    @Test
+    fun `a longer hold is a record, and holds have no e1RM`() {
+        val holds = PersonalRecords.of(listOf(PastSet(null, 45, null, timed = true)))
+        assertEquals(null, holds.bestE1rm)
+        assertEquals(setOf(PrKind.REPS), PersonalRecords.beaten(PastSet(null, 50, null, timed = true), holds))
+        // A 10-second hold with a plate is not a 1RM estimate either
+        assertTrue(PrKind.E1RM !in PersonalRecords.beaten(PastSet(20.0, 10, null, timed = true), PersonalRecords.of(listOf(PastSet(10.0, 10, null, timed = true)))))
+    }
 }

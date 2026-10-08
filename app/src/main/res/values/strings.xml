@@ -439,4 +439,18 @@
         <item quantity="one">%d exercise</item>
         <item quantity="other">%d exercises</item>
     </plurals>
+
+    <!-- Timed and one-sided exercises -->
+    <string name="side_left_short">L</string>
+    <string name="side_right_short">R</string>
+    <string name="seconds_short">sec</string>
+    <string name="seconds_min">Sec min</string>
+    <string name="seconds_max">Sec max</string>
+    <string name="unilateral_hint">Sets are per side: a left and a right count as one</string>
+    <string name="field_how">How it\'s done</string>
+    <string name="option_timed">Held for time</string>
+    <string name="option_unilateral">One side at a time</string>
+    <string name="metric_duration">Time</string>
+    <string name="module_best_duration">01 · Longest hold</string>
+    <string name="duration_hint">Longest straight set of each session</string>
 </resources>

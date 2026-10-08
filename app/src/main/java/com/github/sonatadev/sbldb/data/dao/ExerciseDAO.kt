@@ -79,7 +79,7 @@ interface ExerciseDAO {
     /** Completed working sets for an exercise across finished workouts, newest first. */
     @Query(
         """
-        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType FROM workout_sets s
+        SELECT w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType, s.side FROM workout_sets s
         JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
         JOIN workouts w ON w.workoutId = we.workoutId
         WHERE we.exerciseId = :exerciseId AND s.isCompleted = 1 AND s.isWarmup = 0
@@ -92,7 +92,7 @@ interface ExerciseDAO {
     /** Completed working sets of every exercise in finished workouts started from [from] on, oldest first. */
     @Query(
         """
-        SELECT we.exerciseId, e.name, w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType FROM workout_sets s
+        SELECT we.exerciseId, e.name, e.isTimed, w.workoutId, w.startedAt, s.weightKg, s.reps, s.rir, s.setType, s.side FROM workout_sets s
         JOIN workout_exercises we ON we.workoutExerciseId = s.workoutExerciseId
         JOIN workouts w ON w.workoutId = we.workoutId
         JOIN exercises e ON e.exerciseId = we.exerciseId
@@ -117,7 +117,7 @@ interface ExerciseDAO {
 }
 
 /** A [SetHistoryRow] with the exercise it belongs to, for the progress overview. */
-data class ExerciseSetRow(val exerciseId: Int, val name: String, @Embedded val set: SetHistoryRow)
+data class ExerciseSetRow(val exerciseId: Int, val name: String, val isTimed: Boolean, @Embedded val set: SetHistoryRow)
 
 data class ExercisePrimaryGroup(val exerciseId: Int, val muscleGroup: String)
 

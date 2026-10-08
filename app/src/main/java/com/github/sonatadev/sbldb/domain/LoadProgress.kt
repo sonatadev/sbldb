@@ -11,7 +11,15 @@ enum class LoadMetric {
     HEAVIEST,
 
     /** Weight × reps summed over the session's working sets. */
-    VOLUME
+    VOLUME,
+
+    /** Longest straight set of the session, in seconds: the only one for timed exercises. */
+    DURATION;
+
+    companion object {
+        /** What can be followed for an exercise: time for holds, load for everything else. */
+        fun forExercise(timed: Boolean): List<LoadMetric> = if (timed) listOf(DURATION) else listOf(E1RM, HEAVIEST, VOLUME)
+    }
 }
 
 /** One exercise's trend over a period: the series is oldest first, values in kg. */
@@ -19,7 +27,9 @@ data class ExerciseProgress(
     val exerciseId: Int,
     val name: String,
     val series: List<Pair<Long, Double>>,
-    val lastSessionAt: Long
+    val lastSessionAt: Long,
+    /** Values are seconds held, not kg. */
+    val isTimed: Boolean = false
 ) {
     /** Relative change from the first to the last session, e.g. 0.05 for +5%; null with fewer than two sessions. */
     val change: Double? get() = LoadProgress.change(series)
@@ -44,6 +54,7 @@ object LoadProgress {
         LoadMetric.E1RM -> sets.mapNotNull { OneRepMax.epley(it.weightKg, it.reps) }.maxOrNull()
         LoadMetric.HEAVIEST -> sets.filter { it.isStraight && (it.reps ?: 0) > 0 }.mapNotNull { it.weightKg }.filter { it > 0 }.maxOrNull()
         LoadMetric.VOLUME -> sets.sumOf { (it.weightKg ?: 0.0) * (it.reps ?: 0) }.takeIf { it > 0 }
+        LoadMetric.DURATION -> sets.filter { it.isStraight }.mapNotNull { it.reps }.filter { it > 0 }.maxOrNull()?.toDouble()
     }
 
     fun change(series: List<Pair<Long, Double>>): Double? {
@@ -68,10 +79,11 @@ object LoadProgress {
             .groupBy({ it.first }, { it.second })
             .filterKeys { !Progression.isAssisted(it.name) }
             .mapNotNull { (exercise, sets) ->
-                val series = series(sets, metric)
-                if (series.isEmpty()) null else ExerciseProgress(exercise.exerciseId, exercise.name, series, series.last().first)
+                // Holds are followed in seconds whatever the metric: kg and e1RM mean nothing there
+                val series = series(sets, if (exercise.isTimed) LoadMetric.DURATION else metric)
+                if (series.isEmpty()) null else ExerciseProgress(exercise.exerciseId, exercise.name, series, series.last().first, exercise.isTimed)
             }
             .sortedByDescending { it.lastSessionAt }
 }
 
-data class ExerciseRef(val exerciseId: Int, val name: String)
+data class ExerciseRef(val exerciseId: Int, val name: String, val isTimed: Boolean = false)

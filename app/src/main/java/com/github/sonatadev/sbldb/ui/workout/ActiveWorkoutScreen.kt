@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.workout
 
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.ui.components.AttachmentChip
 import com.github.sonatadev.sbldb.ui.components.HeroText
 import com.github.sonatadev.sbldb.data.entity.Exercise
@@ -182,7 +183,9 @@ fun ActiveWorkoutScreen(
 
         // Time and progress as one quiet line: the exercise below is what matters
         item {
-            val done = workingSets.count { it.isCompleted }
+            // A left and a right set count as one
+            fun count(sets: List<WorkoutSet>) = sets.sumOf { if (it.side != null) 0.5 else 1.0 }.toInt()
+            val done = count(workingSets.filter { it.isCompleted })
             Row(
                 Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -191,7 +194,7 @@ fun ActiveWorkoutScreen(
                 HeroText(formatClock(now - workout.workout.startedAt), 30, colors.accent)
                 StatusDot(colors.accent)
                 Box(Modifier.weight(1f))
-                Text(stringResource(R.string.sets_done_of, done, workingSets.size).uppercase(), style = SbldbType.mono, color = colors.muted)
+                Text(stringResource(R.string.sets_done_of, done, count(workingSets)).uppercase(), style = SbldbType.mono, color = colors.muted)
             }
         }
 
@@ -422,7 +425,8 @@ private fun FocusedExercise(
 
         val version by viewModel.prefillVersion.collectAsStateWithLifecycle()
         val doneWorking = sets.filter { it.isCompleted && !it.isWarmup && it.setType != SetType.DROP && it.setType != SetType.PARTIALS }
-        val records = PersonalRecords.beatenInSession(info.records, doneWorking.map { PastSet(it.weightKg, it.reps, it.rir) })
+        val timed = exercise.exercise.isTimed
+        val records = PersonalRecords.beatenInSession(info.records, doneWorking.map { PastSet(it.weightKg, it.reps, it.rir, timed) })
         // On assisted machines more weight means easier, so only rep records mean anything
         val assisted = Progression.isAssisted(exercise.exercise.name)
         val recordSets = doneWorking.zip(records)
@@ -431,7 +435,8 @@ private fun FocusedExercise(
         Column {
             var workingIndex = 0
             sets.forEach { set ->
-                val label = if (set.isWarmup) null else ++workingIndex
+                // The right set shares its number with the left one
+                val label = if (set.isWarmup) null else if (set.side == Side.RIGHT) workingIndex.coerceAtLeast(1) else ++workingIndex
                 SetRow(
                     set = set,
                     label = label,
@@ -440,7 +445,8 @@ private fun FocusedExercise(
                     targetRir = info.target?.targetRir,
                     actions = viewModel,
                     isRecord = set.setId in recordSets,
-                    version = version
+                    version = version,
+                    timed = timed
                 )
             }
         }
@@ -452,7 +458,8 @@ private fun FocusedExercise(
             }
         }
 
-        val suggestion = Progression.suggest(
+        // Holds have no double progression: the target range in seconds is the guide
+        val suggestion = if (timed) null else Progression.suggest(
             last = info.previous.filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir) },
             equipment = exercise.exercise.equipment,
             unit = unit,
@@ -470,6 +477,7 @@ private fun FocusedExercise(
                 buildString {
                     append(stringResource(R.string.target))
                     append(" ${target.repMin}–${target.repMax}")
+                    if (timed) append(" s")
                     target.targetRir?.let { append(" @ RIR $it") }
                 },
                 color = colors.accent
@@ -483,9 +491,8 @@ private fun FocusedExercise(
                 else buildString {
                     append(stringResource(R.string.last_time))
                     append(" ")
-                    append(last.weightKg?.let { unit.format(it) + " × " } ?: "× ")
-                    append(last.reps ?: "–")
-                    if (lastE1rm != null) append(" · e1RM ${unit.formatRounded(lastE1rm)}")
+                    append(formatSet(last.weightKg, last.reps, null, unit, timed))
+                    if (lastE1rm != null && !timed) append(" · e1RM ${unit.formatRounded(lastE1rm)}")
                 },
                 Modifier.weight(1f)
             )

@@ -29,5 +29,9 @@ data class WorkoutSet(
     val isWarmup: Boolean = false,
     val isCompleted: Boolean = false,
     /** Kept in sync with [isWarmup] (WARMUP ⇔ isWarmup). */
-    @ColumnInfo(defaultValue = "NORMAL") val setType: SetType = SetType.NORMAL
+    @ColumnInfo(defaultValue = "NORMAL") val setType: SetType = SetType.NORMAL,
+    /** On a one-sided exercise, the side this set was done with; a left and a right set make one set. */
+    val side: Side? = null
 )
+
+enum class Side { LEFT, RIGHT }

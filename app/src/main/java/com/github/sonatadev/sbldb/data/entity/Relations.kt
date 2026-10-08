@@ -35,7 +35,9 @@ data class VolumeRow(
     val muscleGroup: String,
     val muscleRegion: String?,
     val role: Role,
-    val rir: Int?
+    val rir: Int?,
+    /** Set on one-sided sets, which count half. */
+    val side: Side? = null
 )
 
 /** A completed working set with the start time of its workout, for history and e1RM. */
@@ -45,7 +47,8 @@ data class SetHistoryRow(
     val weightKg: Double?,
     val reps: Int?,
     val rir: Int?,
-    val setType: SetType = SetType.NORMAL
+    val setType: SetType = SetType.NORMAL,
+    val side: Side? = null
 ) {
     /** Straight sets at full range: drop sets and partials would distort records and progression. */
     val isStraight: Boolean get() = setType == SetType.NORMAL || setType == SetType.FAILURE || setType == SetType.MYO

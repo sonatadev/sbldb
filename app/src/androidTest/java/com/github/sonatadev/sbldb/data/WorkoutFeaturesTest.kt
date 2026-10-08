@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.github.sonatadev.sbldb.data.content.ContentSource
 import com.github.sonatadev.sbldb.data.entity.SetType
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.data.entity.Workout
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
@@ -132,5 +133,22 @@ class WorkoutFeaturesTest {
         val before = order()
         repo.moveExercise(ordered(), ordered().first(), -1)
         assertEquals(before, order())
+    }
+
+    @Test
+    fun oneSidedExercisesGetALeftAndARightSet() = runBlocking {
+        val workout = db.workoutDAO().insertWorkout(Workout(name = "W", startedAt = 1L))
+        repo.addExercise(workout, db.exerciseDAO().findId("Bulgarian Split Squat")!!)
+        var exercise = repo.workout(workout).first()!!.exercises.single()
+        assertEquals(listOf(Side.LEFT, Side.RIGHT), exercise.sets.sortedBy { it.position }.map { it.side })
+
+        repo.addSet(exercise)
+        exercise = repo.workout(workout).first()!!.exercises.single()
+        assertEquals(listOf(Side.LEFT, Side.RIGHT, Side.LEFT, Side.RIGHT), exercise.sets.sortedBy { it.position }.map { it.side })
+
+        // Two-sided exercises keep single sets
+        repo.addExercise(workout, db.exerciseDAO().findId("Barbell Back Squat")!!)
+        val squat = repo.workout(workout).first()!!.exercises.single { it.exercise.name == "Barbell Back Squat" }
+        assertEquals(listOf(null), squat.sets.map { it.side })
     }
 }

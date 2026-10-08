@@ -13,7 +13,11 @@ data class CustomExerciseInput(
     val note: String?,
     val aliases: List<String>,
     /** Joint action id → rating 1–5. */
-    val ratings: Map<Int, Int>
+    val ratings: Map<Int, Int>,
+    /** Held for time: sets are logged in seconds. */
+    val isTimed: Boolean = false,
+    /** Done one side at a time: sets come in left/right pairs. */
+    val isUnilateral: Boolean = false
 )
 
 object CustomExercises {
@@ -32,7 +36,9 @@ object CustomExercises {
             attachment = input.attachment?.trim()?.takeIf { it.isNotEmpty() },
             note = input.note?.trim()?.takeIf { it.isNotEmpty() },
             aliases = input.aliases.filter { it.isNotBlank() }.takeIf { it.isNotEmpty() }?.joinToString(" | "),
-            isCustom = true
+            isCustom = true,
+            isTimed = input.isTimed,
+            isUnilateral = input.isUnilateral
         )
         val previous = existingId?.let { exerciseDao.findById(it) }
         val id = if (existingId != null) existingId.also { exerciseDao.updateExercise(row.copy(parentId = previous?.parentId)) } else exerciseDao.insertExercise(row).toInt()

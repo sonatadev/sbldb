@@ -20,7 +20,7 @@ object PersonalRecords {
         val reps = set.reps ?: return records
         if (reps <= 0) return records
         val weight = set.weightKg ?: 0.0
-        val e1rm = OneRepMax.epley(set.weightKg, set.reps)
+        val e1rm = if (set.timed) null else OneRepMax.epley(set.weightKg, set.reps)
         return Records(
             bestE1rm = listOfNotNull(records.bestE1rm, e1rm).maxOrNull(),
             heaviest = if (weight > 0) maxOf(records.heaviest ?: 0.0, weight) else records.heaviest,
@@ -37,7 +37,7 @@ object PersonalRecords {
         if (reps <= 0 || before.isEmpty) return emptySet()
         val weight = set.weightKg ?: 0.0
         val kinds = mutableSetOf<PrKind>()
-        val e1rm = OneRepMax.epley(set.weightKg, set.reps)
+        val e1rm = if (set.timed) null else OneRepMax.epley(set.weightKg, set.reps)
         if (e1rm != null && before.bestE1rm != null && e1rm > before.bestE1rm + 1e-9) kinds += PrKind.E1RM
         if (weight > 0 && before.heaviest != null && weight > before.heaviest + 1e-9) kinds += PrKind.WEIGHT
         before.repsAtWeight[weight]?.let { if (reps > it) kinds += PrKind.REPS }

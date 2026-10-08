@@ -1,5 +1,7 @@
 package com.github.sonatadev.sbldb.data.repository
 
+import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.domain.WarmupSet
 import androidx.room.withTransaction
 import com.github.sonatadev.sbldb.data.AppDatabase
@@ -51,16 +53,21 @@ class WorkoutRepository(
             val workoutExerciseId = dao.insertWorkoutExercise(
                 WorkoutExercise(workoutId = workoutId, exerciseId = planned.exerciseId, position = position)
             )
-            val lastWeight = dao.getLastPerformance(planned.exerciseId).firstOrNull()?.weightKg
-            repeat(planned.sets.coerceAtLeast(1)) { index ->
-                dao.insertSet(
-                    WorkoutSet(
-                        workoutExerciseId = workoutExerciseId,
-                        position = index,
-                        weightKg = lastWeight,
-                        reps = planned.repMax
+            val last = dao.getLastPerformance(planned.exerciseId)
+            val sides = sidesOf(planned.exerciseId)
+            var position = 0
+            repeat(planned.sets.coerceAtLeast(1)) {
+                sides.forEach { side ->
+                    dao.insertSet(
+                        WorkoutSet(
+                            workoutExerciseId = workoutExerciseId,
+                            position = position++,
+                            weightKg = (last.firstOrNull { it.side == side } ?: last.firstOrNull())?.weightKg,
+                            reps = planned.repMax,
+                            side = side
+                        )
                     )
-                )
+                }
             }
         }
         workoutId
@@ -99,11 +106,21 @@ class WorkoutRepository(
         val finished = dao.findWorkout(workoutId)?.endedAt != null
         val position = dao.nextExercisePosition(workoutId)
         val workoutExerciseId = dao.insertWorkoutExercise(WorkoutExercise(workoutId = workoutId, exerciseId = exerciseId, position = position))
-        val last = dao.getLastPerformance(exerciseId).firstOrNull()
-        dao.insertSet(
-            WorkoutSet(workoutExerciseId = workoutExerciseId, position = 0, weightKg = last?.weightKg, reps = last?.reps, isCompleted = finished)
-        )
+        val last = dao.getLastPerformance(exerciseId)
+        sidesOf(exerciseId).forEachIndexed { i, side ->
+            val previous = last.firstOrNull { it.side == side } ?: last.firstOrNull()
+            dao.insertSet(
+                WorkoutSet(
+                    workoutExerciseId = workoutExerciseId, position = i, weightKg = previous?.weightKg, reps = previous?.reps,
+                    isCompleted = finished, side = side
+                )
+            )
+        }
     }
+
+    /** A set per side for one-sided exercises (left, then right), a single set otherwise. */
+    private suspend fun sidesOf(exerciseId: Int): List<Side?> =
+        if (db.exerciseDAO().findById(exerciseId)?.isUnilateral == true) listOf(Side.LEFT, Side.RIGHT) else listOf(null)
 
     /** Moves a finished workout in time; [durationMillis] keeps the end after the start. */
     suspend fun updateTimes(workout: Workout, startedAt: Long, durationMillis: Long) =
@@ -137,18 +154,28 @@ class WorkoutRepository(
         return ids.mapNotNull { exercises.getExercise(it).first() }
     }
 
-    /** Adds a set copying weight and reps from [previous], so repeating a set is one tap. */
-    suspend fun addSet(workoutExerciseId: Long, previous: WorkoutSet?, completed: Boolean = false) = db.withTransaction {
-        dao.insertSet(
-            WorkoutSet(
-                workoutExerciseId = workoutExerciseId,
-                position = dao.nextSetPosition(workoutExerciseId),
-                weightKg = previous?.weightKg,
-                reps = previous?.reps,
-                rir = previous?.rir,
-                isCompleted = completed
+    /**
+     * Adds a set copying weight, reps and effort from the last working set, so repeating a set is
+     * one tap. One-sided exercises get a left and a right set, each copying its own side.
+     */
+    suspend fun addSet(exercise: WorkoutExerciseWithSets, completed: Boolean = false) = db.withTransaction {
+        val id = exercise.workoutExercise.workoutExerciseId
+        val ordered = exercise.sets.sortedBy { it.position }
+        val sides = if (exercise.exercise.isUnilateral) listOf(Side.LEFT, Side.RIGHT) else listOf(null)
+        sides.forEach { side ->
+            val previous = ordered.lastOrNull { !it.isWarmup && it.side == side } ?: ordered.lastOrNull()
+            dao.insertSet(
+                WorkoutSet(
+                    workoutExerciseId = id,
+                    position = dao.nextSetPosition(id),
+                    weightKg = previous?.weightKg,
+                    reps = previous?.reps,
+                    rir = previous?.rir,
+                    isCompleted = completed,
+                    side = side
+                )
             )
-        )
+        }
     }
 
     suspend fun updateWeight(setId: Long, weightKg: Double?) = dao.updateWeight(setId, weightKg)

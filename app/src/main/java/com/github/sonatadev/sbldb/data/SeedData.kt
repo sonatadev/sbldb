@@ -70,7 +70,11 @@ data class ExerciseSeed(
     /** Names this exercise had before: a row still called that way is renamed, keeping its history. */
     val formerly: List<String> = emptyList(),
     /** Attachments that need more than the defaults: their own movement, or a merged old exercise. */
-    val variants: List<VariantSeed> = emptyList()
+    val variants: List<VariantSeed> = emptyList(),
+    /** `measure: time` in the file: held for seconds. */
+    val isTimed: Boolean = false,
+    /** `unilateral: true` in the file: done one side at a time. */
+    val isUnilateral: Boolean = false
 ) {
     val joinedAliases: String? get() = aliases.takeIf { it.isNotEmpty() }?.joinToString(" | ")
 
@@ -83,7 +87,9 @@ data class ExerciseSeed(
         aliases = variant.formerly,
         actions = variant.actions ?: actions,
         muscleOverride = if (variant.actions != null) variant.muscleOverride else variant.muscleOverride ?: muscleOverride,
-        formerly = variant.formerly
+        formerly = variant.formerly,
+        isTimed = isTimed,
+        isUnilateral = isUnilateral
     )
 }
 
@@ -163,7 +169,13 @@ object SeedParser {
                 actions = actions,
                 muscleOverride = (entry["muscles"] as? Map<*, *>)?.muscleRoles(),
                 formerly = entry.stringList("formerly"),
-                variants = variants
+                variants = variants,
+                isTimed = when (val measure = entry["measure"] as String?) {
+                    null, "reps" -> false
+                    "time" -> true
+                    else -> error("Exercise '$name' has unknown measure '$measure'")
+                },
+                isUnilateral = entry["unilateral"] as Boolean? ?: false
             )
         }
 
@@ -321,7 +333,10 @@ object SeedData {
                     ?.let { exerciseDao.updateExercise(it.copy(name = seed.name)) }
             }
             val aliases = (seed.aliases + seed.formerly).distinct().takeIf { it.isNotEmpty() }?.joinToString(" | ")
-            val row = Exercise(0, seed.name, seed.equipment, seed.attachment, seed.note, aliases, parentId = parentId, hasOwnActions = ownActions)
+            val row = Exercise(
+                0, seed.name, seed.equipment, seed.attachment, seed.note, aliases,
+                parentId = parentId, hasOwnActions = ownActions, isTimed = seed.isTimed, isUnilateral = seed.isUnilateral
+            )
             val existing = exerciseDao.findId(seed.name)
             val id = if (existing != null) {
                 exerciseDao.updateExercise(row.copy(exerciseId = existing))

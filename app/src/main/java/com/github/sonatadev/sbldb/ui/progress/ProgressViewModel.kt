@@ -40,7 +40,7 @@ class ProgressViewModel(exercises: ExerciseRepository, settings: SettingsReposit
         .flatMapLatest { (p, m) ->
             val from = ZonedDateTime.now(ZoneId.systemDefault()).minusMonths(p.months).toInstant().toEpochMilli()
             exercises.allSetsSince(from).map { rows ->
-                ProgressUiState(p, m, LoadProgress.of(rows.map { ExerciseRef(it.exerciseId, it.name) to it.set }, m), loaded = true)
+                ProgressUiState(p, m, LoadProgress.of(rows.map { ExerciseRef(it.exerciseId, it.name, it.isTimed) to it.set }, m), loaded = true)
             }
         }
         .combine(settings.weightUnit) { state, unit -> state.copy(unit = unit) }

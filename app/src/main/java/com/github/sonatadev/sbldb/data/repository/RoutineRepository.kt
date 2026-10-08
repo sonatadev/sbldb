@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.data.repository
 
+import com.github.sonatadev.sbldb.domain.Progression
 import androidx.room.withTransaction
 import com.github.sonatadev.sbldb.data.AppDatabase
 import com.github.sonatadev.sbldb.data.entity.Routine
@@ -62,8 +63,13 @@ class RoutineRepository(private val db: AppDatabase) {
     suspend fun delete(routine: Routine) = dao.delete(routine)
 
     suspend fun addExercise(routineId: Long, exerciseId: Int, jointActionId: Int? = null) = db.withTransaction {
+        // Holds are planned in seconds: 30–60 s instead of 8–12 reps
+        val timed = db.exerciseDAO().findById(exerciseId)?.isTimed == true
         dao.insertExercise(
-            RoutineExercise(routineId = routineId, exerciseId = exerciseId, position = dao.nextExercisePosition(routineId), jointActionId = jointActionId)
+            RoutineExercise(
+                routineId = routineId, exerciseId = exerciseId, position = dao.nextExercisePosition(routineId), jointActionId = jointActionId,
+                repMin = if (timed) 30 else Progression.DEFAULT_REP_MIN, repMax = if (timed) 60 else Progression.DEFAULT_REP_MAX
+            )
         )
     }
 

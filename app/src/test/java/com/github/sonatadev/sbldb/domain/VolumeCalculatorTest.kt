@@ -1,6 +1,7 @@
 package com.github.sonatadev.sbldb.domain
 
 import com.github.sonatadev.sbldb.data.entity.Role
+import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.data.entity.VolumeRow
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -81,5 +82,13 @@ class VolumeCalculatorTest {
         assertEquals(VolumeBand.OPTIMAL, band(10.0))
         assertEquals(VolumeBand.OPTIMAL, band(20.0))
         assertEquals(VolumeBand.HIGH, band(20.5))
+    }
+
+    @Test
+    fun `a left and a right set make one set`() {
+        val rows = listOf(Side.LEFT, Side.RIGHT).mapIndexed { i, side ->
+            VolumeRow(i + 1L, workoutId = 1, startedAt = monday, exerciseId = 1, muscleGroup = "Quads", muscleRegion = null, role = Role.PRIMARY, rir = 2, side = side)
+        }
+        assertEquals(1.0, VolumeCalculator.calculate(rows, zone = zone).of("Quads").sets, 0.0)
     }
 }

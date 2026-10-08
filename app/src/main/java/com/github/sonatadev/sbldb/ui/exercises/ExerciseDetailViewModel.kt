@@ -66,7 +66,7 @@ class ExerciseDetailViewModel(
                 .groupBy { it.workoutId }
                 .map { (id, sets) -> SessionHistory(id, sets.first().startedAt, sets) },
             unit = unit,
-            records = PersonalRecords.of(history.filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir) }),
+            records = PersonalRecords.of(history.filter { it.isStraight }.map { PastSet(it.weightKg, it.reps, it.rir, exercise?.isTimed == true) }),
             loadSeries = LoadMetric.entries.associateWith { LoadProgress.series(history, it) }
         )
     }

@@ -47,7 +47,7 @@ class ImportShot {
         compose.setContent { SbldbTheme { ImportScreen(onBack = {}, viewModel = viewModel) } }
         compose.waitUntil(10_000) { !viewModel.uiState.value.loading }
         org.junit.Assert.assertNull(viewModel.uiState.value.error)
-        compose.waitUntil(5_000) { compose.onAllNodesWithText("Exercises", substring = true).fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(5_000) { compose.onAllNodesWithText("Exercises", substring = true, ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
         Thread.sleep(500)
         val bitmap = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
         val out = File(app.getExternalFilesDir(null), "screens").apply { mkdirs() }

@@ -15,6 +15,8 @@ import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 /** Manual dependency container, shared by all ViewModels. */
@@ -65,6 +67,12 @@ class SbldbApplication : Application() {
         super.onCreate()
         container = AppContainer(this)
         appScope.launch { container.decideOnboarding() }
+        appScope.launch {
+            // The launcher icon follows the theme and accent picked in Settings
+            combine(container.settingsRepository.themeMode, container.settingsRepository.accentColor) { theme, accent -> theme to accent }
+                .distinctUntilChanged()
+                .collect { (theme, accent) -> runCatching { AppIcon.apply(this@SbldbApplication, theme, accent) } }
+        }
         appScope.launch {
             // Start from local content right away, then look for newer content on GitHub
             container.contentUpdater.loadLocal()

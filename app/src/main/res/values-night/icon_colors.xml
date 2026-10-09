@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher icon colors. The "system" ones follow the phone's dark mode through values-night. -->
+<resources>
+    <color name="icon_bg_system">#000000</color>
+    <color name="icon_fg_orange_system">#FF6A13</color>
+    <color name="icon_fg_red_system">#F04438</color>
+    <color name="icon_fg_yellow_system">#FFC700</color>
+    <color name="icon_fg_green_system">#4ADE80</color>
+    <color name="icon_fg_cyan_system">#22D3EE</color>
+    <color name="icon_fg_blue_system">#4D7CFF</color>
+    <color name="icon_fg_violet_system">#A78BFA</color>
+</resources>

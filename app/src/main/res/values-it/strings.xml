@@ -450,4 +450,5 @@
     <string name="widget_detail">%1$d esercizi · %2$d serie</string>
     <string name="widget_start">Inizia</string>
     <string name="widget_resume">Riprendi</string>
+    <string name="library_needs_update">C\'è una libreria di esercizi più nuova: aggiorna l\'app per averla. Intanto resta quella che c\'è.</string>
 </resources>

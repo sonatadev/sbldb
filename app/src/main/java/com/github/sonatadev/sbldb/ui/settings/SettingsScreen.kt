@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.settings
 
+import com.github.sonatadev.sbldb.data.content.ContentUpdater
 import com.github.sonatadev.sbldb.ui.components.HeroText
 import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -217,7 +218,10 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
             content.checkedAt?.let {
                 MonoCaption(stringResource(R.string.library_checked, formatDate(it) + " " + formatTime(it)))
             }
-            content.error?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = colors.accent) }
+            content.error?.let {
+                val message = if (it == ContentUpdater.NEEDS_APP_UPDATE) stringResource(R.string.library_needs_update) else it
+                Text(message, style = MaterialTheme.typography.bodySmall, color = colors.accent)
+            }
             SecondaryButton(
                 stringResource(if (state.checking) R.string.library_checking else R.string.library_check),
                 onClick = viewModel::checkForUpdates,

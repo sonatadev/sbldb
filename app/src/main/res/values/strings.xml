@@ -463,4 +463,5 @@
     <string name="widget_detail">%1$d exercises · %2$d sets</string>
     <string name="widget_start">Start</string>
     <string name="widget_resume">Resume</string>
+    <string name="library_needs_update">There\'s a newer exercise library: update the app to get it. Until then it keeps the one it has.</string>
 </resources>

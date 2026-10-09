@@ -38,7 +38,11 @@ class ContentUpdater(
                     settings.setContentStatus(SOURCE_GITHUB, now, null)
                 }
                 is ContentValidator.Result.Invalid ->
-                    settings.setContentStatus(null, now, "Update ignored: ${check.problems.first()}")
+                    // A newer library format is not a fault: this app is just too old to read it
+                    settings.setContentStatus(
+                        null, now,
+                        if (fetch.files.format > ContentSource.SUPPORTED_FORMAT) NEEDS_APP_UPDATE else "Update ignored: ${check.problems.first()}"
+                    )
             }
         }
     }
@@ -46,5 +50,8 @@ class ContentUpdater(
     companion object {
         const val SOURCE_GITHUB = "GitHub"
         const val SOURCE_APP = "App"
+
+        /** Stored as the content error when GitHub has a library this version can't read. */
+        const val NEEDS_APP_UPDATE = "needs_app_update"
     }
 }

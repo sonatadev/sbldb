@@ -54,7 +54,7 @@ import java.time.format.TextStyle as DayStyle
 import java.util.Locale
 
 /** What the widget shows: today's week as dots, and the routine up next (or the workout in progress). */
-private data class WidgetData(
+internal data class WidgetData(
     val week: List<Pair<String, Boolean>>,
     val todayIndex: Int,
     val sessions: Int,
@@ -73,7 +73,8 @@ class SbldbWidget : GlanceAppWidget() {
         provideContent { Content(context, data) }
     }
 
-    private suspend fun load(context: Context): WidgetData {
+    // Internal for the screenshot test
+    internal suspend fun load(context: Context): WidgetData {
         val container = (context.applicationContext as SbldbApplication).container
         val zone = ZoneId.systemDefault()
         val today = LocalDate.now()
@@ -101,7 +102,7 @@ class SbldbWidget : GlanceAppWidget() {
     }
 
     @Composable
-    private fun Content(context: Context, data: WidgetData) {
+    internal fun Content(context: Context, data: WidgetData) {
         // The app's theme: fixed light or dark, or following the phone
         fun pick(light: Color, dark: Color): ColorProvider = when (data.theme) {
             ThemeMode.LIGHT -> ColorProvider(light)

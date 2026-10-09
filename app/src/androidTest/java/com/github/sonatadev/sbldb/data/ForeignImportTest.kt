@@ -36,6 +36,7 @@ class ForeignImportTest {
         val settings = SettingsRepository(context)
         settings.setContentHash("")
         SeedData.sync(ContentSource.bundled(context), db, settings)
+        Unit
     }
 
     @After

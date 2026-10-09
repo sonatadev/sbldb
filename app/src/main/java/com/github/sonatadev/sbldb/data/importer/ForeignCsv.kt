@@ -71,7 +71,7 @@ object ForeignCsv {
                 name = first.at(col["workout name"]).ifBlank { "Workout" },
                 startedAt = start,
                 endedAt = start + minutes * 60_000L,
-                notes = first.at(col["workout notes"]).ifBlank { null },
+                notes = sets.map { it.at(col["workout notes"]) }.firstOrNull { it.isNotBlank() },
                 exercises = sets.groupConsecutive { it[col.getValue("exercise name")] }.map { (name, list) ->
                     ForeignExercise(
                         name = name.trim(),
@@ -123,7 +123,7 @@ object ForeignCsv {
                 name = first.at(col["title"]).ifBlank { "Workout" },
                 startedAt = startMillis,
                 endedAt = end?.atZone(zone)?.toInstant()?.toEpochMilli()?.takeIf { it > startMillis } ?: (startMillis + 60_000L),
-                notes = first.at(col["description"]).ifBlank { null },
+                notes = sets.map { it.at(col["description"]) }.firstOrNull { it.isNotBlank() },
                 exercises = sets.groupConsecutive { it[col.getValue("exercise_title")] }.map { (name, list) ->
                     ForeignExercise(
                         name = name.trim(),

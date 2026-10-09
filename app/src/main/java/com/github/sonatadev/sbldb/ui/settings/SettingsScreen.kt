@@ -57,7 +57,7 @@ import com.github.sonatadev.sbldb.ui.resolve
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, onImportFrom: (String) -> Unit, viewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val dataMessage by viewModel.dataMessage.collectAsStateWithLifecycle()
     val pendingRestore by viewModel.pendingRestore.collectAsStateWithLifecycle()
@@ -71,6 +71,9 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
     }
     val importJson = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri?.let(viewModel::inspect)
+    }
+    val importForeign = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        uri?.let { onImportFrom(it.toString()) }
     }
     val pickFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         if (uri != null) {
@@ -187,6 +190,11 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
                 SecondaryButton(stringResource(R.string.export_csv), onClick = { exportCsv.launch("sbldb-sets-$stamp.csv") }, modifier = Modifier.weight(1f))
             }
             SecondaryButton(stringResource(R.string.import_backup), onClick = { importJson.launch(arrayOf("application/json", "*/*")) }, modifier = Modifier.fillMaxWidth())
+            SecondaryButton(
+                stringResource(R.string.import_other_apps),
+                onClick = { importForeign.launch(arrayOf("text/csv", "text/comma-separated-values", "text/plain", "*/*")) },
+                modifier = Modifier.fillMaxWidth()
+            )
             ModuleLabel(stringResource(R.string.auto_backup), color = colors.muted, modifier = Modifier.padding(top = 6.dp))
             Text(
                 if (state.backupFolder == null) stringResource(R.string.auto_backup_off)

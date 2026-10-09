@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui.navigation
 
+import com.github.sonatadev.sbldb.ui.importer.ImportScreen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
@@ -90,6 +91,7 @@ private object Routes {
     const val VOLUME = "volume"
     const val PROGRESS = "progress"
     const val SUMMARY = "summary/{workoutId}"
+    const val IMPORT = "import?uri={uri}"
     const val MUSCLE = "muscle/{group}"
     const val GLOSSARY = "glossary?term={term}"
     const val WEEKLY_PLAN = "weekly_plan"
@@ -103,6 +105,7 @@ private object Routes {
 
     fun workoutDetail(id: Long) = "workout/$id"
     fun summary(id: Long) = "summary/$id"
+    fun import(uri: String) = "import?uri=${Uri.encode(uri)}"
     fun exerciseDetail(id: Int) = "exercise/$id"
     fun actionDetail(id: Int) = "action/$id"
     fun routine(id: Long) = "routine/$id"
@@ -195,7 +198,11 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
             }
             screen(Routes.BODY) { BodyScreen(onBack = back, onOpenGlossary = openGlossary) }
             screen(Routes.SETTINGS) {
-                SettingsScreen(onOpenGlossary = { openGlossary(null) }, onOpenTargets = { navController.navigate(Routes.VOLUME_TARGETS) })
+                SettingsScreen(
+                    onOpenGlossary = { openGlossary(null) },
+                    onOpenTargets = { navController.navigate(Routes.VOLUME_TARGETS) },
+                    onImportFrom = { navController.navigate(Routes.import(it)) }
+                )
             }
             screen(Routes.WEEKLY_PLAN) {
                 WeeklyPlanScreen(
@@ -206,6 +213,9 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                 )
             }
             screen(Routes.VOLUME_TARGETS) { VolumeTargetsScreen(onBack = back, onOpenGlossary = openGlossary) }
+            screen(Routes.IMPORT, arguments = listOf(navArgument("uri") { type = NavType.StringType; defaultValue = "" })) {
+                ImportScreen(onBack = back)
+            }
             screen(Routes.PROGRESS) { ProgressScreen(onBack = back, onOpenExercise = openExercise) }
             screen(Routes.VOLUME) { VolumeScreen(onBack = back, onOpenMuscle = openMuscle, onOpenGlossary = openGlossary) }
             screen(Routes.MUSCLE, arguments = listOf(navArgument("group") { type = NavType.StringType })) {

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb.ui
 
+import com.github.sonatadev.sbldb.ui.importer.ImportViewModel
 import com.github.sonatadev.sbldb.ui.routines.MovementPickerViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
@@ -86,6 +87,9 @@ object AppViewModelProvider {
             VolumeViewModel(container().workoutRepository, container().exerciseRepository)
         }
         initializer { SettingsViewModel(container().settingsRepository, container().contentUpdater, container().backupManager) }
+        initializer {
+            ImportViewModel(createSavedStateHandle(), this[APPLICATION_KEY] as SbldbApplication, container().database, container().settingsRepository)
+        }
     }
 
     private fun CreationExtras.container(): AppContainer =

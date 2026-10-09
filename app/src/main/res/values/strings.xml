@@ -474,4 +474,26 @@
     <string name="reminder_hint">On days with a routine in the calendar, if you haven\'t done it yet</string>
     <string name="turn_on_short">Turn on</string>
     <string name="turn_off_short">Off</string>
+
+    <!-- Import from Strong / Hevy -->
+    <string name="import_other_apps">Import from Strong or Hevy</string>
+    <string name="import_label">Import</string>
+    <string name="import_from">From %1$s</string>
+    <string name="import_title">Import workouts</string>
+    <string name="import_error">This file can\'t be read</string>
+    <string name="import_summary">%1$d workouts · %2$s – %3$s</string>
+    <string name="import_unit">Weights in the file are in</string>
+    <string name="import_to_check">Exercises · %1$d to check</string>
+    <string name="import_exercises">Exercises</string>
+    <string name="import_sets">%1$d sets</string>
+    <string name="import_pick">Pick an exercise</string>
+    <string name="import_left_out">Left out</string>
+    <string name="import_hint">Tap a row to change it. Exercises left out are skipped, the rest of their workout is kept.</string>
+    <string name="import_go">Import %1$d workouts</string>
+    <string name="import_running">Importing…</string>
+    <string name="import_done">%1$d workouts and %2$d sets imported</string>
+    <string name="import_skipped">%1$d were already here and were skipped</string>
+    <string name="import_search">Search the library</string>
+    <string name="import_closest">Closest</string>
+    <string name="import_leave_out">Leave out</string>
 </resources>

@@ -34,6 +34,10 @@ interface WorkoutDAO {
     @Query("SELECT COUNT(*) FROM workouts")
     suspend fun countWorkouts(): Int
 
+    /** Workouts started at exactly [startedAt], to skip ones already imported. */
+    @Query("SELECT COUNT(*) FROM workouts WHERE startedAt = :startedAt")
+    suspend fun countStartedAt(startedAt: Long): Int
+
     @Query("SELECT * FROM workouts WHERE workoutId = :workoutId")
     suspend fun findWorkout(workoutId: Long): Workout?
 

@@ -461,4 +461,26 @@
     <string name="reminder_hint">Nei giorni con una routine in calendario, se non l\'hai ancora fatta</string>
     <string name="turn_on_short">Attiva</string>
     <string name="turn_off_short">Spegni</string>
+
+    <!-- Import from Strong / Hevy -->
+    <string name="import_other_apps">Importa da Strong o Hevy</string>
+    <string name="import_label">Importa</string>
+    <string name="import_from">Da %1$s</string>
+    <string name="import_title">Importa allenamenti</string>
+    <string name="import_error">Non riesco a leggere questo file</string>
+    <string name="import_summary">%1$d allenamenti · %2$s – %3$s</string>
+    <string name="import_unit">I pesi nel file sono in</string>
+    <string name="import_to_check">Esercizi · %1$d da controllare</string>
+    <string name="import_exercises">Esercizi</string>
+    <string name="import_sets">%1$d serie</string>
+    <string name="import_pick">Scegli un esercizio</string>
+    <string name="import_left_out">Escluso</string>
+    <string name="import_hint">Tocca una riga per cambiarla. Gli esercizi esclusi vengono saltati, il resto dell\'allenamento resta.</string>
+    <string name="import_go">Importa %1$d allenamenti</string>
+    <string name="import_running">Importo…</string>
+    <string name="import_done">%1$d allenamenti e %2$d serie importati</string>
+    <string name="import_skipped">%1$d c\'erano già e sono stati saltati</string>
+    <string name="import_search">Cerca nella libreria</string>
+    <string name="import_closest">I più simili</string>
+    <string name="import_leave_out">Escludi</string>
 </resources>

@@ -112,8 +112,8 @@ class ScreenshotTour {
             // Logging a workout after the fact, from the Log
             back()
             tab("Log")
-            scrollTo("Log a workout for this day")
-            compose.onAllNodesWithText("Log a workout for this day", substring = true).onFirst().performClick()
+            scrollTo("Log a workout for this day", ignoreCase = true)
+            compose.onAllNodesWithText("Log a workout for this day", substring = true, ignoreCase = true).onFirst().performClick()
             compose.waitForIdle()
             shot("15-log-past")
             compose.onAllNodesWithText("Upper A").onLast().performClick()

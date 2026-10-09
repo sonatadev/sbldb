@@ -464,4 +464,14 @@
     <string name="widget_start">Start</string>
     <string name="widget_resume">Resume</string>
     <string name="library_needs_update">There\'s a newer exercise library: update the app to get it. Until then it keeps the one it has.</string>
+
+    <!-- Workout reminders -->
+    <string name="channel_reminders">Workout reminders</string>
+    <string name="reminder_title">Today: %1$s</string>
+    <string name="reminder_text">Planned in your calendar and not done yet</string>
+    <string name="reminder_label">Reminder</string>
+    <string name="reminder_off">Off</string>
+    <string name="reminder_hint">On days with a routine in the calendar, if you haven\'t done it yet</string>
+    <string name="turn_on_short">Turn on</string>
+    <string name="turn_off_short">Off</string>
 </resources>

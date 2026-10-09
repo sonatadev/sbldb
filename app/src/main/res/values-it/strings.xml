@@ -451,4 +451,14 @@
     <string name="widget_start">Inizia</string>
     <string name="widget_resume">Riprendi</string>
     <string name="library_needs_update">C\'è una libreria di esercizi più nuova: aggiorna l\'app per averla. Intanto resta quella che c\'è.</string>
+
+    <!-- Workout reminders -->
+    <string name="channel_reminders">Promemoria allenamenti</string>
+    <string name="reminder_title">Oggi: %1$s</string>
+    <string name="reminder_text">In calendario e non ancora fatto</string>
+    <string name="reminder_label">Promemoria</string>
+    <string name="reminder_off">Spento</string>
+    <string name="reminder_hint">Nei giorni con una routine in calendario, se non l\'hai ancora fatta</string>
+    <string name="turn_on_short">Attiva</string>
+    <string name="turn_off_short">Spegni</string>
 </resources>

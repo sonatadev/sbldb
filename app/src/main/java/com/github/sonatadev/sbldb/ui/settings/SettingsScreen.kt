@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.sonatadev.sbldb.R
+import com.github.sonatadev.sbldb.data.repository.Reminder
 import com.github.sonatadev.sbldb.domain.AccentColor
 import com.github.sonatadev.sbldb.domain.ExplanationLevel
 import com.github.sonatadev.sbldb.domain.ThemeMode
@@ -166,6 +167,7 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
                 SecondaryButton("+15", onClick = { viewModel.setRestSeconds(state.restSeconds + 15) })
             }
             MonoCaption(stringResource(R.string.default_rest_hint))
+            ReminderRow(state.reminder, viewModel::setReminder)
             Row(
                 Modifier.fillMaxWidth().clickable(onClick = onOpenTargets).padding(vertical = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -247,4 +249,41 @@ fun SettingsScreen(onOpenGlossary: () -> Unit, onOpenTargets: () -> Unit, viewMo
             onDismiss = viewModel::cancelRestore
         )
     }
+}
+
+/** Reminder for routines planned in the calendar: on/off and the time, in half hours. */
+@Composable
+private fun ReminderRow(reminder: Reminder, onChange: (Reminder) -> Unit) {
+    val colors = SbldbTheme.colors
+    val context = androidx.compose.ui.platform.LocalContext.current
+    // Turning it on asks for notifications first, where Android needs it
+    val permission = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+    ) { granted -> if (granted) onChange(reminder.copy(enabled = true)) }
+    fun turnOn() {
+        val needs = android.os.Build.VERSION.SDK_INT >= 33 && androidx.core.content.ContextCompat.checkSelfPermission(
+            context, android.Manifest.permission.POST_NOTIFICATIONS
+        ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        if (needs) permission.launch(android.Manifest.permission.POST_NOTIFICATIONS) else onChange(reminder.copy(enabled = true))
+    }
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(top = 6.dp)) {
+        Column(Modifier.weight(1f)) {
+            ModuleLabel(stringResource(R.string.reminder_label), color = colors.muted)
+            HeroText(
+                if (reminder.enabled) "%02d:%02d".format(reminder.minuteOfDay / 60, reminder.minuteOfDay % 60) else stringResource(R.string.reminder_off),
+                36,
+                if (reminder.enabled) colors.accent else colors.dim
+            )
+        }
+        if (reminder.enabled) {
+            SecondaryButton("−30", onClick = { onChange(reminder.copy(minuteOfDay = reminder.minuteOfDay - 30)) })
+            Spacer(Modifier.width(6.dp))
+            SecondaryButton("+30", onClick = { onChange(reminder.copy(minuteOfDay = reminder.minuteOfDay + 30)) })
+            Spacer(Modifier.width(6.dp))
+            SecondaryButton(stringResource(R.string.turn_off_short), onClick = { onChange(reminder.copy(enabled = false)) })
+        } else {
+            SecondaryButton(stringResource(R.string.turn_on_short), onClick = ::turnOn, color = colors.accent)
+        }
+    }
+    MonoCaption(stringResource(R.string.reminder_hint))
 }

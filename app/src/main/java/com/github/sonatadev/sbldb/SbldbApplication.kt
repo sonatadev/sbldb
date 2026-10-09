@@ -12,6 +12,7 @@ import com.github.sonatadev.sbldb.data.repository.BodyRepository
 import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
 import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
+import com.github.sonatadev.sbldb.reminder.Reminders
 import com.github.sonatadev.sbldb.widget.SbldbWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
@@ -76,6 +77,10 @@ class SbldbApplication : Application() {
             combine(container.settingsRepository.themeMode, container.settingsRepository.accentColor) { theme, accent -> theme to accent }
                 .distinctUntilChanged()
                 .collect { (theme, accent) -> runCatching { AppIcon.apply(this@SbldbApplication, theme, accent) } }
+        }
+        appScope.launch {
+            // The reminder alarm follows its setting (and is set again at every app start)
+            container.settingsRepository.reminder.collect { runCatching { Reminders.schedule(this@SbldbApplication, it) } }
         }
         appScope.launch {
             // The widget redraws whenever what it shows changes

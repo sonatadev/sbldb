@@ -72,6 +72,21 @@ class SettingsRepository(private val context: Context) {
     /** Default rest between sets when the routine does not set one. */
     val restSeconds: Flow<Int> = context.dataStore.data.map { it[restSecondsKey] ?: 120 }.distinctUntilChanged()
 
+    private val reminderOnKey = androidx.datastore.preferences.core.booleanPreferencesKey("reminder_on")
+    private val reminderMinuteKey = intPreferencesKey("reminder_minute")
+
+    /** Reminder for routines planned in the calendar: on/off, and the time of day in minutes from midnight. */
+    val reminder: Flow<Reminder> = context.dataStore.data
+        .map { Reminder(it[reminderOnKey] ?: false, it[reminderMinuteKey] ?: Reminder.DEFAULT_MINUTE) }
+        .distinctUntilChanged()
+
+    suspend fun setReminder(reminder: Reminder) {
+        context.dataStore.edit {
+            it[reminderOnKey] = reminder.enabled
+            it[reminderMinuteKey] = reminder.minuteOfDay.mod(24 * 60)
+        }
+    }
+
     suspend fun backupFolder(): String? = context.dataStore.data.first()[backupFolderKey]
 
     suspend fun setBackupFolder(uri: String?) {
@@ -123,3 +138,10 @@ class SettingsRepository(private val context: Context) {
 }
 
 data class ContentStatus(val source: String?, val checkedAt: Long?, val error: String?)
+
+data class Reminder(val enabled: Boolean, val minuteOfDay: Int) {
+    companion object {
+        /** 17:00 */
+        const val DEFAULT_MINUTE = 17 * 60
+    }
+}

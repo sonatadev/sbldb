@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.github.sonatadev.sbldb.R
+import com.github.sonatadev.sbldb.data.repository.Reminder
 import com.github.sonatadev.sbldb.ui.UiText
 
 data class SettingsUiState(
@@ -31,7 +32,8 @@ data class SettingsUiState(
     val checking: Boolean = false,
     val restSeconds: Int = 120,
     val backupFolder: String? = null,
-    val lastBackup: Long? = null
+    val lastBackup: Long? = null,
+    val reminder: Reminder = Reminder(false, Reminder.DEFAULT_MINUTE)
 )
 
 /** A backup picked for import, waiting for the user to confirm. */
@@ -56,6 +58,7 @@ class SettingsViewModel(
         combine(preferences, settings.contentStatus, checking, settings.backupStatus, settings.restSeconds) { prefs, content, busy, backup, rest ->
             prefs.copy(content = content, checking = busy, backupFolder = backup.first, lastBackup = backup.second, restSeconds = rest)
         }
+            .combine(settings.reminder) { state, reminder -> state.copy(reminder = reminder) }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SettingsUiState())
 
     fun exportJson(uri: Uri) = dataAction { backups.write(uri, backups.exportJson()); UiText.Res(R.string.msg_backup_saved) }
@@ -72,6 +75,10 @@ class SettingsViewModel(
         val pending = pendingRestore.value ?: return
         pendingRestore.value = null
         dataAction { backups.restore(pending.json); UiText.Res(R.string.msg_restored, listOf(pending.summary.workouts)) }
+    }
+
+    fun setReminder(reminder: Reminder) {
+        viewModelScope.launch { settings.setReminder(reminder) }
     }
 
     fun cancelRestore() {

@@ -71,6 +71,9 @@ fun ImportScreen(onBack: () -> Unit, viewModel: ImportViewModel = viewModel(fact
                 navigation = { BackButton(onBack) }
             )
         }
+        if (state.loading) item {
+            MonoCaption(stringResource(R.string.import_reading), Modifier.padding(horizontal = 6.dp))
+        }
         state.error?.let { error ->
             item {
                 Module(Modifier.fillMaxWidth()) {

@@ -3,6 +3,7 @@ package com.github.sonatadev.sbldb.ui
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.lifecycle.SavedStateHandle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -44,8 +45,10 @@ class ImportShot {
         }
         val viewModel = ImportViewModel(SavedStateHandle(mapOf("uri" to Uri.fromFile(csv).toString())), app, app.container.database, app.container.settingsRepository)
         compose.setContent { SbldbTheme { ImportScreen(onBack = {}, viewModel = viewModel) } }
-        compose.waitUntil(5_000) { !viewModel.uiState.value.loading }
-        compose.waitForIdle()
+        compose.waitUntil(10_000) { !viewModel.uiState.value.loading }
+        org.junit.Assert.assertNull(viewModel.uiState.value.error)
+        compose.waitUntil(5_000) { compose.onAllNodesWithText("Exercises", substring = true).fetchSemanticsNodes().isNotEmpty() }
+        Thread.sleep(500)
         val bitmap = InstrumentationRegistry.getInstrumentation().uiAutomation.takeScreenshot()
         val out = File(app.getExternalFilesDir(null), "screens").apply { mkdirs() }
         File(out, "21-import.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

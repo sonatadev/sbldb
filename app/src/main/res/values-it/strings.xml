@@ -483,4 +483,5 @@
     <string name="import_search">Cerca nella libreria</string>
     <string name="import_closest">I più simili</string>
     <string name="import_leave_out">Escludi</string>
+    <string name="import_reading">Leggo il file…</string>
 </resources>

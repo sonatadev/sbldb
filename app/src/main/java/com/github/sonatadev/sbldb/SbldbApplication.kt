@@ -12,10 +12,13 @@ import com.github.sonatadev.sbldb.data.repository.BodyRepository
 import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
 import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
+import com.github.sonatadev.sbldb.widget.SbldbWidget
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -57,6 +60,7 @@ class AppContainer(application: Application) {
     }
 }
 
+@OptIn(FlowPreview::class)
 class SbldbApplication : Application() {
     lateinit var container: AppContainer
         private set
@@ -72,6 +76,18 @@ class SbldbApplication : Application() {
             combine(container.settingsRepository.themeMode, container.settingsRepository.accentColor) { theme, accent -> theme to accent }
                 .distinctUntilChanged()
                 .collect { (theme, accent) -> runCatching { AppIcon.apply(this@SbldbApplication, theme, accent) } }
+        }
+        appScope.launch {
+            // The widget redraws whenever what it shows changes
+            combine(
+                container.workoutRepository.history,
+                container.workoutRepository.activeWorkout,
+                container.routineRepository.routines,
+                container.settingsRepository.themeMode,
+                container.settingsRepository.accentColor
+            ) { _, active, _, _, _ -> active?.workoutId }
+                .debounce(500)
+                .collect { SbldbWidget.refresh(this@SbldbApplication) }
         }
         appScope.launch {
             // Start from local content right away, then look for newer content on GitHub

@@ -1,5 +1,6 @@
 package com.github.sonatadev.sbldb
 
+import androidx.lifecycle.lifecycleScope
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,13 +32,28 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
-        if (intent.getBooleanExtra(EXTRA_OPEN_WORKOUT, false)) openWorkoutRequests.value++
+        handle(intent)
+    }
+
+    /** From the workout notification or the widget: open the workout, starting the routine first if asked. */
+    private fun handle(intent: android.content.Intent?) {
+        intent ?: return
+        val routineId = intent.getLongExtra(EXTRA_START_ROUTINE, -1L)
+        if (routineId > 0) {
+            intent.removeExtra(EXTRA_START_ROUTINE)
+            lifecycleScope.launch {
+                (application as SbldbApplication).container.workoutRepository.startFromRoutine(routineId)
+                openWorkoutRequests.value++
+            }
+        } else if (intent.getBooleanExtra(EXTRA_OPEN_WORKOUT, false)) {
+            openWorkoutRequests.value++
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if (intent?.getBooleanExtra(EXTRA_OPEN_WORKOUT, false) == true) openWorkoutRequests.value++
+        if (savedInstanceState == null) handle(intent)
         val container = (application as SbldbApplication).container
         val settings = container.settingsRepository
         setContent {
@@ -73,5 +89,7 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val EXTRA_OPEN_WORKOUT = "open_workout"
+        /** Routine id to start (or resume the workout in progress) when opened from the widget. */
+        const val EXTRA_START_ROUTINE = "start_routine"
     }
 }

@@ -453,4 +453,14 @@
     <string name="metric_duration">Time</string>
     <string name="module_best_duration">01 · Longest hold</string>
     <string name="duration_hint">Longest straight set of each session</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">The week at a glance and one tap to start the next routine</string>
+    <string name="widget_week">This week · %1$d</string>
+    <string name="widget_next">Next up</string>
+    <string name="widget_in_progress">In progress</string>
+    <string name="widget_no_routine">No routine yet</string>
+    <string name="widget_detail">%1$d exercises · %2$d sets</string>
+    <string name="widget_start">Start</string>
+    <string name="widget_resume">Resume</string>
 </resources>

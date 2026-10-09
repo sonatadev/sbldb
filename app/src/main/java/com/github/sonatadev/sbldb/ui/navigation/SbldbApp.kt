@@ -1,5 +1,8 @@
 package com.github.sonatadev.sbldb.ui.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavGraphBuilder
 import com.github.sonatadev.sbldb.ui.routines.MovementPickerScreen
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -163,7 +166,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
             val openGlossary: (String?) -> Unit = { navController.navigate(Routes.glossary(it)) }
             val openAction: (Int) -> Unit = { navController.navigate(Routes.actionDetail(it)) }
 
-            composable(Routes.HOME) {
+            screen(Routes.HOME) {
                 HomeScreen(
                     onOpenActiveWorkout = { navController.navigate(Routes.ACTIVE_WORKOUT) { launchSingleTop = true } },
                     onEditRoutine = { navController.navigate(Routes.routine(it)) },
@@ -172,7 +175,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenWorkout = { navController.navigate(Routes.workoutDetail(it)) }
                 )
             }
-            composable(Routes.ACTIONS) {
+            screen(Routes.ACTIONS) {
                 ActionsScreen(
                     onOpenAction = openAction,
                     onOpenAllExercises = { navController.navigate(Routes.EXERCISES) },
@@ -180,7 +183,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenGlossary = { openGlossary(null) }
                 )
             }
-            composable(Routes.LOG) {
+            screen(Routes.LOG) {
                 LogScreen(
                     onOpenWorkout = { navController.navigate(Routes.workoutDetail(it)) },
                     onOpenVolume = { navController.navigate(Routes.VOLUME) },
@@ -190,11 +193,11 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenActiveWorkout = { navController.navigate(Routes.ACTIVE_WORKOUT) { launchSingleTop = true } }
                 )
             }
-            composable(Routes.BODY) { BodyScreen(onBack = back, onOpenGlossary = openGlossary) }
-            composable(Routes.SETTINGS) {
+            screen(Routes.BODY) { BodyScreen(onBack = back, onOpenGlossary = openGlossary) }
+            screen(Routes.SETTINGS) {
                 SettingsScreen(onOpenGlossary = { openGlossary(null) }, onOpenTargets = { navController.navigate(Routes.VOLUME_TARGETS) })
             }
-            composable(Routes.WEEKLY_PLAN) {
+            screen(Routes.WEEKLY_PLAN) {
                 WeeklyPlanScreen(
                     onBack = back,
                     onEditRoutine = { navController.navigate(Routes.routine(it)) },
@@ -202,20 +205,20 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenGlossary = openGlossary
                 )
             }
-            composable(Routes.VOLUME_TARGETS) { VolumeTargetsScreen(onBack = back, onOpenGlossary = openGlossary) }
-            composable(Routes.PROGRESS) { ProgressScreen(onBack = back, onOpenExercise = openExercise) }
-            composable(Routes.VOLUME) { VolumeScreen(onBack = back, onOpenMuscle = openMuscle, onOpenGlossary = openGlossary) }
-            composable(Routes.MUSCLE, arguments = listOf(navArgument("group") { type = NavType.StringType })) {
+            screen(Routes.VOLUME_TARGETS) { VolumeTargetsScreen(onBack = back, onOpenGlossary = openGlossary) }
+            screen(Routes.PROGRESS) { ProgressScreen(onBack = back, onOpenExercise = openExercise) }
+            screen(Routes.VOLUME) { VolumeScreen(onBack = back, onOpenMuscle = openMuscle, onOpenGlossary = openGlossary) }
+            screen(Routes.MUSCLE, arguments = listOf(navArgument("group") { type = NavType.StringType })) {
                 MuscleDetailScreen(onBack = back, onOpenAction = openAction, onOpenExercise = openExercise)
             }
-            composable(
+            screen(
                 Routes.GLOSSARY,
                 arguments = listOf(navArgument("term") { type = NavType.StringType; defaultValue = "" })
             ) {
                 GlossaryScreen(onBack = back)
             }
-            composable(Routes.EXERCISES) { ExerciseListScreen(onOpenExercise = openExercise, onBack = back) }
-            composable(Routes.ACTIVE_WORKOUT) {
+            screen(Routes.EXERCISES) { ExerciseListScreen(onOpenExercise = openExercise, onBack = back) }
+            screen(Routes.ACTIVE_WORKOUT) {
                 ActiveWorkoutScreen(
                     onAddExercise = { navController.navigate(Routes.pickExercise("workout", it)) },
                     onOpenExercise = openExercise,
@@ -226,13 +229,13 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     }
                 )
             }
-            composable(Routes.SUMMARY, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
+            screen(Routes.SUMMARY, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
                 WorkoutSummaryScreen(
                     onDone = { navController.popBackStack() },
                     onOpenWorkout = { id -> navController.navigate(Routes.workoutDetail(id)) { popUpTo(Routes.SUMMARY) { inclusive = true } } }
                 )
             }
-            composable(Routes.WORKOUT_DETAIL, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
+            screen(Routes.WORKOUT_DETAIL, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
                 WorkoutDetailScreen(
                     onBack = back,
                     onOpenExercise = openExercise,
@@ -240,7 +243,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenRoutine = { navController.navigate(Routes.routine(it)) }
                 )
             }
-            composable(Routes.EXERCISE_DETAIL, arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })) {
+            screen(Routes.EXERCISE_DETAIL, arguments = listOf(navArgument("exerciseId") { type = NavType.IntType })) {
                 ExerciseDetailScreen(
                     onBack = back,
                     onOpenAction = openAction,
@@ -249,10 +252,10 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenExercise = { navController.navigate(Routes.exerciseDetail(it)) { popUpTo(Routes.EXERCISE_DETAIL) { inclusive = true } } }
                 )
             }
-            composable(Routes.ACTION_DETAIL, arguments = listOf(navArgument("actionId") { type = NavType.IntType })) {
+            screen(Routes.ACTION_DETAIL, arguments = listOf(navArgument("actionId") { type = NavType.IntType })) {
                 ActionDetailScreen(onBack = back, onOpenExercise = openExercise, onOpenMuscle = openMuscle, onOpenGlossary = openGlossary)
             }
-            composable(Routes.ROUTINE, arguments = listOf(navArgument("routineId") { type = NavType.LongType })) {
+            screen(Routes.ROUTINE, arguments = listOf(navArgument("routineId") { type = NavType.LongType })) {
                 RoutineEditorScreen(
                     onBack = back,
                     onAddExercise = { navController.navigate(Routes.pickExercise("routine", it)) },
@@ -260,7 +263,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) }
                 )
             }
-            composable(
+            screen(
                 Routes.PICK_MOVEMENT,
                 arguments = listOf(
                     navArgument("routineId") { type = NavType.LongType },
@@ -270,7 +273,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
             ) {
                 MovementPickerScreen(onClose = back, onOpenAction = openAction)
             }
-            composable(
+            screen(
                 Routes.PICK_EXERCISE,
                 arguments = listOf(
                     navArgument("kind") { type = NavType.StringType },
@@ -283,7 +286,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onNewCustomExercise = { navController.navigate(Routes.customExercise()) }
                 )
             }
-            composable(
+            screen(
                 Routes.CUSTOM_EXERCISE,
                 arguments = listOf(navArgument("exerciseId") { type = NavType.IntType; defaultValue = -1 })
             ) { entry ->
@@ -307,6 +310,18 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
             }
         }
     }
+}
+
+/**
+ * A destination on an opaque ground. Switching tabs briefly composes the old and the new screen
+ * together; with transparent screens one showed through the other for a frame.
+ */
+private fun NavGraphBuilder.screen(
+    route: String,
+    arguments: List<NamedNavArgument> = emptyList(),
+    content: @Composable (NavBackStackEntry) -> Unit
+) = composable(route, arguments) { entry ->
+    Box(Modifier.fillMaxSize().background(SbldbTheme.colors.ground)) { content(entry) }
 }
 
 private val tabRoutes = setOf(Routes.HOME, Routes.ACTIONS, Routes.LOG, Routes.SETTINGS)

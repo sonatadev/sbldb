@@ -440,4 +440,14 @@
     <string name="metric_duration">Tempo</string>
     <string name="module_best_duration">01 · Tenuta più lunga</string>
     <string name="duration_hint">La tenuta più lunga di ogni seduta</string>
+
+    <!-- Home-screen widget -->
+    <string name="widget_description">La settimana a colpo d\'occhio e un tocco per iniziare la prossima routine</string>
+    <string name="widget_week">Questa settimana · %1$d</string>
+    <string name="widget_next">Prossimo</string>
+    <string name="widget_in_progress">In corso</string>
+    <string name="widget_no_routine">Nessuna routine</string>
+    <string name="widget_detail">%1$d esercizi · %2$d serie</string>
+    <string name="widget_start">Inizia</string>
+    <string name="widget_resume">Riprendi</string>
 </resources>

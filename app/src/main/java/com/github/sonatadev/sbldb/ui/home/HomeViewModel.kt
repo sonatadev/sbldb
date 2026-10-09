@@ -9,6 +9,7 @@ import com.github.sonatadev.sbldb.data.repository.ExerciseRepository
 import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
 import com.github.sonatadev.sbldb.domain.MuscleGroupVolume
+import com.github.sonatadev.sbldb.domain.NextRoutine
 import com.github.sonatadev.sbldb.domain.VolumeCalculator
 import com.github.sonatadev.sbldb.domain.WeekRange
 import kotlinx.coroutines.flow.SharingStarted
@@ -70,21 +71,13 @@ class HomeViewModel(
         weekData,
         routines.plannedBetween(LocalDate.now(), LocalDate.now())
     ) { active, routineList, history, data, plannedToday ->
-        val lastDone = history.mapNotNull { w -> w.workout.routineId?.let { it to w.workout.startedAt } }
-            .groupBy({ it.first }, { it.second })
-            .mapValues { it.value.max() }
-        val doneToday = history.filter { Instant.ofEpochMilli(it.workout.startedAt).atZone(zone).toLocalDate() == LocalDate.now() }
-            .mapNotNull { it.workout.routineId }.toSet()
-        // A routine planned for today wins, until it has been done
-        val planned = plannedToday.firstOrNull { it.routineId !in doneToday }
-            ?.let { p -> routineList.firstOrNull { it.routine.routineId == p.routineId && it.exercises.isNotEmpty() } }
+        val next = NextRoutine.pick(routineList, history, plannedToday, zone = zone)
         HomeUiState(
             week = week,
             activeWorkout = active,
             routines = routineList,
-            nextRoutine = planned ?: routineList.filter { it.exercises.isNotEmpty() }
-                .minByOrNull { lastDone[it.routine.routineId] ?: Long.MIN_VALUE },
-            nextIsPlanned = planned != null,
+            nextRoutine = next?.routine,
+            nextIsPlanned = next?.isPlanned == true,
             trainedDays = data.trainedDays,
             sessionsThisWeek = data.sessions,
             hardSetsThisWeek = data.hardSets,

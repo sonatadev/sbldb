@@ -472,7 +472,6 @@
     <string name="import_unit">I pesi nel file sono in</string>
     <string name="import_to_check">Esercizi · %1$d da controllare</string>
     <string name="import_exercises">Esercizi</string>
-    <string name="import_sets">%1$d serie</string>
     <string name="import_pick">Scegli un esercizio</string>
     <string name="import_left_out">Escluso</string>
     <string name="import_hint">Tocca una riga per cambiarla. Gli esercizi esclusi vengono saltati, il resto dell\'allenamento resta.</string>
@@ -484,4 +483,9 @@
     <string name="import_closest">I più simili</string>
     <string name="import_leave_out">Escludi</string>
     <string name="import_reading">Leggo il file…</string>
+    <plurals name="import_sets">
+        <item quantity="one">%d serie</item>
+        <item quantity="many">%d serie</item>
+        <item quantity="other">%d serie</item>
+    </plurals>
 </resources>

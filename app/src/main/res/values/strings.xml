@@ -485,7 +485,6 @@
     <string name="import_unit">Weights in the file are in</string>
     <string name="import_to_check">Exercises · %1$d to check</string>
     <string name="import_exercises">Exercises</string>
-    <string name="import_sets">%1$d sets</string>
     <string name="import_pick">Pick an exercise</string>
     <string name="import_left_out">Left out</string>
     <string name="import_hint">Tap a row to change it. Exercises left out are skipped, the rest of their workout is kept.</string>
@@ -497,4 +496,8 @@
     <string name="import_closest">Closest</string>
     <string name="import_leave_out">Leave out</string>
     <string name="import_reading">Reading the file…</string>
+    <plurals name="import_sets">
+        <item quantity="one">%d set</item>
+        <item quantity="other">%d sets</item>
+    </plurals>
 </resources>

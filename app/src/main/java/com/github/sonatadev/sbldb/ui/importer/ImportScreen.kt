@@ -21,6 +21,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -120,7 +121,7 @@ fun ImportScreen(onBack: () -> Unit, viewModel: ImportViewModel = viewModel(fact
                         state.rows.forEach { row ->
                             ModuleRow(onClick = { picking = row }) {
                                 Column(Modifier.weight(1f)) {
-                                    MonoCaption(row.foreign + " · " + stringResource(R.string.import_sets, row.sets), color = colors.dim)
+                                    MonoCaption(row.foreign + " · " + pluralStringResource(R.plurals.import_sets, row.sets, row.sets), color = colors.dim)
                                     Text(
                                         row.exerciseName ?: stringResource(if (row.sure) R.string.import_left_out else R.string.import_pick),
                                         style = MaterialTheme.typography.bodyLarge,

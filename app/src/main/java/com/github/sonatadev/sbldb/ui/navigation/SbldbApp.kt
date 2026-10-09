@@ -82,7 +82,7 @@ private object Routes {
     const val LOG = "log"
     const val SETTINGS = "settings"
     const val ACTIVE_WORKOUT = "active_workout"
-    const val WORKOUT_DETAIL = "workout/{workoutId}"
+    const val WORKOUT_DETAIL = "workout/{workoutId}?edit={edit}"
     const val EXERCISES = "exercises"
     const val EXERCISE_DETAIL = "exercise/{exerciseId}"
     const val ACTION_DETAIL = "action/{actionId}"
@@ -103,7 +103,7 @@ private object Routes {
     fun muscle(group: String) = "muscle/${Uri.encode(group)}"
     fun glossary(term: String? = null) = "glossary?term=${Uri.encode(term.orEmpty())}"
 
-    fun workoutDetail(id: Long) = "workout/$id"
+    fun workoutDetail(id: Long, edit: Boolean = false) = "workout/$id?edit=$edit"
     fun summary(id: Long) = "summary/$id"
     fun import(uri: String) = "import?uri=${Uri.encode(uri)}"
     fun exerciseDetail(id: Int) = "exercise/$id"
@@ -189,6 +189,7 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
             screen(Routes.LOG) {
                 LogScreen(
                     onOpenWorkout = { navController.navigate(Routes.workoutDetail(it)) },
+                    onOpenWorkoutEditing = { navController.navigate(Routes.workoutDetail(it, edit = true)) },
                     onOpenVolume = { navController.navigate(Routes.VOLUME) },
                     onOpenProgress = { navController.navigate(Routes.PROGRESS) },
                     onOpenPlan = { navController.navigate(Routes.WEEKLY_PLAN) },
@@ -245,7 +246,13 @@ fun SbldbApp(openWorkoutRequest: Int = 0, navController: NavHostController = rem
                     onOpenWorkout = { id -> navController.navigate(Routes.workoutDetail(id)) { popUpTo(Routes.SUMMARY) { inclusive = true } } }
                 )
             }
-            screen(Routes.WORKOUT_DETAIL, arguments = listOf(navArgument("workoutId") { type = NavType.LongType })) {
+            screen(
+                Routes.WORKOUT_DETAIL,
+                arguments = listOf(
+                    navArgument("workoutId") { type = NavType.LongType },
+                    navArgument("edit") { type = NavType.BoolType; defaultValue = false }
+                )
+            ) {
                 WorkoutDetailScreen(
                     onBack = back,
                     onOpenExercise = openExercise,

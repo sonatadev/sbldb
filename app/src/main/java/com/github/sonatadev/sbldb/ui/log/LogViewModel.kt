@@ -109,6 +109,12 @@ class LogViewModel(
         viewModelScope.launch { routines.unplan(planned.plannedId) }
     }
 
+    /** Logs a workout done on the selected day; [routineId] null for an empty one. */
+    fun logPast(routineId: Long?, onCreated: (Long) -> Unit) {
+        val day = selected.value
+        viewModelScope.launch { onCreated(workouts.logPast(day, routineId)) }
+    }
+
     fun start(planned: PlannedRoutine, onReady: () -> Unit) {
         viewModelScope.launch {
             workouts.startFromRoutine(planned.routineId)

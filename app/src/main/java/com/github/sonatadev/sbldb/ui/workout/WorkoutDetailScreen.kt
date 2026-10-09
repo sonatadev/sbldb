@@ -84,7 +84,7 @@ fun WorkoutDetailScreen(
     val colors = SbldbTheme.colors
     var showDelete by remember { mutableStateOf(false) }
     var showRename by remember { mutableStateOf(false) }
-    var editing by rememberSaveable { mutableStateOf(false) }
+    var editing by rememberSaveable { mutableStateOf(viewModel.startEditing) }
 
     LaunchedEffect(state.isLoading, state.workout == null) {
         if (!state.isLoading && state.workout == null) onBack()

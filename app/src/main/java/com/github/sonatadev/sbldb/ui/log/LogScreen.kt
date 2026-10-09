@@ -67,6 +67,8 @@ private val dayFormatter: DateTimeFormatter get() = DateTimeFormatter.ofPattern(
 @Composable
 fun LogScreen(
     onOpenWorkout: (Long) -> Unit,
+    /** Opens a workout straight in edit mode (one just logged after the fact). */
+    onOpenWorkoutEditing: (Long) -> Unit,
     onOpenVolume: () -> Unit,
     onOpenProgress: () -> Unit,
     onOpenPlan: () -> Unit,
@@ -83,6 +85,18 @@ fun LogScreen(
             routines = state.routines,
             onPick = { viewModel.plan(it); picking = false },
             onDismiss = { picking = false }
+        )
+    }
+    // Logging a workout done on a past day that wasn't tracked
+    var logging by remember { mutableStateOf(false) }
+    if (logging) {
+        PlanDialog(
+            day = state.selected,
+            routines = state.routines,
+            title = stringResource(R.string.log_past_for, state.selected.format(dayFormatter)),
+            onPick = { id -> logging = false; viewModel.logPast(id) { onOpenWorkoutEditing(it) } },
+            onEmpty = { logging = false; viewModel.logPast(null) { onOpenWorkoutEditing(it) } },
+            onDismiss = { logging = false }
         )
     }
 
@@ -129,12 +143,24 @@ fun LogScreen(
         }
         items(state.selectedPlanned, key = { "planned-${it.plannedId}" }) { planned ->
             val isToday = state.selected == LocalDate.now()
+            val past = state.selected.isBefore(LocalDate.now())
             PlannedCard(
                 planned = planned,
-                past = state.selected.isBefore(LocalDate.now()),
+                past = past,
                 onStart = if (isToday && !state.hasActiveWorkout) ({ viewModel.start(planned, onOpenActiveWorkout) }) else null,
+                onLog = if (past) ({ viewModel.logPast(planned.routineId) { onOpenWorkoutEditing(it) } }) else null,
                 onRemove = { viewModel.unplan(planned) }
             )
+        }
+        // Past days and today: a workout done but not tracked can be logged after the fact
+        if (!state.selected.isAfter(LocalDate.now())) {
+            item {
+                SecondaryButton(
+                    "+ " + stringResource(R.string.log_past),
+                    onClick = { logging = true },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
         if (state.canPlanSelected) {
             item {
@@ -302,7 +328,7 @@ private fun Stat(label: String, value: String, modifier: Modifier) {
 
 /** A routine planned for the selected day; today it can be started from here. */
 @Composable
-private fun PlannedCard(planned: PlannedRoutine, past: Boolean, onStart: (() -> Unit)?, onRemove: () -> Unit) {
+private fun PlannedCard(planned: PlannedRoutine, past: Boolean, onStart: (() -> Unit)?, onLog: (() -> Unit)?, onRemove: () -> Unit) {
     val colors = SbldbTheme.colors
     Module(
         Modifier.fillMaxWidth(),
@@ -329,20 +355,29 @@ private fun PlannedCard(planned: PlannedRoutine, past: Boolean, onStart: (() -> 
                 overflow = TextOverflow.Ellipsis
             )
             if (onStart != null) SecondaryButton(stringResource(R.string.start), onClick = onStart, color = colors.accent)
+            if (onLog != null) SecondaryButton(stringResource(R.string.log_it), onClick = onLog, color = colors.accent)
         }
     }
 }
 
 @Composable
-private fun PlanDialog(day: LocalDate, routines: List<RoutineWithExercises>, onPick: (Long) -> Unit, onDismiss: () -> Unit) {
+private fun PlanDialog(
+    day: LocalDate,
+    routines: List<RoutineWithExercises>,
+    onPick: (Long) -> Unit,
+    onDismiss: () -> Unit,
+    title: String = stringResource(R.string.plan_for, day.format(dayFormatter)),
+    /** When set, an extra choice for a workout without a routine. */
+    onEmpty: (() -> Unit)? = null
+) {
     val colors = SbldbTheme.colors
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = colors.module,
-        title = { Text(stringResource(R.string.plan_for, day.format(dayFormatter)), color = colors.ink) },
+        title = { Text(title, color = colors.ink) },
         text = {
             Column {
-                if (routines.isEmpty()) {
+                if (routines.isEmpty() && onEmpty == null) {
                     Text(stringResource(R.string.plan_no_routine), color = colors.muted)
                 }
                 routines.forEach { routine ->
@@ -355,6 +390,14 @@ private fun PlanDialog(day: LocalDate, routines: List<RoutineWithExercises>, onP
                         Text(routine.routine.name, style = MaterialTheme.typography.titleMedium, color = colors.ink)
                         MonoCaption(pluralStringResource(R.plurals.exercise_count, routine.exercises.size, routine.exercises.size))
                     }
+                }
+                if (onEmpty != null) {
+                    Text(
+                        stringResource(R.string.log_past_empty),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = colors.accent,
+                        modifier = Modifier.fillMaxWidth().clickable(onClick = onEmpty).padding(vertical = 10.dp)
+                    )
                 }
             }
         },

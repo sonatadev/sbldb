@@ -500,4 +500,10 @@
         <item quantity="one">%d set</item>
         <item quantity="other">%d sets</item>
     </plurals>
+
+    <!-- Logging a past workout -->
+    <string name="log_past">Log a workout for this day</string>
+    <string name="log_past_for">Done on %1$s</string>
+    <string name="log_past_empty">+ Empty workout</string>
+    <string name="log_it">Log it</string>
 </resources>

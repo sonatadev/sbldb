@@ -9,6 +9,7 @@ import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.data.entity.Workout
 import com.github.sonatadev.sbldb.data.entity.WorkoutExercise
 import com.github.sonatadev.sbldb.data.entity.WorkoutSet
+import com.github.sonatadev.sbldb.data.repository.RoutineRepository
 import com.github.sonatadev.sbldb.data.repository.SettingsRepository
 import com.github.sonatadev.sbldb.data.repository.WorkoutRepository
 import kotlinx.coroutines.flow.first
@@ -150,5 +151,29 @@ class WorkoutFeaturesTest {
         repo.addExercise(workout, db.exerciseDAO().findId("Barbell Back Squat")!!)
         val squat = repo.workout(workout).first()!!.exercises.single { it.exercise.name == "Barbell Back Squat" }
         assertEquals(listOf(null), squat.sets.map { it.side })
+    }
+
+    @Test
+    fun aPastWorkoutIsLoggedFinishedOnItsDay() = runBlocking {
+        val routines = RoutineRepository(db)
+        val routineId = routines.create("Legs")
+        routines.addExercise(routineId, db.exerciseDAO().findId("Bulgarian Split Squat")!!)
+        routines.addExercise(routineId, db.exerciseDAO().findId("Leg Extension")!!)
+        val day = java.time.LocalDate.of(2026, 10, 8)
+        val zone = java.time.ZoneOffset.UTC
+
+        val id = repo.logPast(day, routineId, java.time.LocalTime.of(18, 0), zone)
+        val workout = repo.workout(id).first()!!
+        assertEquals(day.atTime(18, 0).toInstant(zone).toEpochMilli(), workout.workout.startedAt)
+        assertEquals(60 * 60_000L, workout.workout.endedAt!! - workout.workout.startedAt)
+        assertEquals("Legs", workout.workout.name)
+        // 3 sets of a one-sided exercise are 6 rows, all done
+        assertEquals(6, workout.exercises.single { it.exercise.name == "Bulgarian Split Squat" }.sets.size)
+        assertTrue(workout.exercises.flatMap { it.sets }.all { it.isCompleted })
+        // It is history, not a workout in progress
+        assertEquals(null, repo.activeWorkout.first())
+
+        val empty = repo.workout(repo.logPast(day, null, zone = zone)).first()!!
+        assertTrue(empty.exercises.isEmpty())
     }
 }

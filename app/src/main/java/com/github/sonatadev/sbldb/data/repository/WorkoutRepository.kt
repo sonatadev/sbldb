@@ -1,5 +1,7 @@
 package com.github.sonatadev.sbldb.data.repository
 
+import java.time.LocalTime
+import java.time.LocalDate
 import com.github.sonatadev.sbldb.data.entity.WorkoutExerciseWithSets
 import com.github.sonatadev.sbldb.data.entity.Side
 import com.github.sonatadev.sbldb.domain.WarmupSet
@@ -64,6 +66,51 @@ class WorkoutRepository(
                             position = position++,
                             weightKg = (last.firstOrNull { it.side == side } ?: last.firstOrNull())?.weightKg,
                             reps = planned.repMax,
+                            side = side
+                        )
+                    )
+                }
+            }
+        }
+        workoutId
+    }
+
+    /**
+     * Logs a workout done on [day] without having tracked it: a finished workout at [timeOfDay]
+     * lasting an hour, with [routineId]'s exercises and sets already done at last time's load and
+     * the top of the rep range, ready to be corrected. Without a routine it starts empty.
+     */
+    suspend fun logPast(
+        day: LocalDate,
+        routineId: Long?,
+        timeOfDay: LocalTime = LocalTime.of(18, 0),
+        zone: ZoneId = ZoneId.systemDefault()
+    ): Long = db.withTransaction {
+        val start = day.atTime(timeOfDay).atZone(zone).toInstant().toEpochMilli()
+        val routine = routineId?.let { db.routineDAO().find(it) }
+        val workoutId = dao.insertWorkout(
+            Workout(
+                name = routine?.routine?.name ?: defaultName(start),
+                startedAt = start,
+                endedAt = start + 60 * 60_000L,
+                routineId = routine?.routine?.routineId
+            )
+        )
+        routine?.exercises?.sortedBy { it.routineExercise.position }?.forEachIndexed { position, entry ->
+            val planned = entry.routineExercise
+            val workoutExerciseId = dao.insertWorkoutExercise(WorkoutExercise(workoutId = workoutId, exerciseId = planned.exerciseId, position = position))
+            val last = dao.getLastPerformance(planned.exerciseId)
+            var setPosition = 0
+            repeat(planned.sets.coerceAtLeast(1)) {
+                sidesOf(planned.exerciseId).forEach { side ->
+                    dao.insertSet(
+                        WorkoutSet(
+                            workoutExerciseId = workoutExerciseId,
+                            position = setPosition++,
+                            weightKg = (last.firstOrNull { it.side == side } ?: last.firstOrNull())?.weightKg,
+                            reps = planned.repMax,
+                            rir = planned.targetRir,
+                            isCompleted = true,
                             side = side
                         )
                     )

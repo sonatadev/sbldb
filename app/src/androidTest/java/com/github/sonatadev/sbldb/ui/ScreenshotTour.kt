@@ -108,6 +108,17 @@ class ScreenshotTour {
             compose.waitForIdle()
             scrollTo("Log set", ignoreCase = true)
             shot("14-timed")
+
+            // Logging a workout after the fact, from the Log
+            back()
+            tab("Log")
+            scrollTo("Log a workout for this day")
+            compose.onAllNodesWithText("Log a workout for this day", substring = true).onFirst().performClick()
+            compose.waitForIdle()
+            shot("15-log-past")
+            compose.onAllNodesWithText("Upper A").onLast().performClick()
+            compose.waitUntil(5_000) { compose.onAllNodesWithText("Done", ignoreCase = true).fetchSemanticsNodes().isNotEmpty() }
+            shot("16-logged-past")
         }
     }
 

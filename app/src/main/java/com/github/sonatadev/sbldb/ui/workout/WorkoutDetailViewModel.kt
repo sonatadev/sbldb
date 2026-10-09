@@ -36,6 +36,9 @@ class WorkoutDetailViewModel(
 ) : ViewModel(), SetActions {
     val workoutId: Long = checkNotNull(savedStateHandle["workoutId"])
 
+    /** Opened right after being logged after the fact: straight into edit mode. */
+    val startEditing: Boolean = savedStateHandle["edit"] ?: false
+
     val uiState: StateFlow<WorkoutDetailUiState> =
         combine(repository.workout(workoutId), settings.weightUnit) { workout, unit ->
             WorkoutDetailUiState(isLoading = false, workout = workout, unit = unit)

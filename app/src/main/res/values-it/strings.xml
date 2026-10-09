@@ -488,4 +488,10 @@
         <item quantity="many">%d serie</item>
         <item quantity="other">%d serie</item>
     </plurals>
+
+    <!-- Logging a past workout -->
+    <string name="log_past">Registra un allenamento in questo giorno</string>
+    <string name="log_past_for">Fatto %1$s</string>
+    <string name="log_past_empty">+ Allenamento vuoto</string>
+    <string name="log_it">Registra</string>
 </resources>
